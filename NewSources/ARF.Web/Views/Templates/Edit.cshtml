@@ -1,0 +1,82 @@
+﻿@model TemplateViewModel
+
+@{
+    ViewBag.Title = "Edit";
+}
+<link href="~/Content/css/summernote.css" rel="stylesheet">
+
+<ul class="breadcrumb">
+    <li><a href="@Url.Action("Index", "Home")">@LangHelpers.Instance["home"]</a></li>
+    <li><a href="@Url.Action("Index", "Templates")">@LangHelpers.Instance["templates"]</a></li>
+    <li>@LangHelpers.Instance["edit_template"]</li>
+</ul>
+
+<div class="box2 box2-info">
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.TemplateKey)
+            <div class="form-group">
+                @Html.LabelFor(model => model.TemplateKey, LangHelpers.Instance["template_name"], htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+
+                    <label>@LangHelpers.Instance[Model.TemplateKey]</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.SubjectArabic, LangHelpers.Instance["subject_arabic"], htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.SubjectArabic, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.SubjectArabic, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.BodyArabic, LangHelpers.Instance["body_arabic"], htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9" dir="rtl">
+                    @Html.TextAreaFor(model => model.BodyArabic, new { @class = "form-control .editor", rows = 10 })
+                    @Html.ValidationMessageFor(model => model.BodyArabic, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.SubjectEnglish, LangHelpers.Instance["subject_english"], htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.SubjectEnglish, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.SubjectEnglish, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.BodyEnglish, LangHelpers.Instance["body_english"], htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9" dir="rtl">
+                    @Html.TextAreaFor(model => model.BodyEnglish, new { @class = "form-control .editor", rows = 10 })
+                    @Html.ValidationMessageFor(model => model.BodyEnglish, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+
+            @Html.HiddenFor(model => model.IsHtml)
+
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                    <input type="submit" value="@LangHelpers.Instance["save"]" class="btn btn-primary btn-lg btn-block" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section scripts
+{
+    <script src="~/Content/js/summernote.js" type="text/javascript" nonce="@Html.ScriptNonce()"></script>
+    <script type="text/javascript" nonce="@Html.ScriptNonce()">
+        $('#BodyEnglish').summernote();
+        $('#BodyArabic').summernote();
+    </script>
+}

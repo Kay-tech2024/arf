@@ -1,0 +1,940 @@
+﻿@model ARF.Web.Models.RegistrationViewModel
+
+@{
+    ViewBag.Title = @LangHelpers.Instance["register_as_researcher"];
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+    Model.Role = ArfUserRole.Researcher;
+}
+
+
+
+@if (Model.Step < 1)
+{
+    Model.Step = 1;
+}
+else if (Model.Step > 5)
+{
+    Model.Step = 5;
+}
+
+
+
+<link rel="stylesheet" type="text/css" href="~/Content/css/bootstrap-datetimepicker@(LangHelpers.Instance["css_suffix"]).css" />
+<link rel="stylesheet" type="text/css" href="~/Content/css/calendar@(LangHelpers.Instance["css_suffix"]).css" />
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="step-wizard-container2 step5">
+
+            <div class="step-wizard">
+                <div class="progress2">
+                    <div class="progressbar2 empty"></div>
+                    <div id="prog" class="progressbar2"></div>
+                </div>
+                <ul>
+                    @for (var i = 0; i < 5; i++)
+                    {
+                        <li class="@(i + 1 == Model.Step ? "active" : "")">
+                            <a href="@Utils.GetRegisterLink(Model.Role.Value, i + 1)">
+                                <span class="step2">@(i + 1)</span>
+
+                            </a>
+                            <br />
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2>@ViewBag.ResearcherPageTitle</h2>
+
+
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="validation-summary-errors" data-valmsg-summary="true">
+        <ul>
+
+            @foreach (var m in ViewData.ModelState.Keys)
+            {
+                if (ViewData.ModelState[m].Errors.Count == 0)
+                {
+                    continue;
+                }
+
+                if (m.Contains("[") && m.Contains("]"))
+                {
+                    var index1 = m.IndexOf('[');
+                    var index2 = m.IndexOf(']');
+                    var property = m.Substring(0, index1);
+                    var row = int.Parse(m.Substring(index1 + 1, index2 - index1 - 1)) + 1;
+
+                    <li>@(LangHelpers.Instance[property] + " " + LangHelpers.Instance["the_row"] + " " + row + ": " + ViewData.ModelState[m].Errors.First().ErrorMessage)</li>
+                }
+                else
+                {
+                    <li>@ViewData.ModelState[m].Errors.First().ErrorMessage</li>
+                }
+            }
+        </ul>
+
+    </div>
+
+
+}
+
+<form action="@Utils.GetRegisterLink(Model.Role.Value, Model.Step)" method="post" class="form-horizontal" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    @if (Model.Step == 1)
+    {
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.FullName, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["quad_name"]</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", @placeholder = "الاسم الكامل" })
+            </div>
+        </div>
+
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.NationalId, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["NationalId"]</label>
+
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.NationalId, new { @class = "form-control", @placeholder = LangHelpers.Instance["national_id"] })
+            </div>
+        </div>
+
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.NationalityId, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["NationalityId"]</label>
+
+
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.NationalityId, (SelectList)ViewBag.Countries, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.BirthDate, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["BirthDate"]</label>
+            <div class="col-md-8">
+                @Html.DatePickerFor(m => m.BirthDate, ARF.Web.App_Start.Extensions.DateType.Date, new { @class = "form-control allow-edit" })
+
+                @Html.ValidationMessageFor(model => model.BirthDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.CountryId, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["CountryId"]</label>
+
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.CountryId, (SelectList)ViewBag.Countries, new { @class = "form-control ddl-country" })
+            </div>
+        </div>
+
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.CityId, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["CityId"]</label>
+
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.CityId, new SelectList(Model.Cities.Where(c => c.CountryId == null || (Model.CountryId > 0 && c.CountryId == Model.CountryId)), "Id", "Name", Model.CityId), LangHelpers.Instance["select"], new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.CityId)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @*@Html.LabelFor(m => m.Address, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["address"]</label>
+
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.Address, new { @class = "form-control", @placeholder = "العنوان" })
+            </div>
+        </div>
+
+
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.UniversityId, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["UniversityId"]</label>
+
+            <div class="col-md-8">
+                @Html.HiddenFor(m => m.UniversityId)
+                <div class="form-control disabled">@Model.UniversityName</div>
+                @Html.ValidationMessageFor(m => m.UniversityId)
+            </div>
+        </div>
+
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.CollegeId, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["CollegeId"]</label>
+
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.CollegeId, new SelectList(Model.Colleges, "Value", "Text", Model.CollegeId), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown ddl-college" })
+                @Html.ValidationMessageFor(m => m.CollegeId)
+            </div>
+        </div>
+
+        <div class="form-group required" style="display: @(Model.CollegeId == null || Model.CollegeId > 0 ? "none" : "block")">
+            @*@Html.LabelFor(m => m.CollegeOther, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["CollegeOther"]</label>
+
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.CollegeOther, new { @class = "form-control", @placeholder = "الكلية" })
+            </div>
+        </div>
+
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.DepartmentID, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["DepartmentID"]</label>
+
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.DepartmentID, new SelectList(Model.Departments, "Value", "Text", Model.DepartmentID), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown" })
+                @Html.ValidationMessageFor(m => m.DepartmentID)
+            </div>
+        </div>
+
+        <div class="form-group required div-department-other" style="display: @(Model.DepartmentID == null || Model.DepartmentID > 0 ? "none" : "block")">
+            <label class="control-label col-md-4">@LangHelpers.Instance["DepartmentID"]</label>
+
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.DepartmentOther, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.DepartmentOther)
+            </div>
+        </div>
+
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.Qualification, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["Qualification"]</label>
+
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.Qualification, new SelectList(Utils.QualificationTypesByResearcherType(ResearcherRole.MainResearcher)
+                                                                                                                                                                                                                                                      .Select(r => new SelectListItem { Text = LangHelpers.Instance[r.ToString()], Value = r.ToString() }), "Value", "Text", Model.Qualification), LangHelpers.Instance["select"], new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Qualification)
+            </div>
+        </div>
+
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.Specialization, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["Specialization"]</label>
+
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.Specialization, new { @class = "form-control researcher-name" })
+                @Html.ValidationMessageFor(m => m.Specialization)
+            </div>
+        </div>
+    }
+    else if (Model.Step == 2)
+    {
+
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.Bank, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["Bank"]</label>
+
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.Bank, new SelectList(Model.Banks, "Value", "Text", Model.Bank), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown" })
+                @Html.ValidationMessageFor(m => m.Bank)
+            </div>
+        </div>
+
+        <div class="form-group required div-bank-other" style="display: @(Model.Bank == null || Model.Bank > 0 ? "none" : "block")">
+            @*@Html.LabelFor(m => m.BankOther, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["BankOther"]</label>
+
+
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.BankOther, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.BankOther)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @*@Html.LabelFor(m => m.BankBranch, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["BankBranch"]</label>
+
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.BankBranch, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.BankBranch)
+            </div>
+        </div>
+
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.BankAccountHolderName, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["BankAccountHolderName"]</label>
+
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.BankAccountHolderName, new { @class = "form-control", @placeholder = LangHelpers.Instance["account_holder_name"] })
+            </div>
+        </div>
+
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.BankAccountIBAN, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["BankAccountIBAN"]</label>
+
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.BankAccountIBAN, new { @class = "form-control", @placeholder = LangHelpers.Instance["iban"] })
+            </div>
+        </div>
+
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.BankIbanPhotocopy, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["BankIbanPhotocopy"]</label>
+
+            <div class="col-md-8">
+                <input type="file" name="BankIbanPhotocopy" />
+                @if (Model.BankIbanPhotocopyReadonly != null)
+                {
+                    <a class="btn btn-xs btn-success" target="_blank" href="@(Utils.GetApplicationUrl() + "f/" + Model.BankIbanPhotocopyReadonly.FileId)">    @Model.BankIbanPhotocopyReadonly.FileName</a>
+                }
+                @Html.ValidationMessageFor(m => m.BankIbanPhotocopy)
+            </div>
+        </div>
+
+    }
+    else if (Model.Step == 3)
+    {
+        <div class="form-group required">
+            <label class="control-label col-md-4 larger-text">@LangHelpers.Instance["cv"]</label>
+            <div class="col-md-8">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table">
+                    <tbody>
+                        <tr class="row-section-header required">
+                            <td>
+                                <a class="field-caption" style="margin-right: 60px;" href="#">@LangHelpers.Instance["SectionCareerHistory"]</a>
+                            </td>
+                            <td><span class="color-red"></span></td>
+                            <td><a data-toggle="dont-collapse" data-target="#CvSectionCareerHistory" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                        </tr>
+                        <tr class="collapse row-section-details" id="CvSectionCareerHistory">
+                            <td colspan="3">
+                                @Html.TextAreaFor(m => @m.SectionCareerHistory, new { rows = 3, @class = "form-control rich-text-editor small" })
+                            </td>
+                        </tr>
+                        <tr class="row-section-header required">
+                            <td><a class="field-caption" style="margin-right: 60px;" href="#">@LangHelpers.Instance["SectionAcademicHistory"]</a></td>
+                            <td><span class="color-red"></span></td>
+                            <td><a data-toggle="dont-collapse" data-target="#CvSectionAcademicHistory" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                        </tr>
+                        <tr class="collapse row-section-details" id="CvSectionAcademicHistory">
+                            <td colspan="3">
+                                @Html.TextAreaFor(m => @m.SectionAcademicHistory, new { rows = 3, @class = "form-control rich-text-editor small" })
+                            </td>
+                        </tr>
+                        <tr class="row-section-header required">
+                            <td><a class="field-caption" style="margin-right: 60px;" href="#">@LangHelpers.Instance["SectionPublishedPapers"]</a></td>
+                            <td><span class="color-red"></span></td>
+                            <td><a data-toggle="dont-collapse" data-target="#CvSectionPublishedPapers" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                        </tr>
+                        <tr class="collapse row-section-details" id="CvSectionPublishedPapers">
+                            <td colspan="3">
+                                @Html.TextAreaFor(m => @m.SectionPublishedPapers, new { rows = 3, @class = "form-control rich-text-editor small" })
+                            </td>
+                        </tr>
+                        <tr class="row-section-header required">
+                            <td><a class="field-caption" style="margin-right: 60px;" href="#">@LangHelpers.Instance["SectionInterests"]</a></td>
+                            <td><span class="color-red"></span></td>
+                            <td><a data-toggle="dont-collapse" data-target="#CvSectionInterests" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                        </tr>
+                        <tr class="collapse row-section-details" id="CvSectionInterests">
+                            <td colspan="3">
+                                @Html.TextAreaFor(m => @m.SectionInterests, new { rows = 3, @class = "form-control rich-text-editor small" })
+                            </td>
+                        </tr>
+                        <tr class="row-section-header required">
+                            <td><a class="field-caption" style="margin-right: 60px;" href="#">@LangHelpers.Instance["SectionMemberships"]</a></td>
+                            <td><span class="color-red"></span></td>
+                            <td><a data-toggle="dont-collapse" data-target="SectionMemberships" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                        </tr>
+                        <tr class="collapse row-section-details" id="CvSectionMemberships">
+                            <td colspan="3">
+                                @Html.TextAreaFor(m => @m.SectionMemberships, new { rows = 3, @class = "form-control rich-text-editor small" })
+                            </td>
+                        </tr>
+                        <tr class="row-section-header required">
+                            <td><a class="field-caption" style="margin-right: 60px;" href="#">@LangHelpers.Instance["SectionAwards"]</a></td>
+                            <td><span class="color-red"></span></td>
+                            <td><a data-toggle="dont-collapse" data-target="#CvSectionAwards" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                        </tr>
+                        <tr class="collapse row-section-details" id="CvSectionAwards">
+                            <td colspan="3">
+                                @Html.TextAreaFor(m => @m.SectionAwards, new { rows = 3, @class = "form-control rich-text-editor small" })
+                            </td>
+                        </tr>
+                        <tr class="row-section-header required">
+                            <td><a class="field-caption" style="margin-right: 60px;" href="#">@LangHelpers.Instance["SectionTrainingCourses"]</a></td>
+                            <td><span class="color-red"></span></td>
+                            <td><a data-toggle="dont-collapse" data-target="#CvSectionTrainingCourses" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                        </tr>
+                        <tr class="collapse row-section-details" id="CvSectionTrainingCourses">
+                            <td colspan="3">
+                                @Html.TextAreaFor(m => @m.SectionTrainingCourses, new { rows = 3, @class = "form-control rich-text-editor small" })
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+                @Html.ValidationMessageFor(m => m.CvText)
+            </div>
+        </div>
+
+    }
+
+    else if (Model.Step == 4)
+    {
+        <h4>@LangHelpers.Instance["mobile_verification"]</h4>
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.MobileNumber, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["MobileNumber"]</label>
+
+
+            <div class="col-md-8">
+                <div class="input-group">
+                    @Html.TextBoxFor(m => m.MobileNumber, new { @class = "form-control", @placeholder = LangHelpers.Instance["mobile"] })
+                    <span class="input-group-btn">
+                        <a id="btnSendVerifyMobile" href="#" class="btn btn-danger">@LangHelpers.Instance["send_verification_code"]</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div id="divPhoneVerification" class="form-group required" style="display: none;">
+            @Html.HiddenFor(m => m.SmsKey)
+            @*@Html.LabelFor(m => m.SmsCode, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["SmsCode"]</label>
+
+            <div class="col-md-8">
+                <div class="input-group">
+                    @Html.TextBoxFor(m => m.SmsCode, new { @class = "form-control", @placeholder = LangHelpers.Instance["sms_code"] })
+                    <span class="input-group-btn">
+                        <a id="btnVerifyMobile" href="#" class="btn btn-default">@LangHelpers.Instance["verify"]</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div id="divPhoneVerificationInfo" class="alert alert-info text-center" style="display: none;"></div>
+        <br />
+        <hr />
+        <h4>@LangHelpers.Instance["email_verification"]</h4>
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.Email, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["Email"]</label>
+
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = LangHelpers.Instance["email"] })
+            </div>
+        </div>
+
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.EmailConfirmation, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["EmailConfirmation"]</label>
+
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.EmailConfirmation, new { @class = "form-control", @placeholder = LangHelpers.Instance["email_confirmation"] })
+            </div>
+        </div>
+
+        <p class="text-center">
+            <a id="btnSendVerifyEmail" href="#" class="btn btn-danger">@LangHelpers.Instance["send_verification_code"]</a>
+        </p>
+
+
+        <div id="divEmailVerification" class="form-group required" style="display: none;">
+            @Html.HiddenFor(m => m.EmailKey)
+            @*@Html.LabelFor(m => m.EmailCode, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["EmailCode"]</label>
+
+            <div class="col-md-8">
+                <div class="input-group">
+                    @Html.TextBoxFor(m => m.EmailCode, new { @class = "form-control", @placeholder = LangHelpers.Instance["email_code"] })
+                    <span class="input-group-btn">
+                        <a id="btnVerifyEmail" href="#" class="btn btn-default">@LangHelpers.Instance["verify"]</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div id="divEmailVerificationInfo" class="alert alert-info text-center" style="display: none;"></div>
+
+
+        <input id="hdnIsMobileVerified" value="@(ViewBag.IsMobileVerified == true? "1":"0")" type="hidden" />
+        <input id="hdnIsEmailVerified" value="@(ViewBag.IsEmailVerified == true? "1":"0")" type="hidden" />
+    }
+
+
+
+
+
+    else if (Model.Step == 5)
+    {
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.Password, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["Password"]</label>
+
+            <div class="col-md-8">
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = LangHelpers.Instance["password"] })
+            </div>
+        </div>
+
+        <div class="form-group required">
+            @*@Html.LabelFor(m => m.ConfirmPassword, new { @class = "control-label col-md-4" })*@
+            <label class="control-label col-md-4">@LangHelpers.Instance["ConfirmPassword"]</label>
+
+            <div class="col-md-8">
+                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", @placeholder = LangHelpers.Instance["password_confirmation"] })
+            </div>
+        </div>
+
+
+
+
+    }
+
+
+    @if (Model.Step == 5)
+    {
+        <div class="form-group">
+            <div class="col-md-8 col-md-offset-4">
+                <button id="btnSubmit" type="submit" class="btn btn-success btn-block btn-60px">@LangHelpers.Instance["register"]</button>
+            </div>
+        </div>
+    }
+    else if (Model.Step > 1)
+    {
+        <div class="form-group">
+            <div class="col-md-2">
+                <a href="@Utils.GetRegisterLink(Model.Role.Value, Model.Step-1)" class="btn btn-info btn-block btn-60px">@LangHelpers.Instance["prev_btn"]</a>
+            </div>
+            <div class="col-md-8"></div>
+            <div class="col-md-2">
+                <button id="btnSubmit" type="submit" class="btn btn-success btn-block btn-60px">@LangHelpers.Instance["next_btn"]</button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="form-group">
+            <div class="col-md-2">
+
+            </div>
+            <div class="col-md-8"></div>
+            <div class="col-md-2">
+                <button id="btnSubmit" type="submit" class="btn btn-success btn-block btn-60px">@LangHelpers.Instance["next_btn"]</button>
+            </div>
+        </div>
+    }
+</form>
+
+</div>
+
+@section scripts
+{
+    <script type="text/javascript" src="~/Content/js/moment-with-locales.min.js" nonce="@Html.ScriptNonce()"></script>
+    <script type="text/javascript" src="~/Content/js/bootstrap-datetimepicker.js" nonce="@Html.ScriptNonce()"></script>
+    <script type="text/javascript" src="~/Content/js/calendar.js" nonce="@Html.ScriptNonce()"></script>
+    <script type="text/javascript" src="~/Content/js/site.js" nonce="@Html.ScriptNonce()"></script>
+
+    <script type="text/javascript" nonce="@Html.ScriptNonce()">
+        var step = @(Model.Step);
+        var cities = @Html.Raw(Utils.SerializeObject(Model.Cities.Select(r => new { Id = r.Id, Name = r.Name })));
+
+        var switchOther = function ($el) {
+            var $otherEl = $el.closest('.form-group').next();
+            var selected = $el.val();
+            var selectedVal = null;
+            try {
+                selectedVal = parseInt(selected);
+            } catch (e) {
+                return;
+            }
+
+            if (selectedVal == NaN) return;
+
+            if (selectedVal === 0) {
+                $otherEl.slideDown();
+            } else {
+                $otherEl.find('input').val('');
+                $otherEl.slideUp();
+            }
+        };
+
+        onDomInserted('.other-dropdown', function (el) {
+
+            $(el).on('change', function (e) {
+                switchOther($(el));
+                return false;
+            });
+        });
+
+        onDomInserted('.row-section-header', function (el) {
+
+            $(el).find('a').on('click', function (e) {
+
+                var xel = $(el).next('.row-section-details');
+                var attr = xel.attr('data-is-visible');
+
+                if (attr === '1') {
+
+                    xel.css('display', 'none').attr('data-is-visible', '0');
+                } else {
+                    var others = $('.row-section-details');
+                    for (var i = 0; i < others.length; i++) {
+                        $(others[i]).css('display', 'none').attr('data-is-visible', '0');
+                    }
+                    xel.css('display', 'table-row').attr('data-is-visible', '1');
+                }
+
+                e.preventDefault();
+                return false;
+            });
+        });
+
+        onDomInserted('.ddl-country', function (el) {
+
+            $(el).change(function () {
+
+                var $el = $(el);
+                var selected = $el.val();
+
+                var otherEl = $(el).closest('.form-group').next().find('select');
+
+                otherEl.empty();
+
+                var selectedVal = null;
+                try {
+                    selectedVal = parseInt(selected);
+                } catch (e) {
+
+                }
+
+                if (selectedVal === 0) {
+                } else {
+
+                    $.getJSON(baseAjaxUrl + 'GetCities?countryId=' + selected + "&others=False", function (cats) {
+                        var secCateSelect = otherEl;
+                        secCateSelect.empty();
+                        secCateSelect.html('<option></option>');
+
+                            secCateSelect.empty();
+                         secCateSelect.append($('<option />', {
+                        value: '', text: '@LangHelpers.Instance["select"]'
+                        }));
+
+
+                        $.each(cats, function (index, cat) {
+
+                            secCateSelect.append($('<option />', {
+                                value: cat.value,
+                                text: cat.text
+                            }));
+                        });
+
+                        secCateSelect.append($('<option />', {
+                            value: '0',
+                            text: '@ArfStrings.other'
+                        }));
+                    });
+                }
+            });
+        });
+
+
+         onDomInserted('.ddl-college', function (el) {
+
+            $(el).change(function () {
+
+                var $el = $(el);
+                var selected = $el.val();
+
+                var uniEl = $(el).closest('.form-group').prev().find('select');
+                var otherEl = $(el).closest('.form-group').next().find('select');
+
+                if (otherEl == null || otherEl.length === 0 || !otherEl.attr('name').endsWith('DepartmentId')) {
+                    otherEl = $(el).closest('.form-group').next().next().find('select');
+
+                    uniEl = $(el).closest('.form-group').prev().prev().find('select');
+                }
+
+                var hasSelectPicker = false &&  isFunction(otherEl.selectpicker) && otherEl.hasClass('selectpicker');
+
+                otherEl.empty();
+
+                switchOther(otherEl);
+
+                if (hasSelectPicker) {
+                    otherEl.selectpicker('refresh');
+
+                }
+
+                var selectedVal = null;
+                try {
+                    selectedVal = parseInt(selected);
+                } catch (e) {
+
+                }
+
+                if (selectedVal === 0) {
+                } else {
+
+                    $.getJSON(baseAjaxUrl + 'GetDepartments?dontFilter=1&&collegeId=' + selected + "&others=False", function (cats) {
+                        var secCateSelect = otherEl;
+                        secCateSelect.empty();
+                         secCateSelect.append($('<option />', {
+                        value: '', text: '@LangHelpers.Instance["select"]'
+                        }));
+
+
+
+                        $.each(cats, function (index, cat) {
+
+                            secCateSelect.append($('<option />', {
+                                value: cat.value,
+                                text: cat.text
+                            }));
+                        });
+
+                        if (uniEl.val() != 1) {
+                            secCateSelect.append($('<option />', {
+                                value: '0',
+                                text: '@ArfStrings.other'
+                            }));
+                        }
+
+
+                        if (cats.length === 0) {
+                            secCateSelect.val('0');
+                            switchOther(secCateSelect);
+                        }
+
+                        if (hasSelectPicker) {
+                            secCateSelect.selectpicker('refresh');
+                            otherEl.selectpicker('refresh');
+                        }
+
+                    });
+                }
+            });
+        });
+
+        // Email && mobile verification
+         if (step === 4) {
+             var validateVerification = function () {
+                 if ($("#Email").val() != "") {
+                     $("#EmailConfirmation").val($("#Email").val());
+                     $("#Email").attr("readonly", "readonly");
+                     $("#EmailConfirmation").attr("readonly", "readonly");
+                 }
+
+                 var mobileVerified = $('#hdnIsMobileVerified').val() === '1';
+                 var emailVerified = $('#hdnIsEmailVerified').val() === '1';
+
+                 if (!mobileVerified || !emailVerified) {
+                     $('#btnSubmit').addClass('disabled');
+                     return false;
+                 }
+
+
+                 $('#btnSubmit').removeClass('disabled');
+                 return true;
+
+             };
+
+
+             var sendSmsCode = function () {
+                 var mobile = $('#MobileNumber').val();
+                 if (!mobile) return;
+                 $('#divPhoneVerificationInfo').slideUp();
+                 $.getJSON(baseAjaxUrl + 'SendVerificationCode?type=SMS&to=' + mobile, function (res) {
+                     if (!res) return;
+                     if (res.success == true) {
+                         $('#SmsKey').val(res.key);
+                         $('#divPhoneVerification').slideDown();
+                         $('#divPhoneVerificationInfo').slideUp();
+                         $('#SmsCode').val('');
+                     } else {
+                         if (res.isVerified === true) {
+                             $('#hdnIsMobileVerified').val('1');
+                             validateVerification();
+                         }
+                         $('#divPhoneVerification').slideUp();
+                         $('#divPhoneVerificationInfo').html(res.msg).slideDown();
+                     }
+                 });
+             };
+
+             $('#btnSendVerifyMobile').click(function (ev) {
+
+                 sendSmsCode();
+
+                 ev.preventDefault();
+                 return false;
+             });
+
+
+             $('#btnVerifyMobile').click(function () {
+                 var mobile = $('#MobileNumber').val();
+                 var key = $('#SmsKey').val();
+                 var code = $('#SmsCode').val();
+                 if (!mobile) return;
+                 $('#divPhoneVerificationInfo').slideUp();
+
+                 $.getJSON(baseAjaxUrl + 'VerifyCode?type=SMS&to=' + mobile + '&key=' + key + '&code=' + code, function (res) {
+                     if (!res) return;
+                     if (res.success == true) {
+                         $('#divPhoneVerificationInfo').html('<span class="glyphicon glyphicon-ok" style="display: inline;"></span>').slideDown();
+                     } else {
+                         if (res.isVerified === true) {
+                             $('#hdnIsMobileVerified').val('1');
+                             validateVerification();
+                         }
+
+                         $('#divPhoneVerificationInfo').html(res.msg).slideDown();
+                     }
+                 });
+
+                 ev.preventDefault();
+                 return false;
+             });
+
+             var validateEmail = function () {
+                 var email = $('#Email').val();
+                 var emailConfirmation = $('#EmailConfirmation').val();
+                 if (!email || !emailConfirmation || email.trim().length === 0 || email != emailConfirmation) {
+                     $('#btnSendVerifyEmail').addClass('disabled');
+                     return false;
+                 }
+
+
+                 $('#btnSendVerifyEmail').removeClass('disabled');
+                 return true;
+             };
+
+             $('#MobileNumber').on("input", function (e) {
+                 $('#hdnIsMobileVerified').val('0');
+             });
+
+             $('#Email,#EmailConfirmation').on("input", function (e) {
+                 $('#hdnIsEmailVerified').val('0');
+                 validateEmail();
+             });
+
+
+             $('#Email').bind("cut copy paste", function (e) {
+                 e.preventDefault();
+             });
+
+             $('#EmailConfirmation').bind("cut copy paste", function (e) {
+                 e.preventDefault();
+             });
+
+
+             var sendEmailCode = function () {
+                 if (!validateEmail()) return false;
+
+                 var email = $('#Email').val();
+                 if (!email) return;
+
+
+                 email = encodeURIComponent(email);
+
+
+                 $('#divEmailVerificationInfo').slideUp();
+                 $.getJSON(baseAjaxUrl + 'SendVerificationCode?imamOnly=True&type=Email&to=' + email, function (res) {
+                     if (!res) return;
+                     if (res.success == true) {
+                         $('#hdnIsMobileVerified').val('1');
+                         validateVerification();
+                         $('#EmailKey').val(res.key);
+                         $('#divEmailVerification').slideDown();
+                         $('#divEmailVerificationInfo').slideUp();
+                         $('#EmailCode').val('');
+                     } else {
+                         if (res.isVerified === true) {
+                             $('#hdnIsEmailVerified').val('1');
+                             validateVerification();
+                         }
+
+                         $('#divEmailVerification').slideUp();
+                         $('#divEmailVerificationInfo').html(res.msg).slideDown();
+                     }
+                 });
+             };
+
+             $('#btnSendVerifyEmail').click(function (ev) {
+                 sendEmailCode();
+
+                 ev.preventDefault();
+                 return false;
+             });
+
+
+             $('#btnVerifyEmail').click(function (ev) {
+                 if (!validateEmail()) return false;
+
+                 var email = $('#Email').val();
+                 var key = $('#EmailKey').val();
+                 var code = $('#EmailCode').val();
+                 if (!email) return;
+
+
+                 email = encodeURIComponent(email);
+
+                 $('#divEmailVerificationInfo').slideUp();
+
+                 $.getJSON(baseAjaxUrl + 'VerifyCode?type=Email&to=' + email + '&key=' + key + '&code=' + code, function (res) {
+                     if (!res) return;
+                     if (res.success == true) {
+                         $('#hdnIsEmailVerified').val('1');
+                         validateVerification();
+                         $('#divEmailVerificationInfo').html('<span class="glyphicon glyphicon-ok" style="display: inline;"></span>').slideDown();
+                     } else {
+                         if (res.isVerified === true) {
+                             $('#hdnIsEmailVerified').val('1');
+                             validateVerification();
+                         }
+
+                         $('#divEmailVerificationInfo').html(res.msg).slideDown();
+                     }
+                 });
+
+                 ev.preventDefault();
+                 return false;
+
+             });
+
+             var validateEmail = function () {
+                 var email = $('#Email').val();
+                 var emailConfirmation = $('#EmailConfirmation').val();
+                 if (!email || !emailConfirmation || email.trim().length === 0 || email != emailConfirmation) {
+                     $('#btnSendVerifyEmail').addClass('disabled');
+                     return false;
+                 }
+
+
+                 $('#btnSendVerifyEmail').removeClass('disabled');
+                 return true;
+             };
+
+             validateEmail();
+
+             $('#btnSubmit').on("click", function (e) {
+                 if (!validateVerification()) {
+                     e.preventDefault();
+                     return false;
+                 }
+             });
+
+
+             validateVerification();
+
+         }
+    </script>
+}
+

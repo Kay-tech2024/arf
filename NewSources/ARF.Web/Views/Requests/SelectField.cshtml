@@ -1,0 +1,32 @@
+﻿@{
+    ViewBag.Title = LangHelpers.Instance["new_request"];
+
+}
+@model IEnumerable<RequestViewModel>
+<ul class="breadcrumb">
+    <li>@Html.ActionLink(LangHelpers.Instance["home"], "Index", "Home")</li>
+    <li>@Html.ActionLink(LangHelpers.Instance["requests"], "Index", "Requests")</li>
+    <li>@LangHelpers.Instance["new_request"]</li>
+</ul>
+<h4 class="title">@LangHelpers.Instance["new_funding_request"]</h4>
+
+<div class="row">
+    <div class="col-lg-6">
+        <a href="~/Funding/New?type=@ReqFieldType.IslamicField.ToString()" class="btn btn-default hvr-underline-from-center" style="width:95%;padding:10%; margin: 20px;">@LangHelpers.Instance["IslamicSciences_Track"]</a>
+    </div>
+
+    <div class="col-lg-6">
+        <a href="~/Funding/New?type=@ReqFieldType.ArabicLanguageField.ToString()" class="btn btn-default hvr-underline-from-center" style="width:95%;padding:10%; margin: 20px;">@LangHelpers.Instance["ArabicLanguageScience_Track"]</a>
+    </div>
+
+    
+    <div class="col-lg-6">
+        <a href="~/Funding/New?type=@ReqFieldType.SocialField.ToString()" class="btn btn-default hvr-underline-from-center" style="width:95%;padding:10%; margin: 20px;">@LangHelpers.Instance["HumanitiesAndSocialSciences_Track"]</a>
+    </div>
+    
+    <div class="col-lg-6">
+        <a href="~/Funding/New?type=@ReqFieldType.AppliedScienceField.ToString()" class="btn btn-default hvr-underline-from-center" style="width:95%;padding:10%; margin: 20px;">@LangHelpers.Instance["AppliedSciences_Track"]</a>
+    </div>
+
+    
+</div>

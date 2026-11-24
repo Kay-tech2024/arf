@@ -1,0 +1,126 @@
+﻿@model ARF.Web.Models.FundingRequestViewModel
+
+@{
+    ARF.Data.DbModels.ArfDbEntities db = new ARF.Data.DbModels.ArfDbEntities();
+    var preferences = CommonManager.GetUserPreferences();
+    var isArabic = preferences == null || preferences.Language != LanguagePreference.English;
+    var index = ViewBag.Index != null && ViewBag.Index is int ? (int)ViewBag.Index : 0;
+}
+
+@if (index == 0)
+{
+
+}
+<div>
+    <h4>
+        @if (index == 0)
+        {
+            @LangHelpers.Instance["MainResearcher"]
+        }
+        else
+        {
+            @Html.Raw("الباحث المشارك " + index)
+        }
+    </h4>
+
+</div>
+
+<div class="form-group">
+    <label class="control-label col-md-3">
+        @LangHelpers.Instance["name"]
+    </label>
+    <div class="col-md-5">
+        <div class="col-md-3 no-padding">
+            @Html.TextBoxFor(m => m.Researchers[index].FirstName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Researchers[index].FirstName)
+        </div>
+        <div class="col-md-3 no-padding">
+            @Html.TextBoxFor(m => m.Researchers[index].SecondName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Researchers[index].SecondName)
+        </div>
+        <div class="col-md-3 no-padding">
+            @Html.TextBoxFor(m => m.Researchers[index].ThirdName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Researchers[index].ThirdName)
+        </div>
+        <div class="col-md-3 no-padding">
+            @Html.TextBoxFor(m => m.Researchers[index].LastName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Researchers[index].LastName)
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="control-label col-md-3">
+        @LangHelpers.Instance["ScientificLevel"]
+    </label>
+    <div class="col-md-5">
+        @Html.DropDownListFor(m => m.Researchers[index].DegreeId, new SelectList(ViewBag.Degree, "Id", isArabic ? "NameArabic" : "NameEnglish"), LangHelpers.Instance["select"], htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Researchers[index].DegreeId)
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="control-label col-md-3">
+        @LangHelpers.Instance["university"]
+    </label>
+    <div class="col-md-5">
+        @Html.DropDownListFor(m => m.Researchers[index].UniversityId, new SelectList(ViewBag.universities, "Id", isArabic ? "NameArabic" : "NameEnglish"), LangHelpers.Instance["select"], htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Researchers[index].UniversityId)
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label col-md-3">
+        @LangHelpers.Instance["college"]
+    </label>
+
+    <div class="col-md-5">
+        @Html.DropDownListFor(m => m.Researchers[index].CollegeId, new SelectList(ViewBag.Colleges, "Id", isArabic ? "NameArabic" : "NameEnglish"), LangHelpers.Instance["select"], htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Researchers[index].CollegeId)
+    </div>
+</div>
+<div class="form-group hide">
+    <label class="control-label col-md-3">
+        @LangHelpers.Instance["department"]
+    </label>
+
+    <div class="col-md-5">
+        @Html.DropDownListFor(m => m.Researchers[index].DepartmentId, new SelectList(ViewBag.Departments, "Id", isArabic ? "NameArabic" : "NameEnglish"), LangHelpers.Instance["select"], htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Researchers[index].DepartmentId)
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label col-md-3">
+        @LangHelpers.Instance["mobile"]
+    </label>
+    <div class="col-md-5">
+        @Html.TextBoxFor(m => m.Researchers[index].MobileNo, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Researchers[index].MobileNo)
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label col-md-3">
+        @LangHelpers.Instance["email"]
+    </label>
+    <div class="col-md-5">
+        @Html.TextBoxFor(m => m.Researchers[index].Email, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Researchers[index].Email)
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label col-md-3">
+        @LangHelpers.Instance["national_id"]
+    </label>
+    <div class="col-md-5">
+        @Html.TextBoxFor(m => m.Researchers[index].NationalId, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Researchers[index].NationalId)
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label col-md-3">
+        @LangHelpers.Instance["nationality"]
+    </label>
+    <div class="col-md-5">
+        @Html.DropDownListFor(m => m.Researchers[index].NationalityId, new SelectList(ViewBag.Countries, "Id", isArabic ? "NameArabic" : "NameEnglish"), LangHelpers.Instance["select"], htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Researchers[index].NationalityId)
+    </div>
+</div>

@@ -1,0 +1,17 @@
+delete from RequestReferees
+delete from Referees
+delete from UserProfiles where userid in (select id from ViewUsers where RoleName='Referee' or RoleName is null)
+delete from UserRoles where userid in (select id from ViewUsers where RoleName='Referee' or RoleName is null)
+delete from UserFiles where userid in (select id from ViewUsers where RoleName='Referee' or RoleName is null)
+delete from UserTemporaryUrls where userid in (select id from ViewUsers where RoleName='Referee' or RoleName is null)
+delete from UserSessions where userid in (select id from ViewUsers where RoleName='Referee' or RoleName is null)
+delete from RequestFiles where CreatedBy in (select id from ViewUsers where RoleName='Referee' or RoleName is null)
+delete from RequestHistoryLogs where CreatedBy in (select id from ViewUsers where RoleName='Referee' or RoleName is null)
+delete from RewardRequests where CreatedBy in (select id from ViewUsers where RoleName='Referee' or RoleName is null)
+delete from requestfiles where requestid in (select id from requests where CreatedBy in (select id from ViewUsers where RoleName='Referee' or RoleName is null))
+delete from RequestHistoryLogs where requestid in (select id from requests where CreatedBy in (select id from ViewUsers where RoleName='Referee' or RoleName is null))
+delete from requests where CreatedBy in (select id from ViewUsers where RoleName='Referee' or RoleName is null)
+delete from UserLogs where userid in (select id from ViewUsers where RoleName='Referee' or RoleName is null)
+update requests set LastStatusChangedBy = null where LastStatusChangedBy in (select id from ViewUsers where RoleName='Referee' or RoleName is null)
+update requests set UpdatedBy = CreatedBy where UpdatedBy in (select id from ViewUsers where RoleName='Referee' or RoleName is null)
+delete from users where id in (select id from ViewUsers where RoleName='Referee' or RoleName is null)

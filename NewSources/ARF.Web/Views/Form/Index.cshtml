@@ -1,0 +1,178 @@
+﻿@model FormFillModel
+
+@{
+    ViewBag.Title = Model.StepTitles[Model.Step - 1];
+}
+
+<div class="step-wizard-container2 step@(Model.StepCount)">
+
+    <div class="step-wizard">
+        <div class="progress2">
+            <div class="progressbar2 empty"></div>
+            <div id="prog" class="progressbar2"></div>
+        </div>
+        <ul>
+            @for (var i = 0; i < Model.StepTitles.Count; i++)
+            {
+                <li class="@(i+1 == Model.Step? "active": "")">
+                    <a href="@Utils.GetFormSectionLink(Model.FormType, i+1, Model.RequestId)">
+                        <span class="step2">@(i + 1)</span>
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+@Html.ValidationSummary(false, "", htmlAttributes: new { @class = "text-danger" })
+
+@using (Html.BeginForm("Index", "Form", new { type = Model.FormType, step = Model.Step, id = Model.RequestId }, FormMethod.Post, new { enctype = "multipart/form-data", @class = "dynamic-form form-horizontal" + (Model.IsLTR ? " ltr" : "") }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("RequestId", Model.RequestId)
+    @Html.Hidden("FormType", Model.FormType)
+
+
+    var tablestarted = false;
+    var headingstarted = false;
+    var index = -1;
+    var tableFieldIndex = -1;
+
+    foreach (var field in Model.Fields)
+    {
+        var value = Model.FieldData == null || Model.FieldData.FirstOrDefault(f => f.FieldId == field.Id.ToString()) == null ? null : Model.FieldData.FirstOrDefault(f => f.FieldId == field.Id.ToString()).FieldValue;
+        @Html.RenderField(field, value, true, ref tablestarted, ref headingstarted, ref index, ref tableFieldIndex)
+    }
+
+
+
+    <div class="pull-right wizard-nav">
+        <input type="submit" id="submit" class="btn btn-primary wizard-fin" value="@(Model.Step == Model.StepTitles.Count? LangHelpers.Instance["submit"]: LangHelpers.Instance["next_btn"])" />
+    </div>
+}
+
+@section scripts
+{
+
+
+    <script type="text/javascript" nonce="@Html.ScriptNonce()">
+
+        $(document).ready(function () {
+            var typereq = $('#RequestType').val();
+
+            if (typereq == "PublishRequest") {
+                $('#type').hide();
+            }
+            function setClasses(index, steps) {
+                if (index < 0 || index > steps) return;
+                if (index == 0) {
+                    $(".step-wizard-container2 #prev").prop('disabled', true);
+                } else {
+                    $(".step-wizard-container2 #prev").prop('disabled', false);
+                }
+                if (index == steps) {
+                    $(".step-wizard-container2 #next").text('done');
+                } else {
+                    $(".step-wizard-container2 #next").text('next');
+                }
+                $(".step-wizard-container2 ul li").each(function () {
+                    $(this).removeClass();
+                });
+                $(".step-wizard-container2 ul li:lt(" + index + ")").each(function () {
+                    $(this).addClass("done");
+                });
+                $(".step-wizard-container2 ul li:eq(" + index + ")").addClass("active")
+                var p = index * (100 / steps);
+                $(".step-wizard-container2 #prog").width(p + '%');
+            }
+
+            // initial state setup
+            setClasses(@(Model.Step - 1), $(".step-wizard-container2 .step-wizard ul li").length - 1);
+        });
+
+
+
+
+        $('.btn-add-row').on('click', function (e) {
+            var div = $(this).closest('.table-container');
+            if (div.length === 0) return;
+
+            var template = div.find('.template');
+            if (template.length !== 0) return;
+
+            var html = template[0].outerHTML
+                .replace('_0_', '_' + elms.length + '_')
+                .replace('[0]', '[' + elms.length + ']')
+                .replace('.template-label-no', elms.length + 1) ;
+
+            div.append(html);
+
+            e.preventDefault();
+            return false;
+
+        });
+
+
+        onDomInserted('.btn-remove-row', function (el) {
+
+            $(el).on('click', function (e) {
+
+                var elm = $(el).closest('.form-group');
+
+                var index = parseInt(elm.attr('data-index'));
+
+                var div = $(this).closest('.table-container');
+                if (div.length === 0) return;
+
+                var elms = div.find('.template');
+
+
+                for (var i = 1; i < elms.length; i++) {
+
+                    if (index == i) {
+                        elm.remove();
+                    } else if (index < i) {
+                        var $label = $(elms[i]).find('.template-label-no');
+                        $label.html((i));
+                        $(elms[i]).find('#CommitteeMembers_' + i + '_').attr('id', 'CommitteeMembers_' + (i - 1) + '_').attr('name', 'CommitteeMembers[' + (i - 1) + ']');
+                        $(elms[i]).attr('data-index', i - 1);
+                    }
+                }
+
+                return false;
+
+
+
+            });
+        });
+
+        onDomInserted('.field-type-datetime', function (e) {
+            $(function () {
+                if (isFunction($(e).datetimepicker)) {
+                    $(e).datetimepicker({
+                        format: 'YYYY-MM-DD hh:mm A'
+                    });
+                }
+            });
+        });
+
+
+        onDomInserted('.field-type-date', function (e) {
+            $(function () {
+                if (isFunction($(e).datetimepicker)) {
+                    $(e).datetimepicker({
+                        format: 'YYYY-MM-DD'
+                    });
+                } else if (isFunction($(e).datepicker)) {
+                    $(e).datepicker({
+                        format: 'yyyy-mm-dd'
+                    });
+                }
+            });
+        });
+
+
+
+    </script>
+
+}

@@ -1,0 +1,13 @@
+﻿- ResearchIslamicSciForm   	 البحوث والدراسات في مجال العلوم الشرعية  
+- ResearchArabicLangSciForm	 البحوث والدراسات في مجال علوم اللغة العربية
+- ResearchHumanSocietySciForm    البحوث في مجلات العلوم الانسانية والاجتماعية
+- ResearchAppliedSciForm                البحوث في مجالات العلوم التطبيقية
+- ProjectPlanForm		النموذج 2 في مركز البحوث حول مخطط المشروع
+- FundingRequestForIsamicSciForm	نموذج 3أ بحثي مقدم طلب التمويل خاص بالعلوم الشرعية
+- FundingRequestForArabicLangSciForm   نموذج 3ب بحثي مقدم لطلب التمويل خاص باللغة العربية
+- FundingRequestForHumanSocietySciForm  نموذج 3ج بحثي مقدم لطلب التمويل خاص بالعلوم الانسانية والاجتماعية
+- FundingRequestForAppliedSciForm	نموذج 3د بحثي مقدم لطلب التمويل خاص بالعلوم التطبيقية
+- MidTermFollowUpForm			تقرير المتابعة لمنتصف المدة للمشروع
+- StatementOfFinancialDuesForm		بيان المستحقات المالية للفريق البحثي لمشروع 
+- ExaminationOfExistingMidTermForm	 فحص مشروع قائم في منتصف المدة 
+- ReciOfMaterialsEquipmentForm		 استلام عهدة المواد والتجهيزات

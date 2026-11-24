@@ -1,0 +1,95 @@
+﻿@model RequestSummaryTabbedViewModel
+@{
+    var _langDir = "";
+
+    var isSelectedLangArabic = Utils.IsUserLanguageArabic;
+    if (Model.Type == ReqFieldType.AppliedScienceField && isSelectedLangArabic)
+    {
+        Utils.SwitchCulture("en");
+        //var c = (System.Globalization.CultureInfo)Utils.GetDictVal("OldCulture");
+        //if (c != null)
+        //{
+        //    isSelectedLangArabic = c.Name.StartsWith("ar");
+        //}
+        if (isSelectedLangArabic)
+        {
+            _langDir = "ltr";
+        }
+        <style>
+
+            .nav-tabs > li {
+                float: left;
+            }
+        </style>
+    }
+}
+
+@if (Model.tabs.Count > 1)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel with-nav-tabs panel-info">
+                <div class="panel-heading">
+                    <ul class="nav nav-tabs">
+                        @foreach (var _tab in Model.tabs)
+                        {
+                            <li class="@(@_tab.TabId == "1" ? "active" : "")">
+                                <a href="#tabinfoVersion@_tab.TabId" data-toggle="tab" data-requestid="@_tab.RequestId" class="parent-tabs">
+                                    @_tab.TabName
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="tab-content">
+                    @foreach (var _tab in Model.tabs)
+                    {
+                        <div class="parent-tabs-contents tab-pane fade in @(@_tab.TabId == "1" ? "active" : "")" data-requestid="@_tab.RequestId" id="tabinfoVersion@_tab.TabId">
+                            <div class="@_langDir">
+
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" nonce="@Html.ScriptNonce()">
+        $(document).ready(function () {
+            $(".parent-tabs").on("click", function () {
+                loadTabContents($(this).attr("href"));
+            });
+            loadTabContents("#tabinfoVersion1");
+        });
+
+        function loadTabContents(_me) {
+            $(".parent-tabs-contents").each(function () {
+                $(this).find("div").html("");
+            });
+
+            $.post(baseAjaxUrl + "LoadRequestSummaryPartial", { RequestId: $(_me).data("requestid") }, function (_result) {
+                $(_me).find("div").html(_result);
+                makeSummaryFormReadonly();
+            });
+
+        }
+    </script>
+
+}
+else
+{
+    <div id="single-request-content">
+
+    </div>
+    <script nonce="@Html.ScriptNonce()">
+        $(document).ready(function () {
+            $.post(baseAjaxUrl + "LoadRequestSummaryPartial", { RequestId: '@Model.tabs[0].RequestId' }, function (_result) {
+                $("#single-request-content").html(_result);
+                makeSummaryFormReadonly();
+            });
+        });
+
+    </script>
+}
+

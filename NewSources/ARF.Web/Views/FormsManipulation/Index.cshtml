@@ -1,0 +1,129 @@
+﻿@model IEnumerable<ARF.Data.DbModels.Form>
+
+<h2>Edit Forms</h2>
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-6 text-center">
+            <a href="@Url.Action("Sections/"+item.Id.ToString())" style="width:80%@(!item.IsActive?";background-color:#ccc": "")" class="btn @(item.IsActive?"btn-success": "btn-default") btn-wide">@item.LocalizedName()</a>
+            <a style="width:19%" class="btn btn-danger btn-wide edit-form" data-namear="@item.LocalizedName()" data-nameen="@item.NameEnglish" data-id="@item.Id" data-isactive="@item.IsActive" data-visibleroles="@item.VisibleToRoles" data-invisibleroles="@item.InvisibleToRoles">Edit</a>
+        </div>
+    }
+
+</div>
+<hr />
+<div>
+    <a class="btn btn-primary add-form" data-toggle="modal" data-target="#addFormModal">Add Form</a>
+</div>
+
+
+<!-- Modal -->
+<div id="addEditFormModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add Form</h4>
+            </div>
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+
+                    <div class="form-horizontal">
+                        <div class="hidden"><input name="FormId" id="FormId" class="form-control" /></div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Name Arabic</label>   `
+                            <div class="col-md-9"><input name="NameArabic" id="NameArabic" class="form-control" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Name English</label>
+                            <div class="col-md-9"><input name="NameEnglish" id="NameEnglish" class="form-control" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Is Active</label>
+                            <div class="col-md-9">@Html.CheckBox("IsActive", new { @class = "IsActive", @id = "IsActive" })</div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Roles Visible To</label>
+                            <div class="col-md-9">
+                                @Html.DropDownList("VisibleToRoles", (MultiSelectList)ViewBag.Roles, new { @class = "form-control VisibleToRoles", multiple = "multiple", @id = "VisibleToRoles" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Roles Invisible To</label>
+                            <div class="col-md-9">
+                                @Html.DropDownList("InvisibleToRoles", (MultiSelectList)ViewBag.Roles, new { @class = "form-control InVisibleToRoles", multiple = "multiple", @id = "InVisibleToRoles" })
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Submit</button>
+
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
+
+
+
+@section scripts{
+
+    <script nonce="@Html.ScriptNonce()">
+        $(document).on('click', '.edit-form', function () {
+
+            $('#NameArabic').attr('value', $(this).data('namear'));
+            $('#NameEnglish').attr('value', $(this).data('nameen'));
+            $('#FormId').attr('value', $(this).data('id'));
+            $('#IsActive').removeAttr('checked').attr('value', 'true');
+            var VisibleRoles = $(this).data('visibleroles');
+            var VRs = VisibleRoles.split(',');
+            var InVisibleRoles = $(this).data('invisibleroles');
+            var iVRs = InVisibleRoles.split(',');
+            var isActive = $(this).data('isactive');
+            $("#VisibleToRoles").val('');
+            $("#VisibleToRoles").val(VRs);
+            $("#InVisibleToRoles").val('');
+            $("#InVisibleToRoles").val(iVRs);
+            if (isActive == 'True') {
+                $('#IsActive').prop('checked', true).attr('value', 'true');
+            } else {
+                $('#IsActive').prop('checked', false).attr('value', 'true');
+            }
+            $('#addEditFormModal').modal('show');
+        });
+
+        //add-form
+        $(document).on('click', '.add-form', function () {
+            $('#NameArabic').attr('value', '');
+            $('#NameEnglish').attr('value', '');
+            $('#FormId').attr('value', '0');
+            $('#IsActive').removeAttr('checked', 'false').attr('value', 'true');
+            $("#VisibleToRoles").val('');
+            $("#InVisibleToRoles").val('');
+            $('#addEditFormModal').modal('show');
+        });
+
+        //reset the modal on close
+        $('.modal').on('hidden.bs.modal', function (e) {
+            $(this).removeData();
+        });
+
+        //reset the lists on show
+        $('.modal').on('shown.bs.modal', function (e) {
+            $('.InVisibleToRoles').scrollTop(0);
+            $('.VisibleToRoles').scrollTop(0);
+        });
+
+    </script>
+
+}

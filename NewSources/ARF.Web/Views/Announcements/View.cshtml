@@ -1,0 +1,45 @@
+﻿@model AnnouncementEditViewModel
+
+
+<h3>رسالة إعلان بداية دورة تمويل</h3>
+<br />
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="form-horizontal">
+            @Html.HiddenFor(m => m.Id)
+            <div class="form-group disabled">
+                <label class="control-label col-md-4" for="pwd">العنوان</label>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.Title, new { @class = "form-control", disabled = "disabled", @readonly = "readonly" })
+                </div>
+            </div>
+
+
+            <div class="form-group disabled">
+                <label class="control-label col-md-4">تاريخ بداية الدورة التمولية</label>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.StartDate, new { @class = "form-control", disabled = "disabled", @readonly = "readonly" })
+                </div>
+            </div>
+
+            <div class="form-group disabled">
+                <label class="control-label col-md-4">تاريخ نهاية الدورة التمولية</label>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.EndDate, new { @class = "form-control", disabled = "disabled", @readonly = "readonly" })
+                </div>
+            </div>
+
+
+            <div class="form-group request-action disabled">
+                <label class="control-label col-md-4" for="pwd">الرسالة</label>
+                <div class="col-md-8">
+                    @Html.Raw(Model.Content)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

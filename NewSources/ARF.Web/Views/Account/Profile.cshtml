@@ -1,0 +1,597 @@
+﻿@model EditUserViewModel
+
+@{
+    ViewBag.Title = LangHelpers.Instance["profile"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<ul class="breadcrumb">
+    <li>@Html.ActionLink(LangHelpers.Instance["homepage"], "Index", "Home")</li>
+    <li>@LangHelpers.Instance["profile"]</li>
+</ul>
+
+<h2 class="page-header">@LangHelpers.Instance["profile"]</h2>
+<div class="box2 box2-info">
+
+    @using (Html.BeginForm("Profile", "Account", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="validation-summary-errors" data-valmsg-summary="true">
+                    <ul>
+
+                        @foreach (var m in ViewData.ModelState.Keys)
+                        {
+                            if (ViewData.ModelState[m].Errors.Count == 0)
+                            {
+                                continue;
+                            }
+
+                            if (m.Contains("[") && m.Contains("]"))
+                            {
+                                var index1 = m.IndexOf('[');
+                                var index2 = m.IndexOf(']');
+                                var property = m.Substring(0, index1);
+                                var row = int.Parse(m.Substring(index1 + 1, index2 - index1 - 1)) + 1;
+
+                                <li>@(LangHelpers.Instance[property] + " " + LangHelpers.Instance["the_row"] + " " + row + ": " + ViewData.ModelState[m].Errors.First().ErrorMessage)</li>
+                            }
+                            else
+                            {
+                                <li>@ViewData.ModelState[m].Errors.First().ErrorMessage</li>
+                            }
+                        }
+                    </ul>
+                </div>
+
+            }
+            @Html.HiddenFor(model => model.UserId)
+
+            <div class="form-group required">
+                @Html.LabelFor(m => m.UserName, new { @class = "control-label col-sm-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group required">
+                @Html.LabelFor(m => m.FullName, new { @class = "control-label col-sm-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group required">
+                @Html.LabelFor(m => m.NationalId, new { @class = "control-label col-sm-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.NationalId, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.NationalId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.RoleId, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    <div class="form-control disabled"> @LangHelpers.Instance[Model.RoleName]</div>
+                    @Html.HiddenFor(model => model.RoleId)
+                </div>
+            </div>
+
+
+            <div class="form-group required">
+                @Html.LabelFor(expression: model => model.MobileNo, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.MobileNo, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.MobileNo, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(expression: model => model.Email, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            @if (Utils.HasRolesAny(ArfUserRole.PrincipalResearcher, ArfUserRole.Referee))
+            {
+
+                <div class="form-group required">
+                    @Html.LabelFor(m => m.NationalityId, new { @class = "control-label col-sm-3" })
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(m => m.NationalityId, new SelectList(Model.Countries, "Value", "Text", Model.NationalityId), LangHelpers.Instance["select"], new { @class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="form-group required">
+                    @Html.LabelFor(m => m.BirthDate, new { @class = "control-label col-sm-3" })
+                    <div class="col-sm-9">
+
+                        <div id="birthDateGreg" class="custom-date-picker input-group">
+                            @Html.TextBoxFor(m => m.BirthDate, new { @class = "form-control allow-edit" })
+                            <div class="input-group-btn">
+                                <button type="button" class="custom-date-picker-button btn btn-default">&#x25a6;</button>
+                                <button type="button" class="custom-date-picker-switch btn btn-info">@LangHelpers.Instance["hijri"]</button>
+                            </div>
+                        </div>
+                        <div id="birthDateHijri" class="custom-date-picker input-group" data-hirji="1" data-custom-date-picker-link="#birthDateGreg" style="display: none;">
+                            <input type="text" class="form-control" />
+                            <div class="input-group-btn">
+                                <button type="button" class="custom-date-picker-button btn btn-default">&#x25a6;</button>
+                                <button type="button" class="custom-date-picker-switch btn btn-info">@LangHelpers.Instance["gregorian"]</button>
+                            </div>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.BirthDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group required">
+                    @Html.LabelFor(m => m.CountryId, new { @class = "control-label col-sm-3" })
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(m => m.CountryId, new SelectList(Model.Countries, "Value", "Text", Model.NationalityId), LangHelpers.Instance["select"], new { @class = "form-control ddl-country" })
+                    </div>
+                </div>
+
+                <div class="form-group required">
+                    @Html.LabelFor(m => m.CityId, new { @class = "control-label col-sm-3" })
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(m => m.CityId, new SelectList(Model.Cities.Where(c => c.CountryId == null || (Model.CountryId > 0 && c.CountryId == Model.CountryId)), "Id", "Name", Model.CityId), LangHelpers.Instance["select"], new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.CityId)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Address, new { @class = "control-label col-sm-3" })
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(m => m.Address, new { @class = "form-control", @placeholder = "العنوان" })
+                    </div>
+                </div>
+
+
+
+                <div class="form-group required">
+                    @Html.LabelFor(m => m.UniversityId, new { @class = "control-label col-sm-3" })
+                    <div class="col-sm-9">
+                        @Html.HiddenFor(m => m.UniversityId)
+                        <div class="form-control disabled">@Model.UniversityName</div>
+                        @Html.ValidationMessageFor(m => m.UniversityId)
+                    </div>
+                </div>
+
+                <div class="form-group required div-university-other" style="display: @(Model.UniversityId == null || Model.UniversityId  > 0? "none" : "block")">
+                    @Html.LabelFor(m => m.UniversityOther, new { @class = "control-label col-sm-3" })
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(m => m.UniversityOther, new { @class = "form-control", @placeholder = "جامعة التخرج" })
+                        @Html.ValidationMessageFor(m => m.UniversityOther)
+                    </div>
+                </div>
+
+                <div id="divCollege" class="form-group required">
+                    @Html.LabelFor(m => m.CollegeId, new { @class = "control-label col-sm-3" })
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(m => m.CollegeId, new SelectList(Model.Colleges, "Id", "Name", Model.CollegeId), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown ddl-college" })
+                        @Html.ValidationMessageFor(m => m.CollegeId)
+                    </div>
+                </div>
+                <div class="form-group required" style="display: @(Model.CollegeId == null || Model.CollegeId  > 0? "none" : "block")">
+                    @Html.LabelFor(m => m.CollegeOther, new { @class = "control-label col-sm-3" })
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(m => m.CollegeOther, new { @class = "form-control", @placeholder = "الكلية" })
+                    </div>
+                </div>
+
+                <div class="form-group required">
+                    @Html.LabelFor(m => m.DepartmentID, new { @class = "control-label col-sm-3" })
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(m => m.DepartmentID, new SelectList(Model.Departments, "Value", "Text", Model.DepartmentID), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown" })
+                        @Html.ValidationMessageFor(m => m.DepartmentID)
+                    </div>
+                </div>
+
+                <div class="form-group required div-department-other" style="display: @(Model.DepartmentID == null || Model.DepartmentID  > 0? "none" : "block")">
+                    @Html.LabelFor(m => m.DepartmentOther, new { @class = "control-label col-sm-3" })
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(m => m.DepartmentOther, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.DepartmentOther)
+                    </div>
+                </div>
+
+                <div class="form-group required">
+                    @Html.LabelFor(m => m.Qualification, new { @class = "control-label col-sm-3" })
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(m => m.Qualification, new SelectList(Utils.QualificationTypesByResearcherType(ResearcherRole.MainResearcher)
+                                                                     .Select(r => new SelectListItem { Text = LangHelpers.Instance[r.ToString()], Value = r.ToString() }), "Value", "Text", Model.Qualification), LangHelpers.Instance["select"], new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Qualification)
+                    </div>
+                </div>
+
+                <div class="form-group required">
+                    @Html.LabelFor(m => m.Specialization, new { @class = "control-label col-sm-3" })
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(m => m.Specialization, new { @class = "form-control researcher-name" })
+                        @Html.ValidationMessageFor(m => m.Specialization)
+                    </div>
+                </div>
+
+                <div class="form-group required">
+                    @Html.LabelFor(m => m.Bank, new { @class = "control-label col-sm-3" })
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(m => m.Bank, new SelectList(Model.Banks, "Value", "Text", Model.Bank), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown" })
+                        @Html.ValidationMessageFor(m => m.Bank)
+                    </div>
+                </div>
+
+                <div class="form-group required div-bank-other" style="display: @(Model.Bank == null || Model.Bank  > 0? "none" : "block")">
+                    @Html.LabelFor(m => m.BankOther, new { @class = "control-label col-sm-3" })
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(m => m.BankOther, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.BankOther)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.BankBranch, new { @class = "control-label col-sm-3" })
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(m => m.BankBranch, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.BankBranch)
+                    </div>
+                </div>
+
+                <div class="form-group required">
+                    @Html.LabelFor(m => m.BankAccountHolderName, new { @class = "control-label col-sm-3" })
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(m => m.BankAccountHolderName, new { @class = "form-control", @placeholder = LangHelpers.Instance["account_holder_name"] })
+                    </div>
+                </div>
+
+                <div class="form-group required">
+                    @Html.LabelFor(m => m.BankAccountIBAN, new { @class = "control-label col-sm-3" })
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(m => m.BankAccountIBAN, new { @class = "form-control", @placeholder = LangHelpers.Instance["iban"] })
+                    </div>
+                </div>
+
+                <div class="form-group required">
+                    @Html.LabelFor(m => m.BankIbanPhotocopy, new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        <input type="file" name="BankIbanPhotocopy" />
+                        @if (ViewBag.IsTemplate != true && Model.BankIbanPhotocopyReadonly != null)
+                        {
+                            <a class="btn btn-xs btn-success" target="_blank" href="@(Utils.GetApplicationUrl() + "f/" + Model.BankIbanPhotocopyReadonly.FileId)">   @Model.BankIbanPhotocopyReadonly.FileName</a>
+                        }
+                        @Html.ValidationMessageFor(m => m.BankIbanPhotocopy)
+                    </div>
+                </div>
+            }
+            else if (Utils.IsCollegeUser)
+            {
+                <div id="divCollege" class="form-group required">
+                    @Html.LabelFor(m => m.CollegeId, new { @class = "control-label col-sm-3" })
+                    <div class="col-md-9">
+                        @if (Utils.HasRolesAny(ArfUserRole.ResearchUnitMember, ArfUserRole.ViceDeanForHigherStudiesAndScientificResearch))
+                        {
+                            @Html.HiddenFor(m => m.CollegeId)
+                            <span>@Model.CollegeName</span>
+                        }
+                        else
+                        {
+                            @Html.DropDownListFor(m => m.CollegeId, new SelectList(Model.Colleges, "Id", "Name", Model.CollegeId), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown" })
+                            @Html.ValidationMessageFor(m => m.CollegeId)
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (Utils.HasRolesAny(ArfUserRole.PrincipalResearcher))
+            {
+                <div class="form-group required">
+                    <label class="control-label col-sm-3"> @LangHelpers.Instance["cv"]</label>
+                    <div class="col-sm-12">
+                        <table class="table table-striped transition-less">
+                            <tbody>
+                                <tr class="row-section-header required">
+                                    <td><a class="field-caption" href="#">@LangHelpers.Instance["SectionAcademicHistory"]</a></td>
+                                    <td><span class="color-red"></span></td>
+                                    <td><a data-toggle="dont-collapse" data-target="#section_" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                                </tr>
+                                <tr class="collapse row-section-details" id="section_SectionAcademicHistory">
+                                    <td colspan="3">
+                                        @Html.TextAreaFor(m => @m.SectionAcademicHistory, new { rows = 3, @class = "form-control rich-text-editor small" })
+                                    </td>
+                                </tr>
+                                <tr class="row-section-header required">
+                                    <td><a class="field-caption" href="#">@LangHelpers.Instance["SectionPublishedPapers"]</a></td>
+                                    <td><span class="color-red"></span></td>
+                                    <td><a data-toggle="dont-collapse" data-target="#section_" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                                </tr>
+                                <tr class="collapse row-section-details" id="section_SectionPublishedPapers">
+                                    <td colspan="3">
+                                        @Html.TextAreaFor(m => @m.SectionPublishedPapers, new { rows = 3, @class = "form-control rich-text-editor small" })
+                                    </td>
+                                </tr>
+                                <tr class="row-section-header required">
+                                    <td><a class="field-caption" href="#">@LangHelpers.Instance["SectionInterests"]</a></td>
+                                    <td><span class="color-red"></span></td>
+                                    <td><a data-toggle="dont-collapse" data-target="#section_" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                                </tr>
+                                <tr class="collapse row-section-details" id="section_SectionInterests">
+                                    <td colspan="3">
+                                        @Html.TextAreaFor(m => @m.SectionInterests, new { rows = 3, @class = "form-control rich-text-editor small" })
+                                    </td>
+                                </tr>
+                                <tr class="row-section-header required">
+                                    <td><a class="field-caption" href="#">@LangHelpers.Instance["SectionCareerHistory"]</a></td>
+                                    <td><span class="color-red"></span></td>
+                                    <td><a data-toggle="dont-collapse" data-target="#section_" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                                </tr>
+                                <tr class="collapse row-section-details" id="section_SectionCareerHistory">
+                                    <td colspan="3">
+                                        @Html.TextAreaFor(m => @m.SectionCareerHistory, new { rows = 3, @class = "form-control rich-text-editor small" })
+                                    </td>
+                                </tr>
+                                <tr class="row-section-header required">
+                                    <td><a class="field-caption" href="#">@LangHelpers.Instance["SectionTrainingCourses"]</a></td>
+                                    <td><span class="color-red"></span></td>
+                                    <td><a data-toggle="dont-collapse" data-target="#section_" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                                </tr>
+                                <tr class="collapse row-section-details" id="section_SectionTrainingCourses">
+                                    <td colspan="3">
+                                        @Html.TextAreaFor(m => @m.SectionTrainingCourses, new { rows = 3, @class = "form-control rich-text-editor small" })
+                                    </td>
+                                </tr>
+                                <tr class="row-section-header required">
+                                    <td><a class="field-caption" href="#">@LangHelpers.Instance["SectionAwards"]</a></td>
+                                    <td><span class="color-red"></span></td>
+                                    <td><a data-toggle="dont-collapse" data-target="#section_" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                                </tr>
+                                <tr class="collapse row-section-details" id="section_SectionAwards">
+                                    <td colspan="3">
+                                        @Html.TextAreaFor(m => @m.SectionAwards, new { rows = 3, @class = "form-control rich-text-editor small" })
+                                    </td>
+                                </tr>
+                                <tr class="row-section-header required">
+                                    <td><a class="field-caption" href="#">@LangHelpers.Instance["SectionMemberships"]</a></td>
+                                    <td><span class="color-red"></span></td>
+                                    <td><a data-toggle="dont-collapse" data-target="#section_" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                                </tr>
+                                <tr class="collapse row-section-details" id="section_SectionMemberships">
+                                    <td colspan="3">
+                                        @Html.TextAreaFor(m => @m.SectionMemberships, new { rows = 3, @class = "form-control rich-text-editor small" })
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        @Html.ValidationMessageFor(m => m.CvText)
+                    </div>
+                </div>
+            }
+            <div class="alert alert-info">إذا كنت لا ترغب في تغيير كلمة المرور، اترك الخانات فارغة</div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3">كلمة المرور الحالية</label>
+                <div class="col-md-9">
+                    @Html.PasswordFor(m => m.CurrentPassword, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.CurrentPassword, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Password, new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.ConfirmPassword, new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                    <input type="submit" value="حفظ" class="btn btn-primary btn-lg btn-block" />
+                </div>
+            </div>
+        </div>
+    }
+
+    <div>
+    </div>
+</div>
+@section scripts
+{
+    <script type="text/javascript" src="~/Content/js/hijri-date.js" nonce="@Html.ScriptNonce()"></script>
+    <script type="text/javascript" src="~/Content/js/calendar.js" nonce="@Html.ScriptNonce()"></script>
+    <script type="text/javascript" src="~/Content/js/site.js" nonce="@Html.ScriptNonce()"></script>
+
+    <script type="text/javascript" nonce="@Html.ScriptNonce()">
+
+        var switchOther = function ($el) {
+            var $otherEl = $el.closest('.form-group').next();
+            var selected = $el.val();
+            var selectedVal = null;
+            try {
+                selectedVal = parseInt(selected);
+            } catch (e) {
+                return;
+            }
+
+            if (selectedVal == NaN) return;
+
+            if (selectedVal === 0) {
+                $otherEl.slideDown();
+            } else {
+                $otherEl.find('input').val('');
+                $otherEl.slideUp();
+            }
+        };
+
+        onDomInserted('.other-dropdown', function (el) {
+
+            $(el).on('change', function (e) {
+                switchOther($(el));
+                return false;
+            });
+        });
+
+        onDomInserted('.row-section-header', function (el) {
+
+            $(el).find('a').on('click', function (e) {
+
+                var xel = $(el).next('.row-section-details');
+                var attr = xel.attr('data-is-visible');
+
+                if (attr === '1') {
+
+                    xel.css('display', 'none').attr('data-is-visible', '0');
+                } else {
+                    var others = $('.row-section-details');
+                    for (var i = 0; i < others.length; i++) {
+                        $(others[i]).css('display', 'none').attr('data-is-visible', '0');
+                    }
+                    xel.css('display', 'table-row').attr('data-is-visible', '1');
+                }
+
+                e.preventDefault();
+                return false;
+            });
+        });
+
+        onDomInserted('.ddl-country', function (el) {
+
+            $(el).change(function () {
+
+                var $el = $(el);
+                var selected = $el.val();
+
+                var otherEl = $(el).closest('.form-group').next().find('select');
+
+                otherEl.empty();
+
+                var selectedVal = null;
+                try {
+                    selectedVal = parseInt(selected);
+                } catch (e) {
+
+                }
+
+                if (selectedVal === 0) {
+                } else {
+
+                    $.getJSON(baseAjaxUrl + 'GetCities?countryId=' + selected + "&others=False", function (cats) {
+                        var secCateSelect = otherEl;
+                        secCateSelect.empty();
+         secCateSelect.empty();
+                         secCateSelect.append($('<option />', {
+                        value: '', text: '@LangHelpers.Instance["select"]'
+                        }));
+
+                        $.each(cats, function (index, cat) {
+
+                            secCateSelect.append($('<option />', {
+                                value: cat.value,
+                                text: cat.text
+                            }));
+                        });
+
+                        secCateSelect.append($('<option />', {
+                            value: '0',
+                            text: '@ArfStrings.other'
+                        }));
+                    });
+                }
+            });
+        });
+
+            onDomInserted('.ddl-college', function (el) {
+
+            $(el).change(function () {
+
+                var $el = $(el);
+                var selected = $el.val();
+
+                var uniEl = $(el).closest('.form-group').prev().find('select');
+                var otherEl = $(el).closest('.form-group').next().find('select');
+
+                if (otherEl == null || otherEl.length === 0 || !otherEl.attr('name').endsWith('DepartmentId')) {
+                    otherEl = $(el).closest('.form-group').next().next().find('select');
+
+                    uniEl = $(el).closest('.form-group').prev().prev().find('select');
+                }
+
+                var hasSelectPicker = false &&  isFunction(otherEl.selectpicker) && otherEl.hasClass('selectpicker');
+
+                otherEl.empty();
+
+                if (uniEl.val() != 1) {
+                    otherEl.append($('<option />', {
+                        value: '0',
+                        text: '@ArfStrings.other'
+                    }));
+                }
+
+                switchOther(otherEl);
+
+                if (hasSelectPicker) {
+                    otherEl.selectpicker('refresh');
+
+                }
+
+                var selectedVal = null;
+                try {
+                    selectedVal = parseInt(selected);
+                } catch (e) {
+
+                }
+
+                if (selectedVal === 0) {
+                } else {
+
+                    $.getJSON(baseAjaxUrl + 'GetDepartments?dontFilter=1&&collegeId=' + selected + "&others=False", function (cats) {
+                        var secCateSelect = otherEl;
+                        secCateSelect.empty();
+                         secCateSelect.append($('<option />', {
+                        value: '', text: '@LangHelpers.Instance["select"]'
+                        }));
+
+                        $.each(cats, function (index, cat) {
+
+                            secCateSelect.append($('<option />', {
+                                value: cat.value,
+                                text: cat.text
+                            }));
+                        });
+
+                        if (uniEl.val() != 1) {
+                            secCateSelect.append($('<option />', {
+                                value: '0',
+                                text: '@ArfStrings.other'
+                            }));
+                        }
+
+                        if (cats.length === 0) {
+                            secCateSelect.val('0');
+                            switchOther(secCateSelect);
+                        }
+
+                        if (hasSelectPicker) {
+                            secCateSelect.selectpicker('refresh');
+                            otherEl.selectpicker('refresh');
+                        }
+
+                    });
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,189 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+    var preferences = CommonManager.GetUserPreferences();
+}
+
+
+<link href="~/Content/css/jquery.bootgrid.css" rel="stylesheet" />
+<script src="~/Content/js/site.js" nonce="@Html.ScriptNonce()"></script>
+<script src="~/Content/js/moment-with-locales.js" nonce="@Html.ScriptNonce()"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.3.3/d3.min.js" nonce="@Html.ScriptNonce()"></script>
+
+<style>
+    .login-pg {
+        padding: 0px;
+        margin-top: 50px;
+    }
+
+    .modal {
+        color: #31708f !important;
+    }
+
+        .modal a {
+            color: #31708f;
+        }
+
+    h4.title {
+        background: #dedefb5e;
+        padding: 20px;
+        font-weight: bold;
+    }
+
+    .table > tbody > tr > td {
+        border-top: 1px solid #ddd;
+    }
+
+    h4 {
+        color: #2e5e2e !important;
+    }
+
+    #divResearchers {
+        padding: 10px;
+    }
+
+        #divResearchers .panel-heading, #divSuggestedReferees .panel-heading {
+            position: relative;
+            padding-left: 46px;
+        }
+
+        #divResearchers .count, #divSuggestedReferees .count {
+            background: #8bdeff;
+            width: 38px;
+            height: 38px;
+            display: inline-block;
+            text-align: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: #fff;
+            padding: 5px;
+        }
+
+        #divResearchers .panel-title > a, #divSuggestedReferees .panel-title > a {
+            color: inherit;
+            width: 100%;
+            display: block;
+            margin: 0;
+        }
+
+    .tab-content {
+        padding: 20px;
+        border: 1px solid #ddd;
+        margin-top: -1px;
+        background: none;
+    }
+
+    .disabled {
+        /* text-align: right !important; */
+        border: 0 !important;
+        box-shadow: none !important;
+        /* background: none !important; */
+        background-color: rgba(210, 197, 197, 0.35);
+    }
+    #divGanttChart {
+        position: relative;
+        margin-bottom: 20px;
+        background: #fff;
+        overflow: hidden;
+        overflow-x: auto;
+    }
+        #divGanttChart .tag {
+            color: #fff;
+            background: #549018;
+            border-color: #FA283D;
+            width: 240px;
+            position: absolute;
+            display: none;
+            padding: 3px 6px;
+            margin-right: -80px;
+            font-family: Arial;
+            font-size: 13px;
+            direction: ltr;
+        }
+</style>
+<div>
+    <div>
+        @ViewBag.WelcomeMessage
+    </div>
+    <div class="form-horizontal">
+        <br />
+        <p class="text-center">
+            <a data-toggle="modal" data-target="#publicationDetails" class="btn btn-default">@LangHelpers.Instance["publication_details"]</a>
+        </p>
+        <form id="request-response-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="RequestId" id="RequestId" value="@ViewBag.RequestId" />
+            <input type="hidden" name="RequestCoResearcherResponseId" id="RequestCoResearcherResponseId" value="@ViewBag.RequestCoResearcherResponseId" />
+            <input type="hidden" name="ParamsHash" id="ParamsHash" value="@ViewBag.ParamsHash" />
+            <input type="hidden" name="Action" id="Action" value="" />
+        </form>
+        <div class="modal fade bs-example-modal-lg" id="publicationDetails" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">@LangHelpers.Instance["publication_details"]</h4>
+                    </div>
+                    <div class="modal-body">
+                        @Html.Partial("~/Views/Requests/_RequestSummaryPartial.cshtml", WebUtils.GetRequestSummary((long)ViewBag.RequestId))
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">@LangHelpers.Instance["close"]</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br /><br />
+    <div class="form-group">
+        <div class="col-md-6">
+            <button type="button" onclick="updateRequestReviewResponse('@RequestCoresearcherResponseStatus.Approved')" class="btn btn-info btn-block">@LangHelpers.Instance["accept"]</button>
+        </div>
+        <div class="col-md-6">
+            <button type="button" onclick="updateRequestReviewResponse('@RequestCoresearcherResponseStatus.Rejected')" class="btn btn-danger btn-block">@LangHelpers.Instance["reject"]</button>
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/js/jquery.bootgrid.custom.js" nonce="@Html.ScriptNonce()"></script>
+<script src="~/Content/js/jquery.bootgrid.fa.js" nonce="@Html.ScriptNonce()"></script>
+
+<script type="text/javascript" nonce="@Html.ScriptNonce()">
+    $(document).ready(function () {
+        $('#publicationDetails').find('input[type=text],input[type=number],input[type=radio],input[type=checkbox],textarea,select').each(function () {
+            elToReadOnly(this);
+        });
+
+
+        $('#publicationDetails').find('.required').removeClass('required');
+        $('#publicationDetails').find('#btnAddRow').remove();
+        $('#publicationDetails').find('.btnAddRow').remove();
+        $('#publicationDetails').find('.btnRemoveRow').remove();
+    });
+
+    function makeSummaryFormReadonly() {
+        $('#publicationDetails').find('input[type=text],input[type=number],input[type=radio],input[type=checkbox],textarea,select').each(function () {
+            elToReadOnly(this);
+        });
+
+        $('#divRefereeSelection').hide();
+        $('#divSelectedReferees').hide();
+        $("#external_refree_add_link").hide();
+
+        $('#publicationDetails').find('.required').removeClass('required');
+        $('#publicationDetails').find('#btnAddRow').remove();
+        $('#publicationDetails').find('.btnAddRow').remove();
+        $('#publicationDetails').find('.btnRemoveRow').remove();
+    }
+
+    function updateRequestReviewResponse(responseCode) {
+        $("#Action").val(responseCode);
+        var _params = $("#request-response-form").serialize();
+        $.post('@Url.Action("UpdateCoResearcherRequestReviewResponse", "Requests")', _params, function (_result) {
+            if (_result.status) {
+                window.location = _result.redirectURL;
+            }
+        });
+    }
+</script>
+@this.WriteScriptBlocks()

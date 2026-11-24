@@ -1,0 +1,268 @@
+﻿@model CommonFundingRequestViewModel
+
+@{
+
+    if (Model.SuggestedActivities == null || Model.SuggestedActivities.Count == 0)
+    {
+        Model.SuggestedActivities = new List<SuggestedActivityViewModel> { new SuggestedActivityViewModel() };
+    }
+
+    if (Model.Beneficiaries == null || Model.Beneficiaries.Count == 0)
+    {
+        Model.Beneficiaries = new List<BeneficiaryViewModel> { new BeneficiaryViewModel() };
+    }
+
+    if (Model.PublishContainers == null || Model.PublishContainers.Count == 0)
+    {
+        Model.PublishContainers = new List<PublishContainerViewModel> { new PublishContainerViewModel() };
+    }
+
+}
+
+<div>
+    <h4 class="title">@LangHelpers.Instance["suggested_activities"]</h4>
+</div>
+
+<p><em>@LangHelpers.Instance.GetLangValueByString("suggested_activities_tip", false, Model.Type == ReqFieldType.AppliedScienceField ? "en" : null)</em></p>
+
+<br />
+
+<div class="panel-group div-repeatable" data-key="SuggestedActivities">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>@LangHelpers.Instance["sn"]</th>
+                <th>@LangHelpers.Instance["activity_name"]</th>
+                <th>@LangHelpers.Instance["activity_type"]</th>
+                <th>@LangHelpers.Instance["activity_address"]</th>
+                <th>@LangHelpers.Instance["activity_description"]</th>
+                <th>@LangHelpers.Instance["actions"]</th>
+            </tr>
+        </thead>
+        @{
+            var index = -1;
+        }
+        <tbody>
+            @foreach (var c in Model.SuggestedActivities)
+            {
+                index++;
+                ViewBag.Index = index;
+
+                @Html.Partial("~/Views/Requests/FundingRequests/_PartialActivity.cshtml", Model);
+
+            }
+        </tbody>
+    </table>
+
+    <a href="#" class="btnAddRow btn btn-success pull-right">@LangHelpers.Instance["add"]</a>
+    <div class="clearfix"></div>
+</div>
+
+
+
+<div>
+    <h4 class="title">@LangHelpers.Instance["beneficiaries"]</h4>
+</div>
+
+<br />
+
+<div class="panel-group div-repeatable" data-key="Beneficiaries">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>@LangHelpers.Instance["sn"]</th>
+                <th>@LangHelpers.Instance["beneficiary_name"]</th>
+                <th>@LangHelpers.Instance["beneficiary_address"]</th>
+                <th>@LangHelpers.Instance["benefit_description"]</th>
+                <th>@LangHelpers.Instance["actions"]</th>
+            </tr>
+        </thead>
+        @{
+            index = -1;
+        }
+        <tbody>
+            @foreach (var c in Model.Beneficiaries)
+            {
+                index++;
+                ViewBag.Index = index;
+
+                @Html.Partial("~/Views/Requests/FundingRequests/_PartialBeneficiary.cshtml", Model);
+
+            }
+        </tbody>
+    </table>
+
+    <a href="#" class="btnAddRow btn btn-success pull-right">@LangHelpers.Instance["add"]</a>
+    <div class="clearfix"></div>
+</div>
+
+
+
+<div>
+    <h4 class="title">@LangHelpers.Instance["publish_containers"]</h4>
+</div>
+
+<br />
+
+<div class="panel-group div-repeatable" data-key="PublishContainers">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>@LangHelpers.Instance["sn"]</th>
+                <th>@LangHelpers.Instance["container_name"]</th>
+                <th>@LangHelpers.Instance["container_address"]</th>
+                <th>@LangHelpers.Instance["selection_reason"]</th>
+                <th>@LangHelpers.Instance["actions"]</th>
+            </tr>
+        </thead>
+        @{
+            index = -1;
+        }
+        <tbody>
+            @foreach (var c in Model.PublishContainers)
+            {
+                index++;
+                ViewBag.Index = index;
+
+                @Html.Partial("~/Views/Requests/FundingRequests/_PartialPublishContainer.cshtml", Model);
+
+            }
+        </tbody>
+    </table>
+
+    <a href="#" class="btnAddRow btn btn-success pull-right">@LangHelpers.Instance["add"]</a>
+    <div class="clearfix"></div>
+</div>
+
+
+@{
+    ViewBag.Index = 0;
+    ViewBag.IsTemplate = true;
+}
+
+@this.ScriptBlock(
+
+    @<script type="text/javascript" nonce="@Html.ScriptNonce()">
+
+        var templates = {};
+        templates.SuggestedActivities = '@(Html.Raw(Html.Partial("~/Views/Requests/FundingRequests/_PartialActivity.cshtml", Model).ToHtmlString().Replace("\r\n", " ")))';
+        templates.Beneficiaries = '@(Html.Raw(Html.Partial("~/Views/Requests/FundingRequests/_PartialBeneficiary.cshtml", Model).ToHtmlString().Replace("\r\n", " ")))';
+        templates.PublishContainers = '@(Html.Raw(Html.Partial("~/Views/Requests/FundingRequests/_PartialPublishContainer.cshtml", Model).ToHtmlString().Replace("\r\n", " ")))';
+
+         $('.btnAddRow').on('click', function (e) {
+
+             var div = $(this).parent();
+             var key = div.attr('data-key');
+             var elms = div.find('tbody tr');
+
+             var rowHtml = templates[key];
+
+             var index = elms.length;
+
+             var el = $(rowHtml.replaceAll('{index}', index).replaceAll('{order}', index + 1).replaceAll('data-id="0"', 'data-id="' + index + '"').replaceAll('_0__', '_' + index + '__').replaceAll('[0]', '[' + index + ']'));
+             el.find('input,select,textarea').val('');
+             el.find('.field-validation-error').remove();
+
+             div.find('table tbody').append(el);
+             e.preventDefault();
+             return false;
+
+         });
+
+         onDomInserted('.btnRemoveRow', function (el) {
+
+             $(el).on('click', function (e) {
+
+
+                 var elm = $(el).closest('tr');
+                 var index = parseInt(elm.attr('data-index'));
+                 var div = elm.closest('.div-repeatable');
+                 var elms = div.find('tbody tr');
+
+                 for (var i = 0; i < elms.length; i++) {
+
+                     if (index == i) {
+                         elm.remove();
+                     } else if (index < i) {
+                         var els = $(elms[i]).find('input,select,textarea');;
+
+                         for (var j = 0; j < els.length; j++) {
+                             var el2 = $(els[j]);
+                             if (!el2.attr('name')) continue;
+                             var tabs = el2.attr('name').split('.');
+                             var name = tabs[0].split('[')[0];
+                             var x = name + '[' + (i - 1) + '].' + prop;
+
+                             var prop = tabs[1];
+                             el2.attr('id', name + (i - 1) + '_' + prop).attr('name', name + '[' + (i - 1) + '].' + prop);
+                         }
+                         $(elms[i]).attr('data-index', i - 1);
+                     }
+                 }
+                 e.preventDefault();
+                 return false;
+
+             });
+         });
+
+
+         var switchOther = function ($el) {
+
+             window.el = $el;
+             var $otherEl = $el.closest('td').find('.other-div');
+             var selected = $el.val();
+             var selectedVal = null;
+             try {
+                 selectedVal = parseInt(selected);
+             } catch (e) {
+                 return;
+             }
+
+             if (selectedVal == NaN) return;
+
+             if (selectedVal === 0) {
+                 $otherEl.slideDown();
+             } else {
+                 $otherEl.find('input').val('');
+                 $otherEl.slideUp();
+             }
+         };
+
+         onDomInserted('.other-dropdown', function (el) {
+
+             $(el).on('change', function (e) {
+                 switchOther($(el));
+                 return false;
+             });
+         });
+
+         var findFirstError = function () {
+             var $el = $('.field-validation-error');
+
+             if ($el.length > 0) {
+                 $el = $($el[0]);
+                 var $panel = $el.closest('.panel-collapse');
+                 $('#divSuggestedReferees').find('.panel-collapse').removeClass('in');
+                 var $toElement = $el.prev();
+
+                 var $offset = -100;
+                 var $speed = 500;
+
+                 setTimeout(function () {
+                     $('html, body').animate({
+                         scrollTop: $($toElement).offset().top + $offset
+                     }, $speed);
+
+                     if ($toElement) $($toElement).focus();
+                 }, 100)
+
+                 $panel.addClass('in');
+             }
+         };
+
+         findFirstError();
+
+
+
+    </script>
+                                                                                                                                                )

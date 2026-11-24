@@ -1,0 +1,61 @@
+﻿@model UserRolesViewModel
+
+<!-- Modal -->
+
+<div class="modal-header">
+    <button type="button" class="close" data-dissmiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="myModalLabel">User Roles</h4>
+</div>
+
+<div id="partialview">
+    <div class="text-success">@ViewBag.Success</div>
+    <div class="text-danger">@ViewBag.Error</div>
+
+    @using (Html.BeginForm("AddRoleToUser", "Users", null, FormMethod.Post))
+            {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(model => model.user.UserId)
+        @Html.Hidden("UserId", Model.user.UserId)
+        <div class="form-horizontal">
+            <div class="col-lg-12">
+                <div class="col-lg-5">
+                    <div class="form-group-lg">
+                        @Html.Label("Roles", htmlAttributes: new { @class = "col-sm-2" })
+                        <div class="col-md-8">
+                            @Html.DropDownList("RoleId", new SelectList(Model.AllRoles, "RoleId", "RoleName"), htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessage("RoleId", "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <table class="table table-bordered table-responsive" role="grid">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Role Name
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.UserRoles)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.RoleName
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="box-footer">
+                <div class="col-sm-2">
+                </div>
+                <button type="submit" value="Save" class="btn btn-info">Save</button>
+            </div>
+        </div>
+
+    }
+</div>

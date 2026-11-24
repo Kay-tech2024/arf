@@ -1,0 +1,126 @@
+﻿@model AnnouncementCreateViewModel
+<link href="~/Content/css/jquery.claendars/ui.calendars.picker.css" rel="stylesheet" />
+<link href="~/Content/css/jquery.claendars/jquery.calendars.picker.css" rel="stylesheet" />
+<h3>رسالة إعلان بداية دورة تمويل</h3>
+<br />
+
+<div class="row">
+    <div class="col-md-12">
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger alert-validation">
+                <h5>@LangHelpers.Instance["ValidationSummary"]</h5>
+                <div class="text-left">
+                    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+
+        @using (Html.BeginForm("Create", "Announcements", FormMethod.Post, new { @class = "form-horizontal" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group required">
+                <label class="control-label col-md-4" for="pwd">العنوان</label>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.Title, new { @class = "form-control", required = "required" })
+                    @Html.ValidationMessageFor(model => model.Title)
+                </div>
+            </div>
+
+
+            <div class="form-group required">
+                <label class="control-label col-md-4">تاريخ بداية الدورة التمولية</label>
+                <div class="col-md-8">
+                    <div id="startDateHijri" class="is-calendarsPicker" data-hirji="1">
+                        @Html.TextBoxFor(m => m.StartDate, new { @class = "form-control allow-edit defaultPopup" })
+                    </div>
+
+                    @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group required">
+                <label class="control-label col-md-4">تاريخ نهاية الدورة التمولية</label>
+                <div class="col-md-8">
+                    <div id="endDateHijri" class="is-calendarsPicker" data-hirji="1">
+                        @Html.TextBoxFor(m => m.EndDate, new { @class = "form-control allow-edit defaultPopup" })
+
+                    </div>
+
+                    @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+
+            <div class="form-group request-action required">
+                <label class="control-label col-md-4" for="pwd">الرسالة</label>
+                <div class="col-md-8">
+                    @Html.TextAreaFor(model => model.Content, new { @class = "form-control", required = "required", rows = 10 })
+                    @Html.ValidationMessageFor(model => model.Content)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-4 col-md-8">
+                    <button type="submit" class="btn btn-success btn-block">إرسال</button>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+
+
+
+
+
+@section scripts
+{
+    <script src="~/Content/js/summernote.js" type="text/javascript" nonce="@Html.ScriptNonce()"></script>
+    <script src="~/Content/js/lang/summernote-ar-AR.js" nonce="@Html.ScriptNonce()"></script>
+
+    <script type="text/javascript" nonce="@Html.ScriptNonce()">
+        var makeSummerNote = function (el) {
+
+            $(el).summernote({
+                height: 300,
+                codemirror: {
+                    mode: 'text/html',
+                    htmlMode: true,
+                    lineNumbers: true,
+                    theme: 'monokai'
+                }
+            });
+        };
+
+        makeSummerNote($('#Content'))
+    </script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" nonce="@Html.ScriptNonce()"></script>
+    <script src="~/Content/jquery.calendars/jquery.plugin.js" nonce="@Html.ScriptNonce()"></script>
+    <!--<script src="jquery.calendars.all.js"></script><!-- Use instead of calendars, plus, and picker below -->
+    <script src="~/Content/jquery.calendars/jquery.calendars.js" nonce="@Html.ScriptNonce()"></script>
+    <script src="~/Content/jquery.calendars/jquery.calendars.plus.js" nonce="@Html.ScriptNonce()"></script>
+    <script src="~/Content/jquery.calendars/jquery.calendars.picker.js" nonce="@Html.ScriptNonce()"></script>
+    <script src="~/Content/jquery.calendars/jquery.calendars.persian.js" nonce="@Html.ScriptNonce()"></script>
+    <script src="~/Content/jquery.calendars/jquery.calendars.ummalqura.js" nonce="@Html.ScriptNonce()"></script>
+    <script src="~/Content/jquery.calendars/jquery.calendars.ummalqura-ar.js" nonce="@Html.ScriptNonce()"></script>
+
+
+
+    <script nonce="@Html.ScriptNonce()">
+        $(function () {
+            //	$.calendars.picker.setDefaults({renderer: $.calendars.picker.themeRollerRenderer}); // Requires jquery.calendars.picker.ext.js
+            $('.defaultPopup').calendarsPicker({ calendar: $.calendars.instance('ummalqura') });
+
+        });
+
+        function showDate(date) {
+            alert('The date chosen is ' + date);
+        }
+    </script>
+
+
+}

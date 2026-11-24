@@ -1,0 +1,156 @@
+﻿@model FormFieldEditModel
+<h2>Sections Visualization</h2>
+<h4>Form - @ViewBag.FormName</h4>
+<h4>Section - @ViewBag.SectionName</h4>
+@{
+    var le = Enum.GetValues(typeof(FormFieldType));
+    var le2 = new List<SelectListItem>();
+
+    foreach (var l in le)
+    {
+        le2.Add(new SelectListItem { Text = LangHelpers.Instance[((FormFieldType)l).ToString()], Value = ((byte)((FormFieldType)l)) + "" });
+    }
+}
+
+@if (Model.Fields == null) { Model.Fields = new List<ARF.Data.DbModels.FormField>(); }
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="table-responsive">
+        <table class="table table-striped table-hover" id="form-fields-table">
+            <thead>
+                <tr>
+                    <th class="text-center" style="max-width:20px">Sl.</th>
+                    <th class="text-center">Arabic Name</th>
+                    <th class="text-center">English Name</th>
+                    <th class="text-center" style="min-width:150px">Type</th>
+                    <th class="text-center">Required</th>
+                    <th class="text-center">Multiple Selection</th>
+                    <th class="text-center">Min Value</th>
+                    <th class="text-center">Max Value</th>
+                    <th class="text-center" style="max-width:30px">Depends On Field #</th>
+                    <th class="text-center">Depends On Field Value</th>
+                    <th class="text-center">Readonly</th>
+                    <th class="text-center">Summable</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var i = -1;
+
+                }
+                @foreach (var item in Model.Fields)
+                {
+                    i++;
+                    <tr class="@(item.Id<0?"hidden": "available")">
+                        @Html.HiddenFor(m => m.Fields[i].Id, new { @class = "form-control Id" })
+                        @Html.HiddenFor(m => m.Fields[i].FormId, new { @class = "form-control FormId" })
+                        @Html.HiddenFor(m => m.Fields[i].SectionId, new { @class = "form-control SectionId" })
+                        <td>@Html.TextBoxFor(m => Model.Fields[i].Order, new { @class = "Order", @readonly = "readonly", @style = "max-width:20px;border:none;background:transparent;text-align:right" }) </td>
+                        @*<td>@item.Order</td>*@
+                        <td>@Html.TextBoxFor(m => Model.Fields[i].NameArabic, new { @class = "form-control NameArabic" })</td>
+                        <td>@Html.TextBoxFor(m => Model.Fields[i].NameEnglish, new { @class = "form-control NameEnglish" })</td>
+                        <td>@Html.DropDownListFor(m => Model.Fields[i].FieldType, new SelectList(le2, "Value", "Text", Model.Fields[i].FieldType), new { @class = "form-control FieldType" })</td>
+                        <td class="text-center">@Html.CheckBoxFor(m => Model.Fields[i].IsRequired, new { @class = "IsRequired" })</td>
+                        <td class="text-center">@Html.CheckBoxFor(m => Model.Fields[i].IsMultipleSelection, new { @class = "IsMultipleSelection" })</td>
+                        <td>@Html.TextBoxFor(m => Model.Fields[i].MinValue, new { @type = "number", @class = "form-control MinValue", @min = "1", @style = "max-width:110px" })</td>
+                        <td>@Html.TextBoxFor(m => Model.Fields[i].MaxValue, new { @type = "number", @class = "form-control MaxValue", @min = "1", @style = "max-width:110px" })</td>
+                        <td>@Html.TextBoxFor(m => Model.Fields[i].DependsOnFieldId, new { @type = "number", @class = "form-control DependsOnFieldId", @min = "1", @style = "max-width:95px" })</td>
+                        <td>@Html.TextBoxFor(m => Model.Fields[i].DependsOnFieldValue, new { @type = "text", @class = "form-control DependsOnFieldValue" })</td>
+                        <td class="text-center">@Html.CheckBoxFor(m => Model.Fields[i].IsReadOnly, new { @class = "IsReadOnly" })</td>
+                        <td class="text-center">@Html.CheckBoxFor(m => Model.Fields[i].IsSummable, new { @class = "IsSummable" })</td>
+                        @Html.HiddenFor(m => m.Fields[i].IsActive, new { @class = "IsActive" })
+                        @if ((FormFieldType)Model.Fields[i].FieldType == FormFieldType.Dropdown)
+                        {
+                            <td><a class="btn btn-xs btn-warning" href="@Url.Action("Lookups", new {id = Model.Fields[i].Id, formid= Model.Fields[i].FormId, sectionid= Model.Fields[i].SectionId })">Lookups</a></td>
+
+                        }
+                        <td><a class="btn btn-xs btn-danger btn-remove"><i class="fa fa-trash-o"></i></a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <a class="btn btn-primary add-row">Add Field</a>
+    <button type="submit" class="btn btn-success">Submit</button>
+
+}
+
+@section scripts{
+    <!-- jQuery UI CSS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js" nonce="@Html.ScriptNonce()"></script>
+
+    <script type="text/javascript" nonce="@Html.ScriptNonce()">
+
+        $(document).ready(function () {
+            //Helper function to keep table row from collapsing when being sorted
+            var fixHelperModified = function (e, tr) {
+                var $originals = tr.children();
+                var $helper = tr.clone();
+                $helper.children().each(function (index) {
+                    $(this).width($originals.eq(index).width())
+                });
+                return $helper;
+            };
+
+            //Make diagnosis table sortable
+            $("#form-fields-table tbody").sortable({
+                helper: fixHelperModified,
+                stop: function (event, ui) { renumber_table('#form-fields-table') }
+            }).disableSelection();
+
+            //var defaulttrhtml = '<tr class="available"><input class="form-control Id ltr" data-val="true" data-val-number="The field Id must be a number." data-val-required="الحقل Id مطلوب." id="Fields_0__Id" name="Fields[0].Id" type="hidden" value="0"><input class="form-control FormId ltr" data-val="true" data-val-number="The field FormId must be a number." id="Fields_0__FormId" name="Fields[0].FormId" type="hidden" value="{FormId}"><input class="form-control SectionId ltr" data-val="true" data-val-number="The field SectionId must be a number." id="Fields_0__SectionId" name="Fields[0].SectionId" type="hidden" value="{SectionId}"><td><input class="Order ltr" data-val="true" data-val-number="The field Order must be a number." data-val-required="الحقل Order مطلوب." id="Fields_0__Order" name="Fields[0].Order" readonly="readonly" style="max-width:20px;border:none;background:transparent;text-align:right" type="text" value="11"> </td><td><input class="form-control NameArabic rtl" id="Fields_0__NameArabic" name="Fields[0].NameArabic" type="text" value=""></td><td><input class="form-control NameEnglish" id="Fields_0__NameEnglish" name="Fields[0].NameEnglish" type="text" value=""></td><td><select class="form-control FieldType" data-val="true" data-val-number="The field FieldType must be a number." data-val-required="الحقل FieldType مطلوب." id="Fields_0__FieldType" name="Fields[0].FieldType"><option value="0">unspecified</option><option value="1">table_heading</option><option value="2">integer</option><option value="3">normal_text</option><option value="4">التاريخ</option><option value="5">monetary</option><option value="6">checkbox</option><option value="7">dropdown</option><option value="8">البريد الإلكتروني</option><option value="9">short_text</option><option value="10">heading</option><option value="11">text</option><option value="12">long_text</option><option value="13">phone</option><option value="14">attached_file</option><option value="15">sub_heading</option><option value="16">date_time</option><option value="17">static_table</option><option value="18">column_heading</option><option value="19">table_end</option><option value="20">dynamic_table</option></select></td><td class="text-center"><input class="IsRequired ltr" data-val="true" data-val-required="الحقل IsRequired مطلوب." id="Fields_0__IsRequired" name="Fields[0].IsRequired" type="checkbox" value="true"><input name="Fields[0].IsRequired" type="hidden" value="false" class="ltr"></td><td class="text-center"><input class="IsMultipleSelection ltr" data-val="true" data-val-required="الحقل IsMultipleSelection مطلوب." id="Fields_0__IsMultipleSelection" name="Fields[0].IsMultipleSelection" type="checkbox" value="false"><input name="Fields[0].IsMultipleSelection" type="hidden" value="false" class="ltr"></td><td><input class="form-control MinValue" id="Fields_0__MinValue" min="1" name="Fields[0].MinValue" style="max-width:110px" type="number"></td><td><input class="form-control MaxValue" id="Fields_0__MaxValue" min="1" name="Fields[0].MaxValue" style="max-width:110px" type="number" value=""></td><td><input class="form-control DependsOnFieldId" data-val="true" data-val-number="The field DependsOnFieldId must be a number." id="Fields_0__DependsOnFieldId" min="1" name="Fields[0].DependsOnFieldId" style="max-width:95px" type="number" value=""></td><td><input class="form-control DependsOnFieldValue" id="Fields_0__DependsOnFieldValue" name="Fields[0].DependsOnFieldValue" type="text" value=""></td><td class="text-center"><input class="IsReadOnly ltr" data-val="true" data-val-required="الحقل IsReadOnly مطلوب." id="Fields_0__IsReadOnly" name="Fields[0].IsReadOnly" type="checkbox" value="true"><input name="Fields[0].IsReadOnly" type="hidden" value="false" class="ltr"></td><td class="text-center"><input class="IsSummable ltr" data-val="true" data-val-required="الحقل IsSummable مطلوب." id="Fields_0__IsSummable" name="Fields[0].IsSummable" type="checkbox" value="true"><input name="Fields[0].IsSummable" type="hidden" value="false" class="ltr"></td><input class="IsActive ltr" data-val="true" data-val-required="الحقل IsActive مطلوب." id="Fields_0__IsActive" name="Fields[0].IsActive" type="hidden" value="true"><td><a class="btn btn-xs btn-danger btn-remove"><i class="fa fa-trash-o"></i></a></td></tr>';
+
+            //Delete button in table rows
+            $(document).on('click', '.btn-remove', function () {
+                tableID = '#' + $(this).closest('table').attr('id');
+                r = confirm('Delete this item?');
+                if (r) {
+                    $(this).closest('tr').removeClass('available').addClass('hidden');//.remove();
+                    $(this).closest('tr').find('.IsActive').attr('value', 'False');
+                    renumber_table(tableID);
+                }
+            });
+
+            $(document).on('click', '.add-row', function () {
+                tableID = '#form-fields-table';
+                var count = $('#form-fields-table tbody').find('tr').length;
+                var tr = $("<tr class='available'>" + $('#form-fields-table tbody').find('tr').eq(0).html() + "</tr>");
+                tr.find('.Id').attr('value', 0).attr('Id', 'Fields_' + count + '__Id').attr('name', 'Fields[' + count + '].Id');
+                tr.find('.FormId').attr('Id', 'Fields_' + count + '__FormId').attr('name', 'Fields[' + count + '].FormId');
+                tr.find('.SectionId').attr('Id', 'Fields_' + count + '__SectionId').attr('name', 'Fields[' + count + '].SectionId');
+                tr.find('.Order').attr('value', count).attr('Id', 'Fields_' + count + '__Order').attr('name', 'Fields[' + count + '].Order');
+                tr.find('.NameArabic').attr('value', '').attr('Id', 'Fields_' + count + '__NameArabic').attr('name', 'Fields[' + count + '].NameArabic');
+                tr.find('.NameEnglish').attr('value', '').attr('Id', 'Fields_' + count + '__NameEnglish').attr('name', 'Fields[' + count + '].NameEnglish');
+                tr.find('.FieldType option').removeAttr('selected');
+                tr.find('.FieldType').attr('Id', 'Fields_' + count + '__FieldType').attr('name', 'Fields[' + count + '].FieldType');
+                tr.find('.IsRequired').removeAttr('checked', 'false').attr('value', 'true').attr('Id', 'Fields_' + count + '__IsRequired').attr('name', 'Fields[' + count + '].IsRequired');
+                tr.find('.IsMultipleSelection').removeAttr('checked', '').attr('value', 'false').attr('Id', 'Fields_' + count + '__IsMultipleSelection').attr('name', 'Fields[' + count + '].IsMultipleSelection');
+                tr.find('.MinValue').removeAttr('value', '').attr('Id', 'Fields_' + count + '__MinValue').attr('name', 'Fields[' + count + '].MinValue');
+                tr.find('.MaxValue').attr('value', '').attr('Id', 'Fields_' + count + '__MaxValue').attr('name', 'Fields[' + count + '].MaxValue');
+                tr.find('.DependsOnFieldId').attr('value', '').attr('Id', 'Fields_' + count + '__DependsOnFieldId').attr('name', 'Fields[' + count + '].DependsOnFieldId');
+                tr.find('.DependsOnFieldValue').attr('value', '').attr('Id', 'Fields_' + count + '__DependsOnFieldValue').attr('name', 'Fields[' + count + '].DependsOnFieldValue');
+                tr.find('.IsReadOnly').removeAttr('checked', '').attr('value', 'true').attr('Id', 'Fields_' + count + '__IsReadOnly').attr('name', 'Fields[' + count + '].IsReadOnly');
+                tr.find('.IsSummable').removeAttr('checked', '').attr('value', 'true').attr('Id', 'Fields_' + count + '__IsSummable').attr('name', 'Fields[' + count + '].IsSummable');
+                tr.find('.IsActive').attr('value', 'true').attr('Id', 'Fields_' + count + '__IsActive').attr('name', 'Fields[' + count + '].IsActive');
+                $('#form-fields-table tbody').append(tr);
+                renumber_table(tableID);
+            });
+        });
+        //Renumber table rows
+        function renumber_table(tableID) {
+            $(tableID + " tr").each(function (index, value) {
+                count = $(this).parent().children('.available').index($(this));
+                $(this).find('.Order').attr('value', count + 1);
+            });
+        }
+
+
+
+    </script>
+
+
+}

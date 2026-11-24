@@ -1,0 +1,18 @@
+update requests set AnnouncementId = null, LastActionId=null
+delete from Announcements
+delete from RequestHistoryLogs
+delete from requestreferees
+delete from Requests
+delete from RequestTimeline
+delete from RequestActivities
+delete from RequestBeneficiaries
+delete from RequestContainers
+delete from RequestCoresearchers
+delete from RequestSuggestedReferees
+delete from RequestMaterials
+delete from RequestUsers
+delete from RequestFundingSources
+delete from RequestFiles
+delete from RefereeRequestFeedback
+delete from RefereeRequestFeedbackFormQuestions
+delete from RewardRequests

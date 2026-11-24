@@ -1,0 +1,8 @@
+﻿@model IEnumerable<ARF.Data.DbModels.Form>
+<h2>Forms Visualization</h2>
+@foreach (var item in Model)
+{
+    <div class="col-md-6 text-center">
+        <a href="@Url.Action("Form/"+item.Id.ToString())" style="width:100%" class="btn btn-success btn-wide">@item.LocalizedName()</a>
+    </div>
+}

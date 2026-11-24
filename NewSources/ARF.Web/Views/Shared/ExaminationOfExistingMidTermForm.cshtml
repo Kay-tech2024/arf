@@ -1,0 +1,101 @@
+﻿@using ARF.Data.DbModels;
+@model RequestMidTermCheck
+@{
+    Request request = (Request)ViewBag.request;
+ }
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger alert-validation">
+        <h5>@LangHelpers.Instance["ValidationSummary"]</h5>
+        <div class="text-left">
+            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+        </div>
+    </div>
+}
+
+@using (Html.BeginForm("MidTermExamination", "RequestTermForms", null, FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+        <input type="hidden" name="RequestId" value="@request.Id"/>
+    
+            <div class="row">
+            <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="name"> أولا:النسبة المنجزة من المشروع </label>
+                        @Html.TextAreaFor(model => model.FinishedPercentage, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.FinishedPercentage, "", new { @class = "text-danger" })
+
+                    </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="name"> ثانياً:رأي الفاحص حول ما تم إنجازه   </label>
+                        @Html.TextAreaFor(model => model.TesterOpinion, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.TesterOpinion, "", new { @class = "text-danger" })
+
+
+                    </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="name"> الملحوظات </label>
+                        @Html.TextAreaFor(model => model.Notes, new { @class = "form-control" })
+                    </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                    <div class="radio">
+                        <label><input type="radio" checked="checked" name="TesterFinalOpinion" value="المشروع صالح للتمويل بصورته الحالية">المشروع صالح للتمويل بصورته الحالية</label><br />
+                        <label><input type="radio" name="TesterFinalOpinion" value="صالح للتمويل بعد العمل في الملحوظات الواردة في التقرير">  صالح للتمويل بعد العمل في الملحوظات الواردة في التقرير  </label><br />
+                        <label><input type="radio" name="TesterFinalOpinion" value="غير صالح للتمويل إطلاقاً">  (غير صالح للتمويل إطلاقاً (اذكر من فضلك المبررات التي جعلت المشروع غير جدير بالتمويل   </label><br />
+                    </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="name"> أخرى </label>
+                        @*@Html.TextAreaFor(model => model.Other, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Other, "", new { @class = "text-danger" })*@
+                    </div>
+            </div>
+        </div>
+        <br>
+        @*<div class="row">
+            <div class="col-md-6">
+                <div class="form-group" class="text-right">
+                    <label class="control-label col-sm-4">   رئيس وحدة مراكز البحوث  </label>
+                </div>
+                <br>
+                <label class="control-label col-sm-4">   الاسم  </label>
+                <div class="col-md-8">
+                    <input class="form-control" id="Name" name="Name" type="text" value="" />
+                </div>
+                <label class="control-label col-sm-4"> التوقيع  </label>
+                <div class="col-md-8">
+                    <input class="form-control" id="Name" name="Name" type="text" value="" />
+                </div>
+                <label class="control-label col-sm-4">  التاريخ  </label>
+                <div class="col-md-8">
+                    <input class="form-control" id="Name" name="Name" type="text" value="" />
+                </div>
+            </div>
+        </div>*@
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                    <input id="btnSubmit" type="submit" value="@LangHelpers.Instance["save"]" class="btn btn-primary btn-lg btn-block" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+}

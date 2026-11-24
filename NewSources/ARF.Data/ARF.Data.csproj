@@ -1,0 +1,691 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7F518327-84FD-4C79-9339-6EFD6E503E32}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>ARF.Data</RootNamespace>
+    <AssemblyName>ARF.Data</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="DbModels2\EF.Reverse.POCO.Core.ttinclude" />
+    <None Include="DbModels2\EF.Reverse.POCO.ttinclude" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings3.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DbEnums.cs" />
+    <Compile Include="DbModels2\Advertisement.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\AdvertisementConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\AdvertisementView.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\AdvertisementViewConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Announcement.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\AnnouncementConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ArfDb3.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ArfDbEntities.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Bank.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\BankConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Category.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\CategoryConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\City.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\CityConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\College.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\CollegeConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ContactedU.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ContactedUConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Country.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\CountryConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Department.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\DepartmentConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\DepartmentPriority.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\DepartmentPriorityConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Design.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\DesignConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\FileText.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\FileTextConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Form.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\FormConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\FormField.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\FormFieldConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\FormSection.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\FormSectionConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\FuncMaterialRequestsByCollegeReturnModel.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\FuncRequestsByFinancialTypesReturnModel.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\FuncRequestsByTypeReturnModel.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\IArfDbEntities.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Language.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\LanguageConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Letter.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\LetterConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Lookup.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\LookupConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\LookupValue.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\LookupValueConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Major.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\MajorConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Material.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\MaterialConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Meeting.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\MeetingConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\MeetingParticipant.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\MeetingParticipantConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\MeetingRequest.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\MeetingRequestConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Message.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\MessageConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\MessageFile.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\MessageFileConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\MessageUser.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\MessageUserConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Priority.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\PriorityConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ProposalRecommendedRefree.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ProposalRecommendedRefreeConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Referee.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RefereeConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RefereeRequestFeedback.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RefereeRequestFeedbackConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RefereeRequestFeedbackFormQuestion.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RefereeRequestFeedbackFormQuestionConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Region.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RegionConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Request.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestActivity.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestActivityConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestBeneficiary.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestBeneficiaryConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestBenificialAuthority.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestBenificialAuthorityConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestBudget.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestBudgetConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestContainer.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestContainerConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestCoresearcher.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestCoresearcherConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestCoresearcherResponse.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestCoresearcherResponseConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestData.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestDataConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestFile.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestFileConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestFundingSource.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestFundingSourceConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestHistoryLog.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestHistoryLogConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestIslamicAndOtherJudgementForm.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestIslamicAndOtherJudgementFormConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestJudgement.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestJudgementConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestMaterial.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestMaterialConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestMidTermCheck.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestMidTermCheckConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestMidTermReport.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestMidTermReportConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestProposalPlan.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestProposalPlanConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestPublishingToolsAndChannel.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestPublishingToolsAndChannelConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestReferee.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestRefereeConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestSuggestedReferee.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestSuggestedRefereeConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestTask.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestTaskConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestTimeline.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestTimelineConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestTimeTable.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestTimeTableConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestUser.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RequestUserConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Researcher.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ResearcherConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ResearchersCv.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ResearchersCvConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ResearchersReward.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ResearchersRewardConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RewardRequest.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RewardRequestConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Role.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\RoleConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ScientificDegree.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ScientificDegreeConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Setting.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\SettingConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Template.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\TemplateConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\Translation.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\TranslationConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\University.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UniversityConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\User.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserClaim.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserClaimConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserConnection.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserConnectionConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserDependent.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserDependentConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserExtraRole.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserExtraRoleConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserFile.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserFileConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserLog.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserLogConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserLogin.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserLoginConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserNotification.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserNotificationConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserPreference.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserPreferenceConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserProfile.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserProfileConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserSession.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserSessionConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserSessionData.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserSessionDataConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserSessionFile.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserSessionFileConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserTemporaryUrl.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\UserTemporaryUrlConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewCoResearcherRewardRequestsDetail.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewCoResearcherRewardRequestsDetailConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewMaterialRequest.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewMaterialRequestConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewMaterialRequestsDetail.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewMaterialRequestsDetailConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewRefereeRewardRequestsDetail.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewRefereeRewardRequestsDetailConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewRequestsByFinancialTypesReport.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewRequestsByFinancialTypesReportConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewRequestsByResearchTeamTypesReport.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewRequestsByResearchTeamTypesReportConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewRequestsByTypeReport.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewRequestsByTypeReportConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewRequestsDetail.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewRequestsDetailConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewResearcherRewardRequestsDetail.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewResearcherRewardRequestsDetailConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewRewardRequestsDetail.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewRewardRequestsDetailConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewUser.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\ViewUserConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\WorkFlow.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\WorkFlowConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\WorkflowState.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\WorkflowStateAction.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\WorkflowStateActionConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DbModels2\WorkflowStateConfiguration.cs">
+      <DependentUpon>ArfDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CodeFirstStoreFunctions, Version=1.1.1.0, Culture=neutral, PublicKeyToken=46c4868af4307d2c, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.CodeFirstStoreFunctions.1.1.1\lib\net45\CodeFirstStoreFunctions.dll</HintPath>
+    </Reference>
+    <Reference Include="Dapper, Version=1.50.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.1.50.4\lib\net451\Dapper.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DbModels2\ArfDb.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ArfDb3.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

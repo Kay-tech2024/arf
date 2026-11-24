@@ -1,0 +1,599 @@
+﻿@model RequestSummaryViewModel2
+
+@{
+
+    if (Model.Timeline == null || Model.Timeline.Count == 0)
+    {
+        Model.Timeline = new List<TimelineViewModel> { new TimelineViewModel() };
+    }
+
+    var isRTL = Utils.IsUserLanguageArabic;
+    var index = -1;
+}
+
+<div>
+    <h4 class="title">@LangHelpers.Instance["Timeline"]</h4>
+</div>
+
+<br />
+
+
+
+<div class="panel-group div-repeatable" data-key="Timeline">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>@LangHelpers.Instance["sn"]</th>
+                <th>@LangHelpers.Instance["task"]</th>
+                <th>@LangHelpers.Instance["responsible_researcher"]</th>
+                <th>@LangHelpers.Instance["starting_month"]</th>
+                <th>@LangHelpers.Instance["end_month"]</th>
+                <th></th>
+            </tr>
+        </thead>
+        @{
+            index = -1;
+        }
+        <tbody>
+            @foreach (var c in Model.Timeline)
+            {
+                index++;
+                ViewBag.Index = index;
+
+                @Html.Partial("~/Views/Requests/FundingRequests/_PartialTimelinePreview.cshtml", Model);
+
+            }
+        </tbody>
+    </table>
+
+    <a href="#" class="btnAddRow btn btn-success pull-right">@LangHelpers.Instance["add"]</a>
+    <div class="clearfix"></div>
+</div>
+
+@if (Model.Type == ReqFieldType.AppliedScienceField)
+{
+
+    <div>
+        <h4 class="title">@LangHelpers.Instance["requested_materials"]</h4>
+    </div>
+
+    <br />
+    <table class="table table-bordered table-striped">
+        <tr class="row-section-header required">
+            <td style="text-align: left;"><a class="field-caption" href="#">@LangHelpers.Instance["applied_budget_rationale"]</a></td>
+        </tr>
+        <tr class="collapse row-section-details" id="applied_section_objectives" style="display: table-row;" data-is-visible="1">
+            <td colspan="2" style="text-align: left; border:0px;">
+                @Html.TextAreaFor(m => m.BudgetRationale, new { rows = 10, @class = "form-control " })
+            </td>
+        </tr>
+    </table>
+
+    <div class="panel-group div-repeatable" data-key="Materials">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>@LangHelpers.Instance["sn"]</th>
+                    <th>@LangHelpers.Instance["material_name"]</th>
+                    <th>@LangHelpers.Instance["amount_in_grams"]</th>
+                    <th>@LangHelpers.Instance["material_type"]</th>
+                    <th>@LangHelpers.Instance["material_usage"]</th>
+                    <th>@LangHelpers.Instance["material_cost"]</th>
+                    <th></th>
+                </tr>
+            </thead>
+            @{
+                index = -1;
+            }
+            <tbody>
+                @foreach (var c in Model.Materials)
+                {
+                    index++;
+                    ViewBag.Index = index;
+
+                    @Html.Partial("~/Views/Requests/FundingRequests/_PartialMaterialsPreview.cshtml", Model);
+
+                }
+            </tbody>
+        </table>
+
+        <a href="#" class="btnAddRow btn btn-success pull-right">@LangHelpers.Instance["add"]</a>
+        <div class="clearfix"></div>
+    </div>
+}
+@{
+    ViewBag.IsTemplate = true;
+    ViewBag.Index = 0;
+
+    this.ScriptBlock(
+
+@<script type="text/javascript" nonce="@Html.ScriptNonce()">
+
+    var consultantIds = @(Model.ResearchersLookup == null ? new HtmlString("[]") :
+            Html.Raw(Utils.SerializeObject(
+                Model.ResearchersLookup
+                    .Where(r => r.Text.EndsWith("(" + LangHelpers.Instance[ResearcherRole.Consultant.ToString()] + ")"))
+                    .Select(r => r.Value)
+                    .Distinct()
+                    .ToList()
+            ))
+                        );
+
+        var templates = {};
+        templates.Timeline = '@(Html.Raw(Html.Partial("~/Views/Requests/FundingRequests/_PartialTimelinePreview.cshtml", Model).ToHtmlString().Replace("\r\n", " ")))';
+        templates.Materials = '@(Model.Type != ReqFieldType.AppliedScienceField ? new HtmlString("") : Html.Raw(Html.Partial("~/Views/Requests/FundingRequests/_PartialMaterialsPreview.cshtml", Model).ToHtmlString().Replace("\r\n", " ")))';
+
+         $('.btnAddRow').on('click', function (e) {
+
+             var div = $(this).parent();
+             var key = div.attr('data-key');
+             var elms = div.find('tbody tr');
+
+             var rowHtml = templates[key];
+
+             var index = elms.length;
+
+             var el = $(rowHtml.replaceAll('{index}', index).replaceAll('{order}', index + 1).replaceAll('data-id="0"', 'data-id="' + index + '"').replaceAll('_0__', '_' + index + '__').replaceAll('[0]', '[' + index + ']'));
+             el.find('input,select,textarea').val('');
+             el.find('.field-validation-error').remove();
+
+             div.find('table tbody').append(el);
+             e.preventDefault();
+             return false;
+
+         });
+
+         onDomInserted('.btnRemoveRow', function (el) {
+
+             $(el).on('click', function (e) {
+
+                 var elm = $(el).closest('tr');
+                 var index = parseInt(elm.attr('data-index'));
+                 var div = elm.closest('.div-repeatable');
+                 var elms = div.find('tr');
+                 for (var i = 0; i < elms.length; i++) {
+
+                     if (index == i) {
+                         elm.remove();
+                     } else if (index < i) {
+                         var els = $(elms[i]).find('input,select,textarea');;
+
+                         for (var j = 0; j < els.length; j++) {
+                             var el2 = $(els[j]);
+                             if (!el2.attr('name')) continue;
+                             var tabs = el2.attr('name').split('.');
+                             var name = tabs[0].split('[')[0];
+                             var x = name + '[' + (i - 1) + '].' + prop;
+
+                             var prop = tabs[1];
+                             el2.attr('id', name + (i - 1) + '_' + prop).attr('name', name + '[' + (i - 1) + '].' + prop);
+                         }
+                         $(elms[i]).attr('data-index', i - 1);
+                     }
+                 }
+                 e.preventDefault();
+                 return false;
+
+             });
+    });
+
+    onDomInserted('.ddl-researchers', function (el) {
+
+        $(el).on('change', function (e) {
+
+            var id = $(el).val();
+
+
+            var tr = $(el).closest('tr');
+
+            var isConsultant = false;
+
+            for (var i = 0; i < consultantIds.length; i++) {
+
+                if (consultantIds[i] == id) {
+                    isConsultant = true;
+                    break;
+                }
+
+
+
+
+            }
+
+
+            if (isConsultant) {
+                tr.find('.divMonths').hide();
+                tr.find('.divVisits').show();
+            } else {
+                tr.find('.divMonths').show();
+                tr.find('.divVisits').hide();
+            }
+
+            return false;
+        });
+    });
+</script>
+);
+
+
+
+    <div id="divGanttChart" style="direction: ltr;">
+        <div class="svg"></div>
+        <div id="tag" class="tag"></div>
+        <div class="clearfix"></div>
+    </div>
+
+    <div>
+        <h4 class="title">@LangHelpers.Instance["budget_summary"]</h4>
+    </div>
+    <br />
+    <table id="budgetSummary" class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>@ArfStrings.name</th>
+                <th>@ArfStrings.researcher_role</th>
+                <th>@ArfStrings.first_period_active_months</th>
+                <th>@ArfStrings.first_period_cost</th>
+                <th>@ArfStrings.second_period_active_months</th>
+                <th>@ArfStrings.second_period_cost</th>
+                <th>@ArfStrings.total_active_months</th>
+                <th>@ArfStrings.total_cost</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in Model.BudgetSummaryPerPerson)
+            {
+                <tr>
+                    <td>@m.Name</td>
+                    <td>@m.ResearcherRole</td>
+                    <td>@(m.IsConsultant ? LangHelpers.Instance.GetLangValueByString("number_of_visits", false, Model.Type == ReqFieldType.AppliedScienceField ? "en" : null) + ": " + m.FirstPeriodActiveMonths : m.FirstPeriodActiveMonths)</td>
+                    <td>@m.FirstPeriodCost</td>
+                    <td>@(m.IsConsultant ? LangHelpers.Instance.GetLangValueByString("number_of_visits", false, Model.Type == ReqFieldType.AppliedScienceField ? "en" : null) + ": " + m.SecondPeriodActiveMonths : m.SecondPeriodActiveMonths)</td>
+                    <td>@m.SecondPeriodCost</td>
+                    <td>@m.TotalActiveMonths</td>
+                    <td>@m.TotalCost</td>
+                </tr>
+            }
+            <tr>
+                <td colspan="4">@ArfStrings.first_period_total_cost</td>
+                <td colspan="4">@Model.FirstPeriodTotalCost</td>
+            </tr>
+            <tr>
+                <td colspan="4">@ArfStrings.second_period_total_cost</td>
+                <td colspan="4">@Model.SecondPeriodTotalCost</td>
+            </tr>
+            @if (Model.Type == ReqFieldType.AppliedScienceField)
+            {
+                <tr>
+                    <td colspan="4">@ArfStrings.materials_total_cost</td>
+                    <td colspan="4">@Model.MaterialsTotalCost</td>
+                </tr>
+            }
+            <tr>
+                <td colspan="4">@ArfStrings.total_cost_for_project</td>
+                <td colspan="4">@Model.TotalCostForProject</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script type="text/javascript" nonce="@Html.ScriptNonce()">
+
+
+
+    var isRTL = @isRTL.ToString().ToLower();
+    var startingDate = new Date(@DateTime.Now.Year + 1, 0, 1);
+    var w = $('form').width();
+    var h = @Model.TimelinePreview.Count * 30 + 150;
+    if (w == null && $(".login-pg").length > 0) {
+        w = $(".login-pg").width() + 300;
+    }
+     var svg = d3.selectAll(".svg")
+         //.selectAll("svg")
+         .append("svg")
+         .attr("width", w)
+         .attr("height", h)
+         .attr("class", "svg");
+
+     var taskArray = @Html.Raw(Utils.SerializeObject(Model.TimelinePreview));
+
+var dateFormat = d3.time.format("%Y-%m-%d");
+
+var timeScale = d3.time.scale()
+    .domain([d3.min(taskArray, function (d) { return dateFormat.parse(d.endTime); }),
+        d3.max(taskArray, function (d) { return dateFormat.parse(d.startTime); })])
+            .range(@Html.Raw(isRTL ? "[w-150 , 0]" : "[0, w - 150]"));
+
+             var categories = new Array();
+
+             for (var i = 0; i < taskArray.length; i++) {
+                 categories.push(taskArray[i].type);
+             }
+
+             var catsUnfiltered = categories; //for vert labels
+
+             categories = checkUnique(categories);
+
+             makeGant(taskArray, w, h);
+
+             var title = svg.append("text")
+                 .attr("x", w / 2)
+                 .attr("y", 25)
+                 .attr("text-anchor", "middle")
+                 .attr("font-size", 18)
+                 .attr("fill", "#009FFC");
+
+             function makeGant(tasks, pageWidth, pageHeight) {
+
+                 var barHeight = 20;
+                 var gap = barHeight + 4;
+                 var topPadding = 75;
+                 var sidePadding = 75;
+
+                 var colorScale = d3.scale.linear()
+                     .domain([0, 5])
+             .range(["#00B9FA", "#F95002"])
+             .interpolate(d3.interpolateHcl);
+
+             makeGrid(sidePadding, topPadding, pageWidth, pageHeight);
+             drawRects(tasks, gap, topPadding, sidePadding, barHeight, colorScale, pageWidth, pageHeight);
+             vertLabels(gap, topPadding, sidePadding, barHeight, colorScale);
+
+             if (isRTL) {
+                 $("#publicationDetails").on('shown.bs.modal', function () {
+
+                     var isActive = false;
+                     if ($('.nav-tabs a').length > 0) {
+                         var url = document.location.toString();
+                         if (url.match('#') && url.split('#').length > 1) {
+                             isActive = true;
+                         }
+                     }
+
+                     if (isActive)
+                         $('#divGanttChart').scrollLeft(4444);
+
+
+                     // Change hash for page-reload
+                     $('.nav-tabs a').on('shown.bs.tab', function (e) {
+                         var targetHash = $(e.target).data('target');
+                         if (!targetHash)
+                             targetHash = $(e.target).attr('href');
+
+                         if (targetHash === '#tab4info')
+                             $('#divGanttChart').scrollLeft(4444);
+                     });
+
+                 });
+             }
+
+         }
+
+             var ci = 0;
+         function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w, h) {
+
+             var bigRects = svg.append("g")
+                 .selectAll("rect")
+                 .data(theArray)
+                 .enter()
+                 .append("rect")
+                 .attr("x", 0)
+                 .attr("y", function (d, i) {
+                 return i * theGap + theTopPad - 2;
+             })
+             .attr("width", function (d) {
+             return w - theSidePad / 2;
+         })
+             .attr("height", theGap)
+             .attr("stroke", "none")
+                 .attr("fill", function (d) {
+                 return '#fff';
+
+         })
+             .attr("opacity", 0);
+
+         var rectangles = svg.append('g')
+             .selectAll("rect")
+             .data(theArray)
+             .enter();
+
+         var ci2 = 0;
+         var innerRects = rectangles.append("rect")
+             .attr("rx", 3)
+             .attr("ry", 3)
+             .attr("x", function (d) {
+
+                 if (isRTL) {
+                     var width = Math.abs(timeScale(dateFormat.parse(d.endTime)) - timeScale(dateFormat.parse(d.startTime)));
+                     var x1 = w - timeScale(dateFormat.parse(d.startTime)) + theSidePad;
+                     var x2 = x1 + width;
+                     var x1d = w - x2 + 150;
+
+                     return x1d;
+                 } else {
+                     var x1 = timeScale(dateFormat.parse(d.startTime)) + theSidePad;
+                     return x1;
+                 }
+         })
+             .attr("y", function (d, i) {
+             return i * theGap + theTopPad;
+         })
+             .attr("width", function (d) {
+                 var xx = Math.abs(timeScale(dateFormat.parse(d.endTime)) - timeScale(dateFormat.parse(d.startTime)));
+                 return xx;
+         })
+             .attr("height", theBarHeight)
+             .attr("stroke", "none")
+             .attr("fill", function (d) {
+                 if (d.task === '@LangHelpers.Instance["project_start"]' || d.task === '@LangHelpers.Instance["project_end"]' )
+                     return '#fff';
+
+                 var c = theColorScale(ci2++);
+
+                 return d3.rgb(c);
+         })
+
+         var rectText = rectangles.append("text")
+             .text(function (d) {
+
+                 if (d.task === '@LangHelpers.Instance["project_start"]' || d.task === '@LangHelpers.Instance["project_end"]' )
+                     return '';
+
+             return d.task;
+         })
+             .attr("x", function (d) {
+             return (timeScale(dateFormat.parse(d.endTime)) - timeScale(dateFormat.parse(d.startTime))) / 2 + timeScale(dateFormat.parse(d.startTime)) + theSidePad;
+         })
+             .attr("y", function (d, i) {
+             return i * theGap + 14 + theTopPad;
+         })
+             .attr("font-size", 11)
+             .attr("text-anchor", "middle")
+             .attr("text-height", theBarHeight)
+             .attr("fill", "#fff");
+
+         rectText.on('mouseover', function (e) {
+             var tag = "";
+
+             tag =
+                 "<table>" +
+                 "<tr><td>@LangHelpers.Instance["task"]:</td><td><b>" + d3.select(this).data()[0].task + "</b></td></tr>" +
+                 "<tr><td>@LangHelpers.Instance["responsible_researcher"]:</td><td><b>" + d3.select(this).data()[0].details + "</b></td></tr>" +
+                 "<tr><td>@LangHelpers.Instance["starting_month"]:</td><td><b>" + d3.select(this).data()[0].startTimeStr + "</b></td></tr>" +
+                 "<tr><td>@LangHelpers.Instance["end_month"]:</td><td><b>" + d3.select(this).data()[0].endTimeStr + "</b></td></tr>" +
+                 "<tr><td>@LangHelpers.Instance["task_duration"]:</td><td><b>" + d3.select(this).data()[0].duration + " @LangHelpers.Instance["a_month"]</b></td></tr>" +
+                 "</table>";
+
+             var output = document.getElementById("tag");
+
+             var x = this.x.animVal.getItem(this) + "px";
+             var y = this.y.animVal.getItem(this) + 25 + "px";
+
+             output.innerHTML = tag;
+             output.style.top = y;
+             output.style.left = x;
+             output.style.display = "block";
+         }).on('mouseout', function () {
+             var output = document.getElementById("tag");
+             output.style.display = "none";
+         });
+
+         innerRects.on('mouseover', function (e) {
+             //console.log(this);
+             var tag = "";
+
+             tag =
+                 "<table>" +
+                 "<tr><td>@LangHelpers.Instance["task"]:</td><td><b>" + d3.select(this).data()[0].task + "</b></td></tr>" +
+                 "<tr><td>@LangHelpers.Instance["responsible_researcher"]:</td><td><b>" + d3.select(this).data()[0].details + "</b></td></tr>" +
+                 "<tr><td>@LangHelpers.Instance["starting_month"]:</td><td><b>" + d3.select(this).data()[0].startTimeStr + "</b></td></tr>" +
+                 "<tr><td>@LangHelpers.Instance["end_month"]:</td><td><b>" + d3.select(this).data()[0].endTimeStr + "</b></td></tr>" +
+                 "<tr><td>@LangHelpers.Instance["task_duration"]:</td><td><b>" + d3.select(this).data()[0].duration + " @LangHelpers.Instance["a_month"]</b></td></tr>" +
+                 "</table>";
+
+            var output = document.getElementById("tag");
+
+             var x = (this.x.animVal.value + this.width.animVal.value / 2) + "px";
+             var y = this.y.animVal.value + 25 + "px";
+
+             output.innerHTML = tag;
+             output.style.top = y;
+             output.style.left = x;
+             output.style.display = "block";
+         }).on('mouseout', function () {
+             var output = document.getElementById("tag");
+             output.style.display = "none";
+
+         });
+
+     }
+
+     function makeGrid(theSidePad, theTopPad, w, h) {
+
+         var xAxis = d3.svg.axis()
+             .scale(timeScale)
+             .orient('bottom')
+             .ticks(d3.time.months, 1)
+             .tickSize(-h + theTopPad + 20, 0, 0)
+             .tickFormat(function (d) {
+                 var diff = moment(d).diff(moment(startingDate), 'months', true)
+                 if (diff <= 0) return '';
+                 return "@LangHelpers.Instance["the_month"] " + diff;
+             });
+
+         var grid = svg.append('g')
+             .attr('class', 'grid')
+             .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
+             .call(xAxis)
+             .selectAll("text")
+             .style("text-anchor", "middle")
+             .attr("fill", "#000")
+             .attr("stroke", "none")
+             .attr("font-size", 10)
+             .attr("dy", "1em");
+     }
+
+     function vertLabels(theGap, theTopPad, theSidePad, theBarHeight, theColorScale) {
+         var numOccurances = new Array();
+         var prevGap = 0;
+
+         for (var i = 0; i < categories.length; i++) {
+             numOccurances[i] = [categories[i], getCount(categories[i], catsUnfiltered)];
+         }
+
+         var axisText = svg.append("g") //without doing this, impossible to put grid lines behind text
+             .selectAll("text")
+             .data(numOccurances)
+             .enter()
+             .append("text")
+             .text(function (d) {
+             return d[0];
+         })
+             .attr("x", 10)
+             .attr("y", function (d, i) {
+             if (i > 0) {
+                 for (var j = 0; j < i; j++) {
+                     prevGap += numOccurances[i - 1][1];
+                     // console.log(prevGap);
+                     return d[1] * theGap / 2 + prevGap * theGap + theTopPad;
+                 }
+             } else {
+                 return d[1] * theGap / 2 + theTopPad;
+             }
+         })
+             .attr("font-size", 11)
+             .attr("text-anchor", "start")
+             .attr("text-height", 14)
+             .attr("fill", function (d) {
+                 return '#fff';
+         });
+
+     }
+
+     //from this stackexchange question: http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
+     function checkUnique(arr) {
+         var hash = {}, result = [];
+         for (var i = 0, l = arr.length; i < l; ++i) {
+             if (!hash.hasOwnProperty(arr[i])) { //it works with objects! in FF, at least
+                 hash[arr[i]] = true;
+                 result.push(arr[i]);
+             }
+         }
+         return result;
+     }
+
+     //from this stackexchange question: http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
+     function getCounts(arr) {
+         var i = arr.length, // var to loop over
+             obj = {}; // obj to store results
+         while (i) obj[arr[--i]] = (obj[arr[i]] || 0) + 1; // count occurrences
+         return obj;
+     }
+
+     // get specific from everything
+     function getCount(word, arr) {
+         return getCounts(arr)[word] || 0;
+     }
+    </script>
+
+
+}

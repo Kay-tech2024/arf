@@ -1,0 +1,24 @@
+﻿@*@model CommonFundingRequestViewModel
+
+
+
+<!-- FIELD_25460: الأنشطة المقترحة للمشروع (تقديم محاضرة ، عقد حلقة نقاش.....)!-->
+<div class="form-group required">
+	@Html.LabelFor(m => m.FIELD_25460, new { @class = "control-label col-md-3" })
+	<div class="col-md-9">
+		@Html.TextAreaFor(m => m.FIELD_25460, new { @class = "form-control field-required", field_type="long_text", rows = 10 })
+		<span class="help-block">@Html.ValidationMessageFor(m => m.FIELD_25460)</span>
+	</div>
+</div>
+
+
+
+<!-- FIELD_25461: أوعية النشر المقترحة (المجلات العلمية)!-->
+<div class="form-group required">
+	@Html.LabelFor(m => m.FIELD_25461, new { @class = "control-label col-md-3" })
+	<div class="col-md-9">
+		@Html.TextAreaFor(m => m.FIELD_25461, new { @class = "form-control field-required", field_type="long_text", rows = 10 })
+		<span class="help-block">@Html.ValidationMessageFor(m => m.FIELD_25461)</span>
+	</div>
+</div>*@
+

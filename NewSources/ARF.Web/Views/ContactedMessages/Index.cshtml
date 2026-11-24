@@ -1,0 +1,46 @@
+﻿@model IEnumerable<ContactMessagesViewModel>
+
+@{
+    ViewBag.Title = "ContactedMessages";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<ul class="breadcrumb">
+    <li><a href="@Url.Action("Index", "Home")">@ArfStrings.home</a></li>
+    <li>@ArfStrings.contactus</li>
+</ul>
+
+<div class="box2 box2-info">
+
+    <table class="table">
+        <tr>
+            <th>Date</th>
+            <th>Email</th>
+            <th>Subject</th>
+            <th>Message</th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <label>@item.Created</label>
+                </td>
+                <td>
+                    <label>@item.EmailAddress</label>
+                </td>
+                <td>
+                    <label>@item.Subject</label>
+                </td>
+                <td>
+                    <label>@item.Message</label>
+                </td>
+                <td>
+                    <a href="@Url.Action("View", new { id = item.Id })" class="btn btn-icon btn-info" title="@ArfStrings.view"><i class="fa fa-eye"></i></a>
+                    <a href="@Url.Action("Delete", new {id = item.Id })" class="btn btn-icon btn-danger" data-id="@item.Id" title="@ArfStrings.delete"><i class="fa fa-times"></i></a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>

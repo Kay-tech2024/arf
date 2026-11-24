@@ -1,0 +1,1631 @@
+﻿@{
+    ARF.Data.DbModels.ArfDbEntities db = new ARF.Data.DbModels.ArfDbEntities();
+    var preferences = CommonManager.GetUserPreferences();
+    var isArabic = preferences == null || preferences.Language != LanguagePreference.English;
+}
+@model ARF.Web.Models.FundingRequestViewModel
+
+<div class="form-group" style="border:1px solid #333; padding:10px; display:none">
+    <label class="control-label col-md-4">
+        @LangHelpers.Instance["ProjectSeries"]
+    </label>
+    <label class="control-label col-md-4">
+        @LangHelpers.Instance["ResearchUnitCode"]
+    </label>
+    <label class="control-label col-md-4">
+        @LangHelpers.Instance["Year"]
+    </label>
+    <div class="col-md-4">
+        @Html.TextBoxFor(m => m.Request.Serial, new { @class = "form-control" })
+    </div>
+    <div class="col-md-4">
+        @Html.TextBoxFor(m => m.Request.Code, new { @class = "form-control" })
+    </div>
+    <div class="col-md-4">
+        @Html.TextBoxFor(m => m.Request.StartDate, new { @class = "form-control" })
+    </div>
+</div>
+<div class="form-group" style="border:1px solid #333; padding:10px;">
+    <div class="form-group">
+        <label class="control-label col-md-3">
+            @LangHelpers.Instance["ArabicTitleOfProposedProject"]
+        </label>
+        <div class="col-md-9">
+            @Html.TextBoxFor(m => m.Request.Title, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-3">
+            الميزانية المقترحة
+        </label>
+        <div class="col-md-3">
+            <div class="input-group">
+                @Html.TextBoxFor(m => m.Request.AmountSar, new { @class = "form-control", @type = "number" })
+                <span class="input-group-addon">
+                    ريال
+                </span>
+            </div>
+        </div>
+        <label class="control-label col-md-3">
+            المدة المقترحة
+        </label>
+        <div class="col-md-3">
+            <div class="input-group">
+                @Html.TextBoxFor(m => m.Request.Duration, new { @class = "form-control", @type = "number" })
+                <span class="input-group-addon">
+                    @LangHelpers.Instance["Month"]
+                </span>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="form-group" style="border:1px solid #333; padding:10px; display:none;">
+    <label class="control-label col-md-3">
+        @LangHelpers.Instance["SearchProjectType"]
+    </label>
+    <div class="col-md-9">
+        <div class="radio-inline">
+            <label>
+                @Html.RadioButtonFor(m => m.Request.PublicationType, 1) @LangHelpers.Instance["Single"]
+            </label>
+        </div>
+        <div class="radio-inline">
+            <label>
+                @Html.RadioButtonFor(m => m.Request.PublicationType, 2) @LangHelpers.Instance["Joint"]
+            </label>
+        </div>
+    </div>
+</div>
+<div id="dresearchers">
+    <div class="form-group" id="researchers" style="border:1px solid #333; padding:10px;">
+
+        @{
+            var index = 0;
+
+            if (Model.Researchers == null || Model.Researchers.Count == 0)
+            {
+                Model.Researchers = new List<ResearcherViewModel>() { new ResearcherViewModel { } };
+            }
+
+            foreach (var r in Model.Researchers)
+            {
+                ViewBag.index = index;
+                <div id="main-researcher">
+                    @Html.Partial("_ResearchersPartial", Model);
+                    <div class="col-md-5">
+                        <a class="btn btn-primary col-md-3 add-researcher" style="width: auto; padding: 10px;">إضافة باحث مشارك</a>
+                    </div>
+                </div>
+                index++;
+            }
+        }
+
+    </div>
+
+    <div>
+        @Html.HiddenFor(m => m.FieldType)
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-3">@LangHelpers.Instance["ProjectField"]</label>
+        <div class="col-md-9">
+            <label class="control-label col-md-3">التخصص العام: </label>
+            <div class="col-md-3">
+                @Html.TextBoxFor(m => m.Request.ResearchFieldGeneral, new { @class = "form-control" })
+            </div>
+            <label class="control-label col-md-3">التخصص الدقيق: </label>
+            <div class="col-md-3">
+                @Html.TextBoxFor(m => m.Request.ResearchFieldSpecific, new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-12">هل سبق تقديم المقترح لوحدة \مركز البحوث في دورات سابقة؟</label>
+        <div class="col-md-12">
+            <div class="radio-inline col-md-6">
+                <label class="col-md-2">
+                    @Html.RadioButtonFor(m => m.Request.HasBeenPresentedBefore, true) @LangHelpers.Instance["yes"]
+                </label>
+                <div class="col-md-10">
+                    <label class="control-label col-md-4">
+                        رقم المقترح:
+                    </label>
+                    <div class="col-md-6">
+                        @Html.TextBoxFor(m => m.Request.ResearcherPresentaionNumber, new { @class = "form-control" })
+                    </div>
+                </div>
+
+            </div>
+            <div class="radio-inline col-md-5">
+                <label class="col-md-4">
+                    @Html.RadioButtonFor(m => m.Request.HasBeenPresentedBefore, false) @LangHelpers.Instance["No"]
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-6">عدد البحوث الممولة سابقا للباحث الرئيس من عمادة البحث العلمي</label>
+        <div class="col-md-3">
+            @Html.TextBoxFor(m => m.Request.NumberOfPerviousFundedResearchs, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-6">عدد الاوراق البحثة اللتي ستنتشر من المشروع</label>
+        <div class="col-md-3">
+            @Html.TextBoxFor(m => m.Request.NumberOfResearchCommingPapers, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-5">
+            الكلمات الدالة عي البحث keywords (من 6 إلى 10 كلمات)
+        </label>
+        <div class="col-md-5">
+            @Html.TextAreaFor(m => m.Request.KeyWords, new { @class = "form-control", rows = 5 })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-9">
+            هــل ينــدرج المشــروع البحثــي للتمويــل ضمــن أولويــات البحــث العلمــي للقســم العلمــي الــذي تعمــل ؟
+        </label>
+        <div class="col-md-3">
+            <div class="radio-inline col-md-5">
+                <label class="col-md-4">
+                    @Html.RadioButtonFor(m => m.Request.HasPriority, true) @LangHelpers.Instance["yes"]
+                </label>
+            </div>
+            <div class="radio-inline col-md-5">
+                <label class="col-md-4">
+                    @Html.RadioButtonFor(m => m.Request.HasPriority, false) @LangHelpers.Instance["No"]
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-12">اذا كانت الاجابة نعم فما هي تلك الاولوية:</label>
+        <label class="control-label col-md-3">رقم الاولوية:</label>
+        <div class="col-md-1">
+            @Html.TextBoxFor(m => m.Request.PriorityNumber, new { @class = "form-control", @type = "number" })
+        </div>
+        <label class="control-label col-md-3">وتنص علي:</label>
+        <br /><br /><br /><br />
+        <div class="col-md-12">
+            @Html.TextAreaFor(m => m.Request.PriortyDescription, new { @class = "form-control", rows = 5 })
+        </div>
+    </div>
+
+    @{
+        if (Model.FieldType == ReqFieldType.AppliedScienceField)
+        {
+            <div class="ltr div_en" style="font-size:17px; font-family:Calibri">
+                <p>Complete below in full. Do not modify/remove sections – if not applicable to you please indicate “n/a”.</p>
+
+                <div class="form-horizontal">
+                    <h4>Research Project Title</h4>
+                    <div>
+                        <div class="radio">
+                            <label><input type="radio" name="optradio">Medical (• Clinical • BioMedical)</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="optradio">Science</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="optradio">Engineering</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="optradio">Computing</label>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="form-horizontal">
+                    <h4>Principal Investigator/Applicant</h4>
+                    <div class="form-group">
+                        <label class="control-label">Full Name</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Academic Appointment</label>
+                        <div class="col-md-4">
+                            <input class="form-control" type="text" placeholder="Dept/College" />
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control" type="text" placeholder="Title" />
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Contact Information</label>
+                        <div class="col-md-4">
+                            <input class="form-control" type="text" placeholder="Telephone" />
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control" type="text" placeholder="Email" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Address</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="text" placeholder="Street Address and Suite/Unit" />
+                        </div>
+                        <div class="col-md-4">&nbsp;</div>
+
+                        <div class="col-md-8" style="padding:0">
+                            <div class="col-md-4"><input class="form-control" type="text" placeholder="Postal Code" /></div>
+                            <div class="col-md-4"><input class="form-control" type="text" placeholder="Province" /></div>
+                            <div class="col-md-4"><input class="form-control" type="text" placeholder="City/Town" /></div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="form-horizontal">
+                    <h4>Funding Requested (maximum per year for up to two years)</h4>
+                    <div class="form-group">
+                        <label class="control-label">Year One</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Year Two</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Total Amount Requested</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Duration of Project (max two years)</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Project Start Date</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="date" />
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="form-horizontal">
+                    <h4>Co - Principal Investigator Information</h4>
+
+                    <div class="form-group">
+                        <label class="control-label">Full Name</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="text" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Project Role of Co-PI</label>
+                        <div class="col-md-8">
+                            <label class="radio-inline">
+                                <input type="radio" name="optradio">Supervisor
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optradio">Peer
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Clinical or Tech Appointment</label>
+                        <div class="col-md-4">
+                            <input class="form-control" type="text" placeholder="Title" />
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control" type="text" placeholder="Institution" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Academic Appointment</label>
+                        <div class="col-md-4">
+                            <input class="form-control" type="text" placeholder="Title" />
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control" type="text" placeholder="Institution" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Contact Information</label>
+                        <div class="col-md-4">
+                            <input class="form-control" type="text" placeholder="Telephone" />
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control" type="text" placeholder="Email" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Address</label>
+
+                        <div class="col-md-8">
+                            <input class="form-control" type="text" placeholder="Street Address and Suite/Unit" />
+                        </div>
+
+                        <div class="col-md-4">&nbsp;</div>
+
+                        <div class="col-md-8" style="padding:0">
+                            <div class="col-md-4"><input class="form-control" type="text" placeholder="Postal Code" /></div>
+                            <div class="col-md-4"><input class="form-control" type="text" placeholder="Province" /></div>
+                            <div class="col-md-4"><input class="form-control" type="text" placeholder="City/Town" /></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <hr />
+
+                <div class="form-horizontal maximum-width">
+                    <h4>Co-Investigators (maximum of three co-investigators) - CVs are required</h4>
+
+                    <table class="table table-responsive table striped co-investigators">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Full Name
+                                </th>
+                                <th>
+                                    Title and Institution (Clinical / Academic appointment)
+                                </th>
+                                <th>
+                                    Project Role / Expertise
+                                </th>
+                                <th>
+                                    CV
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="file" class="form-control" />
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                    <a class="btn btn-primary btn xs add-row">Add Row</a>
+
+                </div>
+                <hr />
+
+                <div class="form-horizontal maximum-width">
+                    <h4>Collaborators (add rows as needed to list all collaborators) - CVs are not required; Letters of support are required</h4>
+
+                    <table class="table table-responsive table striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Full Name
+                                </th>
+                                <th>
+                                    Title and Institution (Clinical / Academic appointment)
+                                </th>
+                                <th>
+                                    Project Role / Expertise
+                                </th>
+                                <th>
+                                    CV
+                                </th>
+                                <th>
+                                    Letter of Support
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="file" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="file" class="form-control" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <a class="btn btn-primary btn xs add-row">Add Row</a>
+
+                </div>
+
+                <hr />
+
+                <h4>Lay Summary Description of Project (max 200 words)</h4>
+                <label>Describe objectives and methodology in plain language. If funded, this description will be used to describe you project in communications.</label>
+                <div class="form-horizontal maximum-width">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <textarea class="form-control" type="text" rows="5"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <h4>Other Funding</h4>
+                <label>Results of funding from other sources may affect your approved budget, therefore please notify the deanship of scientific research immediately if you have receieved other funding. Have you applied / intending to apply for other funding for this study?</label>
+
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-md-8">
+                            <label class="radio-inline">
+                                <input type="radio" name="optradio">Yes
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optradio">No
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label> If yes, complete the table below and add rows as necessary</label>
+                    <table class="table table responsive table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Funding Agency
+                                </th>
+                                <th>
+                                    Amount Requested / Duration
+                                </th>
+                                <th>
+                                    Status
+                                </th>
+                                <th>
+                                    Date of Expected Pending Descision
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <div class="text-center">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="optradio"> Approved
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="optradio"> Declined
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="optradio"> Pending
+                                        </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <input type="date" class="form-control" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <a class="btn btn-primary btn xs add-row">Add Row</a>
+                </div>
+                <hr />
+                <h4>
+                    Suggested External Reviewers
+                </h4>
+                <label>Complete below in full (all four fields) to suggest individuals who have the appropriate expertise for the foundation to potentially ask to peer review your research grant proposal. Suggested reviewers must not be associated in any way with your project or other research activities, your hospital or academic institution. They also should not be anyone who you trained or recently collaborated with or supervised.</label>
+                <div>
+                    <table class="table table-responsive table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Suggested Reviewer
+                                </th>
+                                <th>
+                                    Contact Information (all fields required)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="vertical-align:middle">
+                                    <div class="col-md-6">
+                                        <input class="form-control" type="text" placeholder="Academic Appointment" />
+                                    </div>
+                                    <div class="col-md-6"><input class="form-control" type="text" placeholder="Name and Title" /></div>
+                                </td>
+                                <td>
+                                    <div class="col-md-12" style="margin-bottom:6px">
+                                        <input class="form-control" type="text" placeholder="Street Address/City/Province or State/Country/PostalCode" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input class="form-control" type="text" placeholder="Email" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input class="form-control" type="text" placeholder="Telephone" />
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <a class="btn btn-primary btn xs add-row">Add Row</a>
+
+                </div>
+                <hr />
+                <h4>
+                    <b>Application Instructions</b>
+                </h4>
+                <label>
+                    Your application must include each of the following sections in the requested order,
+                    using the titles and numbering as below. Page numbering is required, starting
+                    with the first page of the Application Form as page 1. The content must be single
+                    spaced, 12 pt font. Sections 1 through 9 must not exceed page limits where stated.
+                    Please read the guidelines before completing the application to ensure your
+                    project is eligible for consideration.
+                </label>
+                <ul>
+                    <li>
+                        <label>
+                            Resubmission Response (5 page maximum):
+                        </label><p>
+                            If this is a resubmission of
+                            a previously declined application to the deanship, provide a letter explaining
+                            in detail how the resubmission addresses the comments of the external peer
+                            reviewers of the previously declined submission.
+                        </p>
+                        <p><b>Attach Here: </b><input type="file" class="form-control" /></p>
+                        <br />
+                    </li>
+                    <li>
+                        <label>
+                            Statement of objectives and specific aims of the project in the form of
+                            hypothesis (1 page maximum).
+
+                        </label>
+                        <p><b>Attach Here: </b><input type="file" class="form-control" /></p>
+                        <br />
+                    </li>
+                    <li>
+                        <label>
+                            Statement of Relevance (1/2 page maximum):
+                        </label><p>
+                            Please highlight the relevance
+                            and impact of this proposal on the national level.
+                        </p>
+                        <p><b>Attach Here: </b><input type="file" class="form-control" /></p>
+                        <br />
+                    </li>
+                    <li>
+                        <label>
+                            Background, rationale and present state of knowledge (6 pages maximum).
+                            List of reference for this section (2 pages maximum).
+                        </label>
+                        <p><b>Attach Here: </b><input type="file" class="form-control" /></p>
+                        <br />
+                    </li>
+                    <li>
+                        <label>
+                            Project design, methodology and analysis (8 pages maximum). List of
+                            references for this section (1 page maximum).
+                        </label>
+                        <p><b>Attach Here: </b><input type="file" class="form-control" /></p>
+                        <br />
+                    </li>
+                    <li>
+                        <label>
+                            Project Budget requested from DSR
+                        </label>
+
+                        <p>
+                            Please read guidelines to ensure eligible items only are requested. Ineligible items will be removed.
+                        </p>
+                        <h4>
+                            Personnel
+                        </h4>
+                        <div>
+                            <table class="table table-responsive table-striped instructions">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Personnel
+                                        </th>
+                                        <th>
+                                            Year 1
+                                        </th>
+                                        <th>
+                                            Year 2
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="text" class="form-control" /></td>
+                                        <td><input type="text" class="form-control" /></td>
+                                        <td><input type="text" class="form-control" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-center" style="vertical-align:middle">Total Personnel</td>
+                                        <td><input type="text" class="form-control" /></td>
+                                        <td><input type="text" class="form-control" /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <a class="btn btn-primary btn xs add-row">Add Row</a>
+
+                        </div>
+                        <h4>
+                            Equipment
+                        </h4>
+
+                        <div>
+                            <table class="table table-responsive table-striped instructions">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Epuipment
+                                        </th>
+                                        <th>
+                                            Year 1
+                                        </th>
+                                        <th>
+                                            Year 2
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="text" class="form-control" /></td>
+                                        <td><input type="text" class="form-control" /></td>
+                                        <td><input type="text" class="form-control" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-center" style="vertical-align:middle">Total Equipment</td>
+                                        <td><input type="text" class="form-control" /></td>
+                                        <td><input type="text" class="form-control" /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <a class="btn btn-primary btn xs add-row">Add Row</a>
+
+                        </div>
+                        <h4>
+                            Material & Supplies
+                        </h4>
+                        <div>
+                            <table class="table table-responsive table-striped instructions">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Material & Supplies
+                                        </th>
+                                        <th>
+                                            Year 1
+                                        </th>
+                                        <th>
+                                            Year 2
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="text" class="form-control" /></td>
+                                        <td><input type="text" class="form-control" /></td>
+                                        <td><input type="text" class="form-control" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-center" style="vertical-align:middle">Total Material & Supplies</td>
+                                        <td><input type="text" class="form-control" /></td>
+                                        <td><input type="text" class="form-control" /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <a class="btn btn-primary btn xs add-row">Add Row</a>
+
+                        </div>
+                        <h4>
+                            Other Expenses
+                        </h4>
+                        <div>
+                            <table class="table table-responsive table-striped instructions">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Expense
+                                        </th>
+                                        <th>
+                                            Year 1
+                                        </th>
+                                        <th>
+                                            Year 2
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="text" class="form-control" /></td>
+                                        <td><input type="text" class="form-control" /></td>
+                                        <td><input type="text" class="form-control" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-center" style="vertical-align:middle">Total Other Expenses</td>
+                                        <td><input type="text" class="form-control" /></td>
+                                        <td><input type="text" class="form-control" /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <a class="btn btn-primary btn xs add-row">Add Row</a>
+
+                        </div>
+
+                        <h4>
+                            Total Project Budget Requested
+
+                        </h4>
+                        <table class="table table-responsive table-striped">
+                            <tbody>
+                                <tr>
+                                    <td class="text-center" style="vertical-align:middle">TOTAL PROJECT BUDGET REQUESTED (maximum per year for up to two years)</td>
+                                    <td><input type="text" class="form-control" /></td>
+                                    <td><input type="text" class="form-control" /></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </li>
+                    <li>
+                        <label>
+                            Project Budget Rationale (2 page maximum) All the above items require
+                            additional explanation to justify funding. Please provide in this section.
+                        </label>
+                        <p>
+                            <b>Personnel: </b>Describe type/role of personnel and indicate amount of time per
+                            week or month
+                        </p><p>
+                            <b>Equipment: </b>Describe type and quantities and how it will be used for study
+                        </p><p>
+                            <b>Materials & Supplies: </b>Describe type and quantities required and how will be
+                            used for study
+                        </p>
+                        <p>
+                            <b>Other Expenses: </b>Full detailed description, quantities and amounts must be provided
+                        </p>
+                        <p><b>Attach Here: </b><input type="file" class="form-control" /></p>
+                        <br />
+                    </li>
+                    <li>
+                        <label>
+                            Project timetable: use the provided form to give detailed time line for your
+                            research.
+                        </label>
+                        <div style="background:#f9f9f9; padding:20px;">
+                            <h4>First Year</h4>
+                            <div>
+                                <table class="table-responsive table-striped table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:160px">Task</th>
+                                            <th>Month 1</th>
+                                            <th>Month 2</th>
+                                            <th>Month 3</th>
+                                            <th>Month 4</th>
+                                            <th>Month 5</th>
+                                            <th>Month 6</th>
+                                            <th>Month 7</th>
+                                            <th>Month 8</th>
+                                            <th>Month 9</th>
+                                            <th>Month 10</th>
+                                            <th>Month 11</th>
+                                            <th>Month 12</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="text" class="form-control" placeholder="Task Name" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <a class="btn btn-primary btn xs add-row">Add Row</a>
+
+                            </div>
+                            <hr />
+                            <h4>Second Year</h4>
+                            <div>
+                                <table class="table-responsive table-striped table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:160px">Task</th>
+                                            <th>Month 1</th>
+                                            <th>Month 2</th>
+                                            <th>Month 3</th>
+                                            <th>Month 4</th>
+                                            <th>Month 5</th>
+                                            <th>Month 6</th>
+                                            <th>Month 7</th>
+                                            <th>Month 8</th>
+                                            <th>Month 9</th>
+                                            <th>Month 10</th>
+                                            <th>Month 11</th>
+                                            <th>Month 12</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="text" class="form-control" placeholder="Task Name" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                            <td><input type="text" class="form-control" placeholder="" /></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <a class="btn btn-primary btn xs add-row">Add Row</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <label>
+                            Other Funding Summary If funding has been requested from other sources,
+                            please provide the summary, budget and budget justification from these applications.
+                        </label>
+                        <p><b>Attach Here: </b><input type="file" class="form-control" /></p>
+                        <br />
+                    </li>
+                    <li>
+                        <label>Appendices (30 pages maximum)</label>
+                        <p><b>Attach Here: </b><input type="file" class="form-control" /></p>
+                        <br />
+                    </li>
+                    <li>
+                        <label>
+                            Curriculum Vitae for PI, co-PI (if applicable) and each co-investigator:
+                        </label>
+                        <p>
+                            Each
+                            CV is to be made up of two components: the first component is to be limited to
+                            three pages and will include all relevant information such as education, appointments,
+                            committees, etc. The second component is to be a list of publications,
+                            presentations, grants received, etc. for the past 5 years only. Both components
+                            are required.
+                        </p>
+                    </li>
+                    <li>
+                        <label>
+                            Deanship of scientific research Report (1 page per grant):
+                        </label>
+                        <p>
+                            If a deanship of scientific
+                            research grant has been received by the Principal Investigator in the past,
+                            please provide citations for all publications or presentations resulting from the
+                            grant. Please specify if presentations are podium or poster. If none are available,
+                            please provide a summary of the results of research and the reasons for the lack
+                            of publication or presentation.
+                        </p>
+                        <p><b>Attach Here: </b><input type="file" class="form-control" /></p>
+                        <br />
+                    </li>
+                </ul>
+            </div>
+            <ul>
+                <li>
+                    <label>الأنشطة المقترحة:</label>
+                    <p>
+                        (ثلاث أنشطة أو فعليات نابعة من البحث لخدمة المجتمع)
+                    </p>
+                    <table class="table-responsive table table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    م
+                                </th>
+                                <th>
+                                    اسم الفعالية
+                                </th>
+                                <th>
+                                    نوعها
+                                </th>
+                                <th>
+                                    مكانها
+                                </th>
+                                <th>
+                                    تاريخها
+                                </th>
+                                <th>
+                                    وصفها
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    1
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    2
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    3
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+                <li>
+                    <label>جهات الاستفادة من مخرجات البحث:</label>
+
+                    <div>
+                        <table class="table-responsive table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        الجهة
+                                    </th>
+                                    <th>
+                                        عنوانها
+                                    </th>
+                                    <th>
+                                        وصف الاستفادة الممكنة
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input type="text" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <a class="btn btn-primary btn xs add-row">Add Row</a>
+
+                    </div>
+                </li>
+
+                <li>
+                    <label>أوعية النشر المناسبة لنشر البحث:</label>
+
+                    <div>
+                        <table class="table-responsive table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        اسم وعاء النشر
+                                    </th>
+                                    <th>
+                                        عنوانها
+                                    </th>
+                                    <th>
+                                        سبب اختياره
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input type="text" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <a class="btn btn-primary btn xs add-row">Add Row</a>
+                    </div>
+                </li>
+            </ul>
+            <hr />
+        }
+        else
+        {
+            <div class="form-group">
+                <label class="col-md-12 text-center">
+                    2- الخطة المنهجية للمشروع
+                </label>
+                <label class="control-label col-md-3">
+                    اهمية المشروع
+                </label>
+                <div class="col-md-9">
+                    @Html.TextAreaFor(m => m.RequestData.ProjectImportant, new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    المشكلة
+                </label>
+                <div class="col-md-9">
+                    @Html.TextAreaFor(m => m.RequestData.Problem, new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    الاهداف
+                </label>
+                <div class="col-md-9">
+                    @Html.TextAreaFor(m => m.RequestData.StatementOfObjectives, new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    التساؤلات - الفرضيات
+                </label>
+                <div class="col-md-7">
+                    @Html.TextAreaFor(m => m.RequestData.Assuptions, new { @class = "form-control", rows = 10 })
+                </div>
+                <div class="checkbox-inline col-md-2">
+                    <label>
+                        @Html.CheckBox("NotReq_Theories", false, new { @class = "radio" })لا ينطبق
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    المصطلاحات و المفاهيم
+                </label>
+                <div class="col-md-9">
+                    @Html.TextAreaFor(m => m.RequestData.TermAndConcepts, new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    ضابط وحدود الموضوع (الحدود المكانية والزمانية)
+                </label>
+                <div class="col-md-9">
+                    @Html.TextAreaFor(m => m.RequestData.ScopeofSubject, new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    الاطار المرجعي (النظري)للمشروع - ان وجد:-
+                </label>
+                <div class="col-md-7">
+                    @Html.TextAreaFor(m => m.RequestData.ThiorticalFramework, new { @class = "form-control", rows = 10 })
+                </div>
+                <div class="checkbox-inline col-md-2">
+                    <label>
+                        @Html.CheckBox("NotReq_ReferFrame", false, new { @class = "radio" })لا ينطبق
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    الدراسات السابقة
+                </label>
+                <div class="col-md-9">
+                    @Html.TextAreaFor(m => m.RequestData.PreviousStudy, new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    تقسيمات البحث (الابواب والفصول)
+                </label>
+                <div class="col-md-9">
+                    @Html.TextAreaFor(m => m.RequestData.Chapters, new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    المراجع و المصادر المقترحة
+                </label>
+                <div class="col-md-9">
+                    @Html.TextAreaFor(m => m.RequestData.Refrences, new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-12 text-center">
+                    3- الجدول الزمني لتنفيذ المشروع
+                </label>
+                <label class="control-label col-md-2">
+                    تاريخ البداية
+                </label>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(m => m.RequestTT.Year, new { @class = "form-control", @type = "date" })
+                </div>
+            </div>
+            <div class="form-group">
+                <table class="table table-bordered">
+                    <thead>
+                        <colgroup span="12"></colgroup>
+                        <tr>
+                            <th scope="col" rowspan="2">البند Items</th>
+                            <th scope="col" rowspan="2">المهمة و المكلف Planned sequence of major tasks</th>
+                            <th colspan="12" scope="colgroup">السنة الاولي 12 شهرا First Year (12 months)</th>
+                        </tr>
+                        <tr>
+                            <th scope="col">1</th>
+                            <th scope="col">2</th>
+                            <th scope="col">3</th>
+                            <th scope="col">4</th>
+                            <th scope="col">5</th>
+                            <th scope="col">6</th>
+                            <th scope="col">7</th>
+                            <th scope="col">8</th>
+                            <th scope="col">9</th>
+                            <th scope="col">10</th>
+                            <th scope="col">11</th>
+                            <th scope="col">12</th>
+                            <th><a href="#taskstbodya" id="taskstbodya" class="btn btn-default" onclick="AddTaskTR(this);">إضافة بند</a></th>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.TextBox("ItemsNo1", null, new { @class = "form-control" })
+                            </td>
+                            <td>@Html.TextBox("TaskNo1", null, new { @class = "form-control" })</td>
+                            <td>@Html.TextBox("Jan1", null, new { @class = "form-control" })</td>
+                            <td>@Html.TextBox("Feb1", null, new { @class = "form-control" })</td>
+                            <td>@Html.TextBox("Mar1", null, new { @class = "form-control" })</td>
+                            <td>@Html.TextBox("Apr1", null, new { @class = "form-control" })</td>
+                            <td>@Html.TextBox("May1", null, new { @class = "form-control" })</td>
+                            <td>@Html.TextBox("Jun1", null, new { @class = "form-control" })</td>
+                            <td>@Html.TextBox("Jul1", null, new { @class = "form-control" })</td>
+                            <td>@Html.TextBox("Aug1", null, new { @class = "form-control" })</td>
+                            <td>@Html.TextBox("Sep1", null, new { @class = "form-control" })</td>
+                            <td>@Html.TextBox("Oct1", null, new { @class = "form-control" })</td>
+                            <td>@Html.TextBox("Nov1", null, new { @class = "form-control" })</td>
+                            <td>@Html.TextBox("Dec1", null, new { @class = "form-control" })</td>
+
+                        </tr>
+                    </thead>
+                    <tbody id="taskstbody"></tbody>
+                </table>
+
+                <input type="hidden" id="ttcount" name="ttcount" value="1" />
+
+                <script nonce="@Html.ScriptNonce()">
+                    var taskcount = 1;
+
+                    function AddTaskTR(e) {
+                        taskcount++;
+
+                        $("#ttcount").val(taskcount);
+
+                        var content =
+                            '<tr>' +
+                            '<td><input type="text" id="ItemNo' + taskcount + '" name="ItemNo' + taskcount + '" class="form-control" /></td>' +
+                            '<td><input type="text" id="TaskNo' + taskcount + '" name="TaskNo' + taskcount + '" class="form-control" /></td>' +
+                            '<td><input type="text" id="Jan' + taskcount + '" name="Jan' + taskcount + '" class="form-control" /></td>' +
+                            '<td><input type="text" id="Feb' + taskcount + '" name="Feb' + taskcount + '" class="form-control" /></td>' +
+                            '<td><input type="text" id="Mar' + taskcount + '" name="Mar' + taskcount + '" class="form-control" /></td>' +
+                            '<td><input type="text" id="Apr' + taskcount + '" name="Apr' + taskcount + '" class="form-control" /></td>' +
+                            '<td><input type="text" id="May' + taskcount + '" name="May' + taskcount + '" class="form-control" /></td>' +
+                            '<td><input type="text" id="Jun' + taskcount + '" name="Jun' + taskcount + '" class="form-control" /></td>' +
+                            '<td><input type="text" id="Jul' + taskcount + '" name="Jul' + taskcount + '" class="form-control" /></td>' +
+                            '<td><input type="text" id="Aug' + taskcount + '" name="Aug' + taskcount + '" class="form-control" /></td>' +
+                            '<td><input type="text" id="Sep' + taskcount + '" name="Sep' + taskcount + '" class="form-control" /></td>' +
+                            '<td><input type="text" id="Oct' + taskcount + '" name="Oct' + taskcount + '" class="form-control" /></td>' +
+                            '<td><input type="text" id="Nov' + taskcount + '" name="Nov' + taskcount + '" class="form-control" /></td>' +
+                            '<td><input type="text" id="Dec' + taskcount + '" name="Dec' + taskcount + '" class="form-control" /></td>' +
+                            '<td><a href="#taskstbody" class="btn btn-danger" onclick="RemoveTaskTR(this);">حذف</a></td>' +
+                            '</tr>';
+
+                        $("#taskstbody").append(content);
+                    }
+
+                    function RemoveTaskTR(element) {
+                        taskcount--;
+
+                        $("#ttcount").val(taskcount);
+
+                        $(element).parent().parent().remove();
+                    }
+                </script>
+            </div>
+            <div class="form-group">
+                <label class="col-md-12 text-center">
+                    7- الانشطة المقترحة
+                </label>
+                <label class="col-md-12 text-center">
+                    (ثلاثة انشطة او فعليات نابعة من البحث لخدمة المجتمع)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="hidden" id="ReqActiv" name="ReqActiv" value="1" />
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>اسم الفعالية</th>
+                            <th> نوعها</th>
+                            <th>مكانها</th>
+                            <th> تاريخها</th>
+                            <th>وصفها</th>
+                            <th>
+                                <a href="#requesttbody" class="btn btn-default" onclick="AddRequestActivity();">إضافة</a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="requesttbody">
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" id="RequestActivityTitle1" name="RequestActivityTitle1" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" id="RequestActivityType1" name="RequestActivityType1" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" id="RequestActivityPlace1" name="RequestActivityPlace1" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" id="RequestActivityActivityDate1" name="RequestActivityActivityDate1" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" id="RequestActivityDescription1" name="RequestActivityDescription1" />
+                            </td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <script nonce="@Html.ScriptNonce()">
+                    var racount = 1;
+
+                    function AddRequestActivity() {
+                        racount++;
+
+                        var racontent = "";
+
+                        racontent = racontent + '<tr>' +
+                            '<td><input type="text" class="form-control" id="RequestActivityTitle' + racount + '" name="RequestActivityTitle' + racount + '" /></td>' +
+                            '<td><input type="text" class="form-control" id="RequestActivityType' + racount + '" name="RequestActivityType' + racount + '" /></td>' +
+                            '<td><input type="text" class="form-control" id="RequestActivityPlace' + racount + '" name="RequestActivityPlace' + racount + '" /></td>' +
+                            '<td><input type="text" class="form-control" id="RequestActivityActivityDate' + racount + '" name="RequestActivityActivityDate' + racount + '" /></td>' +
+                            '<td><input type="text" class="form-control" id="RequestActivityDescription' + racount + '" name="RequestActivityDescription' + racount + '" /></td>' +
+                            '<td><a href="#requesttbody" class="btn btn-danger" onclick="RemoveRATR(this);">حذف</a></td>' +
+                            '</tr>';
+
+                        $("#requesttbody").append(racontent);
+                    }
+
+                    function RemoveRATR(element) {
+                        racount--;
+
+                        $("#ReqActiv").val(racount);
+                        $(element).parent().parent().remove();
+                    }
+                </script>
+            </div>
+            <div class="form-group">
+                <label class="col-md-12 text-center">
+                    8- جهات الاستفادة من مخرجات البحث
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="hidden" id="ReqBeni" name="ReqBeni" value="1" />
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>الجهة</th>
+                            <th>عنوانها</th>
+                            <th>وصف الاستفادة منها</th>
+                            <th>
+                                <a href="#athtbody" class="btn btn-default" onclick="AddATH();">إضافة</a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="athtbody">
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" id="RequestBenificialTitle1" name="RequestBenificialTitle1" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" id="RequestBenificialAddress1" name="RequestBenificialAddress1" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" id="RequestBenificialDescription1" name="RequestBenificialDescription1" />
+                            </td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <script nonce="@Html.ScriptNonce()">
+                    var athcount = 1;
+
+                    function AddATH() {
+                        athcount++;
+
+                        var rcontent = "";
+
+                        rcontent = '<tr>' +
+                            '<td><input type="text" class="form-control" id="RequestBenificialTitle' + athcount + '" name="RequestBenificialTitle' + racount + '" /></td>' +
+                            '<td><input type="text" class="form-control" id="RequestBenificialAddress' + athcount + '" name="RequestBenificialAddress' + racount + '" /></td>' +
+                            '<td><input type="text" class="form-control" id="RequestBenificialDescription' + athcount + '" name="RequestBenificialDescription' + racount + '" /></td>' +
+                            '<td><a href="#athtbody" class="btn btn-danger" onclick="RemoveRATR(this);">حذف</a></td>' +
+                            '</tr>';
+
+                        $("#athtbody").append(rcontent);
+                    }
+
+                    function RemoveATH(element) {
+                        athcount--;
+
+                        $("#ReqBeni").val(athcount);
+                        $(element).parent().parent().remove();
+                    }
+                </script>
+
+            </div>
+            <div class="form-group">
+                <label class="col-md-12 text-center">10- @LangHelpers.Instance["CVOfTheResearchers"]</label>
+                <label class="col-md-12 text-center">
+                    @LangHelpers.Instance["ThisIsLimitedToThePrincipalResearcherResearcherCoResearchersAndAdvisorAdvisors"]
+                </label>
+            </div>
+            <br />
+            <div class="form-group">
+
+            </div>
+            <div class="form-group">
+                @Html.TextArea("CV", null, new { @class = "form-control", rows = 10 })
+            </div>
+
+        }
+    }
+
+
+
+    @this.ScriptBlock(
+                    @<script type="text/javascript" nonce="@Html.ScriptNonce()">
+        var cores = 1;
+        $(document).on('click', '.add-researcher', function () {
+
+            var html = '<div class="co-res"><br><br><br><hr /><label class="control-label col-md-3 no">باحث المشترك ' + cores + '</label><br /><br /><label class="control-label col-md-3">الاسم</label><div class="col-md-5"><div class="col-md-3 no-padding">    <input class="form-control" id="Researcher_FirstName" name="Researcher.FirstName" type="text" value="" /></div><div class="col-md-3 no-padding">    <input class="form-control" id="Researcher_SecondName" name="Researcher.SecondName" type="text" value="" /></div><div class="col-md-3 no-padding">    <input class="form-control" id="Researcher_ThirdName" name="Researcher.ThirdName" type="text" value="" /></div><div class="col-md-3 no-padding">    <input class="form-control" id="Researcher_LastName" name="Researcher.LastName" type="text" value="" /></div></div><br /><br /><label class="control-label col-md-3">الرتبة العلمية</label><div class="col-md-5"><select class="form-control" data-val="true" data-val-number="The field DegreeId must be a number." id="Researcher_DegreeId" name="Researcher.DegreeId"><option value="">اختر</option><option value="1">Bachelor</option></select></div><br /><br /><label class="control-label col-md-3">الجامعة</label><div class="col-md-5"><select class="form-control" data-val="true" data-val-number="The field UniversityId must be a number." id="Researcher_UniversityId" name="Researcher.UniversityId"><option value="">اختر</option><option value="1">جامعة الإمام محمد بن سعود الإسلامية</option></select></div><br /><br /><label class="control-label col-md-3">الكلية</label><div class="col-md-5"><select class="form-control" data-val="true" data-val-number="The field CollegeId must be a number." id="Researcher_CollegeId" name="Researcher.CollegeId"><option value="">اختر</option><option value="1">المعهد العالي لدعوة والإحتساب</option><option value="2">كلية العلوم </option><option value="3">معهد تعليم اللغة العربية</option><option value="4">كلية الإقتصاد والعلوم الإدارية</option><option value="5">كلية علوم الحاسب والمعلومات</option><option value="6">كلية اللغة العربية</option><option value="7">كلية اللغات و الترجمة</option><option value="8">معهد الملك عبدالله للترجمة والتعربية</option><option value="9">كلية الإعلام والإتصال</option><option value="10">كلية الشريعة</option><option value="11">كلية أصول الدين</option></select></div><br /><br /><label class="control-label col-md-3 hide">القسم العلمي</label><div class="col-md-5 hide"><select class="form-control" data-val="true" data-val-number="The field DepartmentId must be a number." id="Researcher_DepartmentId" name="Researcher.DepartmentId"><option value="">اختر</option><option value="1">قسم 1</option><option value="2">قسم 2</option></select></div><br /><br /><label class="control-label col-md-3">الجوال</label><div class="col-md-5"><input class="form-control" id="Researcher_MobileNo" name="Researcher.MobileNo" type="tel" value="" /></div><br /><br /><label class="control-label col-md-3">البريد الإلكتروني</label><div class="col-md-5"><input class="form-control" id="Researcher_Email" name="Researcher.Email" type="text" value="" /></div><br /><br /><label class="control-label col-md-3">رقم الهوية</label><div class="col-md-5"><input class="form-control" id="Researcher_Iban" name="Researcher.Iban" type="text" value="" /></div><br /><br /><label class="control-label col-md-3">الجنسية</label><div class="col-md-5"><input class="form-control" data-val="true" data-val-number="The field NationalityId must be a number." id="Researcher_NationalityId" name="Researcher.NationalityId" type="number" value="" /></div><br><br><div class="col-md-2"><a class="btn btn-danger remove-researcher"> حذف </a></div><div class="col-md-3"><a class="btn btn-primary add-researcher"> إضافة باحث مشارك </a></div></div>';
+
+
+            var hx = '@(Html.Raw(Html.Partial("_ResearchersPartial",Model).ToHtmlString().Replace("\r\n", " ")))';
+            //var htmlEl = $('#main-researcher').html();
+            var htmlEl = hx.replaceAll("Researchers_0", "Researchers_" + cores);
+            htmlEl = htmlEl.replaceAll("Researchers[0]", "Researchers[" + cores + "]");
+            htmlEl = htmlEl.replace("الباحث الرئيسي", "الباحث المشترك " + (cores));
+            $('#researchers').append('<div class="co-res"><br><br><br><hr />' + htmlEl + '<br><br><div class="col-md-2"></div><div class="col-md-3"><a class="btn btn-primary add-researcher"> إضافة باحث مشارك </a></div></div></div>');
+            //$('select').selectpicker('refresh');
+            cores++;
+        });
+
+        $(document).on('click', '.remove-researcher', function () {
+            this.closest('.co-res').remove();
+            var c = $('.co-res').length;
+            for (var i = 0; i < c; i++) {
+                //$('.co-res').eq(i).find('.no').empty().html('باحث المشترك ' + (i+1));
+            }
+            cores = (i + 1);
+        });
+
+        $('#Researcher_UniversityId').change(function () {
+            var selectedUniversity = $(this).val();
+            if (selectedUniversity != null && selectedUniversity != '') {
+                $.getJSON(baseAjaxUrl + 'GetColleges?UniversityId=' + selectedUniversity, function (colleges) {
+                    var collegeSelect = $('#Researcher_CollegeId');
+                    collegeSelect.empty();
+                    collegeSelect.html('<option>@LangHelpers.Instance["select"]</option>');
+                    $.each(colleges, function (index, college) {
+                        collegeSelect.append($('<option />', {
+                            value: college.value,
+                            text: college.text
+                        }));
+                    });
+
+                    //collegeSelect.selectpicker('refresh');
+                });
+            }
+        });
+        $('#Researcher_UniversityId2').change(function () {
+            var selectedUniversity = $(this).val();
+            if (selectedUniversity != null && selectedUniversity != '') {
+                $.getJSON(baseAjaxUrl + 'GetColleges?UniversityId=' + selectedUniversity, function (colleges) {
+                    var collegeSelect = $('#Researcher_CollegeId2');
+                    collegeSelect.empty();
+                    collegeSelect.html('<option>@LangHelpers.Instance["select"]</option>');
+                    $.each(colleges, function (index, college) {
+                        collegeSelect.append($('<option />', {
+                            value: college.value,
+                            text: college.text
+                        }));
+                    });
+
+                    //collegeSelect.selectpicker('refresh');
+                });
+            }
+        });
+        $('#Researcher_UniversityId3').change(function () {
+            var selectedUniversity = $(this).val();
+            if (selectedUniversity != null && selectedUniversity != '') {
+                $.getJSON(baseAjaxUrl + 'GetColleges?UniversityId=' + selectedUniversity, function (colleges) {
+                    var collegeSelect = $('#Researcher_CollegeId3');
+                    collegeSelect.empty();
+                    collegeSelect.html('<option>@LangHelpers.Instance["select"]</option>');
+                    $.each(colleges, function (index, college) {
+                        collegeSelect.append($('<option />', {
+                            value: college.value,
+                            text: college.text
+                        }));
+                    });
+
+                    //collegeSelect.selectpicker('refresh');
+                });
+            }
+        });
+        ////////////////
+        $('#Researcher_CollegeId').change(function () {
+            var selectedCollege = $(this).val();
+            if (selectedCollege != null && selectedCollege != '') {
+                $.getJSON(baseAjaxUrl + 'GetDepartments?CollegeId=' + selectedCollege, function (Depts) {
+                    var DeptSelect = $('#Researcher_DepartmentId');
+                    DeptSelect.empty();
+                    DeptSelect.html('<option>@LangHelpers.Instance["select"]</option>');
+                    $.each(Depts, function (index, college) {
+                        DeptSelect.append($('<option />', {
+                            value: college.value,
+                            text: college.text
+                        }));
+                    });
+
+                    //DeptSelect.selectpicker('refresh');
+                });
+            }
+        });
+        $('#Researcher_CollegeId2').change(function () {
+            var selectedCollege = $(this).val();
+            if (selectedCollege != null && selectedCollege != '') {
+                $.getJSON(baseAjaxUrl + 'GetDepartments?CollegeId=' + selectedCollege, function (Depts) {
+                    var DeptSelect = $('#Researcher_DepartmentId2');
+                    DeptSelect.empty();
+                    DeptSelect.html('<option>@LangHelpers.Instance["select"]</option>');
+                    $.each(Depts, function (index, college) {
+                        DeptSelect.append($('<option />', {
+                            value: college.value,
+                            text: college.text
+                        }));
+                    });
+
+                    //DeptSelect.selectpicker('refresh');
+                });
+            }
+        });
+        $('#Researcher_CollegeId3').change(function () {
+            var selectedCollege = $(this).val();
+            if (selectedCollege != null && selectedCollege != '') {
+                $.getJSON(baseAjaxUrl + 'GetDepartments?CollegeId=' + selectedCollege, function (Depts) {
+                    var DeptSelect = $('#Researcher_DepartmentId3');
+                    DeptSelect.empty();
+                    DeptSelect.html('<option>@LangHelpers.Instance["select"]</option>');
+                    $.each(Depts, function (index, college) {
+                        DeptSelect.append($('<option />', {
+                            value: college.value,
+                            text: college.text
+                        }));
+                    });
+
+                    //DeptSelect.selectpicker('refresh');
+                });
+            }
+        });
+        var corescount = 1
+        $('.add-row').click(function () {
+
+            if ($(this).parent().find('table').hasClass('co-investigators')) {
+                if (corescount >= 3) {
+                    return false;
+                } else if (corescount == 2) {
+                    $(this).attr('disabled', '');
+                }
+                corescount++;
+            } else if ($(this).parent().find('table').hasClass('instructions')) {
+                var x = $(this).parent().find('tbody tr').first().html();
+                x = '<tr>' + x + '</tr>';
+                $(this).parent().find('tr:last').prev().after(x);
+                return false;
+            }
+            var x = $(this).parent().find('tbody tr').first().html();
+            x = '<tr>' + x + '</tr>';
+            $(this).parent().find('tbody').append(x);
+        });
+
+                    </script>
+                                                )
+

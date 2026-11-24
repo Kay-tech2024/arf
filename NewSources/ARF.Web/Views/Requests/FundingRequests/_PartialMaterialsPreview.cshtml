@@ -1,0 +1,52 @@
+﻿@model RequestSummaryViewModel2
+
+@{
+
+    var index = ViewBag.Index != null && ViewBag.Index > 0 ? (int)ViewBag.Index : 0;
+
+    if (Model.Materials == null || Model.Materials.Count == 0)
+    {
+        Model.Materials = new List<MaterialsViewModel>
+{
+new MaterialsViewModel
+{
+
+}
+
+};
+    }
+
+    var id = ViewBag.IsTemplate == true ? "Materials{index}" : "Materials" + index;
+}
+
+<tr data-index="@(ViewBag.IsTemplate == null? index + "" : "{index}")">
+    <td>@(ViewBag.IsTemplate == null ? (index + 1) + "" : "{order}")</td>
+    <td>
+        @Html.TextBoxFor(m => m.Materials[index].Name, new { @class = "form-control", placeholder = LangHelpers.Instance["material_name"] })
+        @Html.ValidationMessageFor(m => m.Materials[index].Name)
+    </td>
+    <td>
+        @Html.TextBoxFor(m => m.Materials[index].Amount, new { @class = "form-control", placeholder = LangHelpers.Instance["amount_in_grams"] })
+        @Html.ValidationMessageFor(m => m.Materials[index].Amount)
+    </td>
+    <td>
+        @Html.DropDownListFor(m => m.Materials[index].Type, new SelectList(Model.MaterialTypes, "Value", "Text", Model.Materials[index].Type), LangHelpers.Instance["select"], new { @class = "form-control", placeholder = LangHelpers.Instance["material_type"], @disabled = "disabled" })
+        @Html.ValidationMessageFor(m => m.Materials[index].Type)
+    </td>
+    <td>
+        @Html.TextBoxFor(m => m.Materials[index].Usage, new { @class = "form-control", placeholder = LangHelpers.Instance["material_usage"] })
+        @Html.ValidationMessageFor(m => m.Materials[index].Usage)
+    </td>
+    <td>
+        @Html.TextBoxFor(m => m.Materials[index].Cost, new { @class = "form-control", placeholder = LangHelpers.Instance["material_cost"] })
+        @Html.ValidationMessageFor(m => m.Materials[index].Cost)
+    </td>
+
+
+    <td>
+        @*@if (index > 5 || ViewBag.IsTemplate == true)
+        {
+            <a href="#" class="btnRemoveRow btn btn-danger">@LangHelpers.Instance["remove"]</a>
+        }*@
+    </td>
+</tr>

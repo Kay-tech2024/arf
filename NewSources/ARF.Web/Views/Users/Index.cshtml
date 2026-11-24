@@ -1,0 +1,145 @@
+﻿@model EditUserViewModel
+
+@{
+    ViewBag.Title = @LangHelpers.Instance["user_management"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<ul class="breadcrumb">
+    <li>@Html.ActionLink(LangHelpers.Instance["homepage"], "Index", "Home")</li>
+    <li>@LangHelpers.Instance["user_management"]</li>
+</ul>
+
+@if (Utils.HasPrivilagesAny(Privilages.users_create_user))
+{
+    <a class="btn btn-icon btn-success btn-add btn-lg" href="~/Users/Create"><i class="fa fa-plus-circle"></i>@LangHelpers.Instance["create"]</a>
+}
+
+<div class="box2 box2-info">
+    <div class="fluid-container">
+        <div>
+
+            <div class="col col-sm-12">
+                <div class="table-responsive">
+                    <table id="example" style="width: 100%;" class="table table-striped table-small-font table-vmiddle">
+                        <thead>
+                            <tr>
+                                <th scope="col" data-column-id="updated" data-width="50px" data-visible="false" data-order="desc"></th>
+
+                                <th scope="col" data-column-id="fullName">
+                                    @LangHelpers.Instance["name"]
+                                </th>
+                                <th scope="col" data-column-id="email" data-formatter="email">
+                                    @Html.DisplayNameFor(model => model.Email)
+                                </th>
+                                <th scope="col" data-column-id="userName">
+                                    @Html.DisplayNameFor(model => model.UserName)
+                                </th>
+                                <th scope="col" data-column-id="roleName">
+                                    @Html.DisplayNameFor(model => model.RoleName)
+                                </th>
+                                <th scope="col" data-column-id="collegeName">
+                                    @Html.DisplayNameFor(model => model.CollegeName)
+                                </th>
+                                <th scope="col" data-column-id="isActivated">
+                                    @Html.DisplayNameFor(model => model.IsActivated)
+                                </th>
+                                <th scope="col" data-column-id="commands" data-formatter="commands" data-sortable="false">@LangHelpers.Instance["actions"]</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript" nonce="@Html.ScriptNonce()">
+        var currentUserId = '@Utils.GetUserId()';
+        var selector = $('#example');
+        var grid = $(selector).bootgrid({
+            ajax: true,
+            rowCount: 20,
+            url: function () { return baseAjaxUrl + "ListUsers" },
+            ajaxSettings: {
+                method: "GET",
+                cache: false
+            },
+            searchSettings: {
+                delay: 3000
+            },
+            labels: {
+                all: '@LangHelpers.Instance["all"]',
+                infos: '@LangHelpers.Instance["from"] {{ctx.start}} @LangHelpers.Instance["to"] {{ctx.end}} (@LangHelpers.Instance["total"] {{ctx.total}})',
+                loading: '@LangHelpers.Instance["wait"]',
+                search: '@LangHelpers.Instance["search"]',
+                noResults: "@LangHelpers.Instance["no_users"]"
+            },
+            css: {
+                icon: 'fa icon',
+                iconColumns: 'fa-view-module',
+                iconDown: 'fa-sort-alpha-asc',
+                iconRefresh: 'fa-refresh',
+                iconUp: 'fa-sort-alpha-desc',
+                iconSearch: 'fa-search'
+            },
+            converters: {
+                datetime: {
+                    from: function (value) { return moment(value); },
+                    to: function (value) { return moment(value).format('YYYY-MM-DD'); }
+                }
+            },
+            formatters: {
+                "commands": function (column, row) {
+                    if (currentUserId == row.userId) {
+                        return '<a href="@Url.Action("Edit", "Users")?id=' + row.userId + '" class="btn btn-icon btn-info  command-edit"><span class="fa fa-edit"></span></a>&nbsp;';
+                    } else {
+                        return '<a href="@Url.Action("Edit", "Users")?id=' + row.userId + '" class="btn btn-icon btn-info  command-edit"><span class="fa fa-edit"></span></a>&nbsp;' +
+                               ' <button type=\"button\" class=\"btn btn-icon btn-danger  command-delete\" data-row-id=\"' + row.userId + '\"><span class=\"fa fa-trash\"></span></button>';
+                    }
+                },
+                "email": function (column, row) {
+                    return '<a href="mailto:' + row.email + '">' + row.email + '</a>';
+                }
+            }
+        }).on("loaded.rs.jquery.bootgrid", function () {
+            var pages = grid.bootgrid('getTotalPageCount');
+            if (pages <= 1) {
+                $(selector).next('.bootgrid-footer').find('.pagination').hide();
+            } else {
+                $(selector).next('.bootgrid-footer').find('.pagination').show();
+            }
+
+            grid.fadeIn();
+
+            grid.find(".command-delete").on("click", function (e) {
+
+                var id = $(this).data("row-id");
+
+                swal({
+                    title: "@LangHelpers.Instance["are_you_sure"]",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "@LangHelpers.Instance["yes"]",
+                    closeOnConfirm: false,
+                    cancelButtonText: '@LangHelpers.Instance["cancel"]'
+
+                }, function () {
+                    $.ajax({
+                        url: "@Url.Action("AjaxDeleteUser", "Users")/" + id,
+                        context: document.body
+                    }).done(function () {
+                        swal.close();
+                        grid.bootgrid("reload");
+                    });
+                });
+
+            });
+
+        });
+    </script>
+
+}

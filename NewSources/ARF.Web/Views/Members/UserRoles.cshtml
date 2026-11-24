@@ -1,0 +1,57 @@
+﻿@{
+    ViewBag.Title = "UserRoles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>UserRoles</h2>
+
+<div class="col-lg-12" id="AllUserRoles">
+
+    <div class="form-horizontal">
+
+        <table class="table table-responsive table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th style="width:100px">
+                        Role
+                    </th>
+                    <th style="width:100px">
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.UserOrgRoles)
+                {
+                    <tr>
+                        <td>
+                            @item.OrganizationName
+                        </td>
+                        <td>
+                            @item.RoleName
+                        </td>
+                        <td>
+                            @item.IsActivated
+                        </td>
+                        <td>
+                            @Ajax.ActionLink("Remove", "RemoveRole", new { userId = Model.user.UserId, OrgId = item.BranchId, RoleId = item.RoleId },
+                                               new AjaxOptions
+                                               {
+                                                   HttpMethod = "Post",
+                                                   InsertionMode = InsertionMode.Replace,
+                                                   UpdateTargetId = "AllUserRoles",
+                                                   LoadingElementId = "loadingdiv",
+                                               })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <hr />
+    </div>
+
+    <div id="loadingdiv" hidden="hidden" class="loading">
+        Loading...<img src="@string.Format("{0}://{1}{2}",Request.Url.Scheme,Request.Url.Authority,Url.Content("~"))Content/images/loader1.gif" />
+    </div>
+    <h3 class="modal-header">Manage Roles </h3>
+</div>

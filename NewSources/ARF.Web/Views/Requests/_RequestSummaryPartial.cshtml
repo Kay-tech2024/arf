@@ -1,0 +1,209 @@
+﻿@model RequestSummaryViewModel2
+
+@{
+    var controller = HttpContextManager.Current.Request.RequestContext.RouteData.Values["controller"].ToString().ToLower();
+    var action = HttpContextManager.Current.Request.RequestContext.RouteData.Values["action"].ToString().ToLower();
+    //var viewName = (string)null;
+
+    var _langDir = "";
+
+    var isSelectedLangArabic = Utils.IsUserLanguageArabic;
+    if (Model.Type == ReqFieldType.AppliedScienceField && isSelectedLangArabic)
+    {
+        Utils.SwitchCulture("en");
+        //var c = (System.Globalization.CultureInfo)Utils.GetDictVal("OldCulture");
+        //if (c != null)
+        //{
+        //    isSelectedLangArabic = c.Name.StartsWith("ar");
+        //}
+        if (isSelectedLangArabic)
+        {
+            _langDir = "ltr";
+        }
+        <style>
+
+            .nav-tabs > li{
+                float: left;
+            }
+
+        </style>
+    }
+}
+
+<link href="~/Content/css/quill.snow.css" rel="stylesheet">
+<link href="~/Content/css/quill.table.css" rel="stylesheet">
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel with-nav-tabs panel-info">
+            <div class="panel-heading">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#tab1infoV@(Model.TabId)" data-toggle="tab">
+                            @*<span class="step2">1</span>
+                                <br />*@
+                            @ArfStrings.step1
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#tab2infoV@(Model.TabId)" data-toggle="tab">
+                            @*<span class="step2">2</span>*@
+                            @ArfStrings.step2
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#tab3infoV@(Model.TabId)" data-toggle="tab">
+                            @*<span class="step2">3</span>*@
+                            @ArfStrings.step3
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#tab4infoV@(Model.TabId)" data-toggle="tab">
+                            @*<span class="step2">4</span>*@
+                            @ArfStrings.step4
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#tab5infoV@(Model.TabId)" data-toggle="tab">
+                            @*<span class="step2">5</span>*@
+                            @ArfStrings.step5
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#tab6infoV@(Model.TabId)" data-toggle="tab">
+                            @*<span class="step2">6</span>*@
+                            @ArfStrings.step6
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            @*<div class="panel-body">
+            *@
+            <div class="tab-content">
+                <div class="tab-pane fade in active" id="tab1infoV@(Model.TabId)">
+                    <div class="@_langDir">
+
+                        @Html.Partial("~/Views/Requests/FundingRequests/Arabic/Step1Preview.cshtml", Model)
+
+                    </div>
+
+                </div>
+                <div class="tab-pane fade" id="tab2infoV@(Model.TabId)">
+                    <div class="@_langDir">
+
+                        @Html.Partial("~/Views/Requests/FundingRequests/Arabic/Step2Preview.cshtml", Model)
+
+                    </div>
+
+
+                </div>
+                <div class="tab-pane fade" id="tab3infoV@(Model.TabId)">
+                    <div class="@_langDir">
+
+                        @Html.Partial("~/Views/Requests/FundingRequests/Arabic/Step3Preview.cshtml", Model)
+
+                    </div>
+
+
+                </div>
+                <div class="tab-pane fade" id="tab4infoV@(Model.TabId)">
+                    <div class="@_langDir">
+
+                        @Html.Partial("~/Views/Requests/FundingRequests/Arabic/Step4Preview.cshtml", Model)
+
+                    </div>
+
+                </div>
+
+                <div class="tab-pane fade" id="tab5infoV@(Model.TabId)">
+                    <div class="@_langDir">
+
+                        @Html.Partial("~/Views/Requests/FundingRequests/Arabic/Step5Preview.cshtml", Model)
+
+                    </div>
+
+                </div>
+                <div class="tab-pane fade" id="tab6infoV@(Model.TabId)">
+                    <div class="@_langDir">
+
+                        @Html.Partial("~/Views/Requests/FundingRequests/Arabic/Step6Preview.cshtml", Model)
+
+                        @{
+                            Utils.SwitchCulture(null);
+                        }
+                    </div>
+
+                </div>
+            </div>
+            @*
+                </div>*@
+        </div>
+    </div>
+</div>
+
+<style>
+    .panel.with-nav-tabs .panel-heading {
+        padding: 5px 5px 0 5px;
+    }
+
+    .panel.with-nav-tabs .nav-tabs {
+        border-bottom: none;
+    }
+
+    .panel.with-nav-tabs .nav-justified {
+        margin-bottom: -1px;
+    }
+    /********************************************************************/
+    /*** PANEL INFO ***/
+    .with-nav-tabs.panel-info .nav-tabs > li > a,
+    .with-nav-tabs.panel-info .nav-tabs > li > a:hover,
+    .with-nav-tabs.panel-info .nav-tabs > li > a:focus {
+        color: #31708f;
+    }
+
+        .with-nav-tabs.panel-info .nav-tabs > .open > a,
+        .with-nav-tabs.panel-info .nav-tabs > .open > a:hover,
+        .with-nav-tabs.panel-info .nav-tabs > .open > a:focus,
+        .with-nav-tabs.panel-info .nav-tabs > li > a:hover,
+        .with-nav-tabs.panel-info .nav-tabs > li > a:focus {
+            color: #31708f;
+            background-color: #bce8f1;
+            border-color: transparent;
+        }
+
+    .with-nav-tabs.panel-info .nav-tabs > li.active > a,
+    .with-nav-tabs.panel-info .nav-tabs > li.active > a:hover,
+    .with-nav-tabs.panel-info .nav-tabs > li.active > a:focus {
+        color: #31708f;
+        background-color: #fff;
+        border-color: #bce8f1;
+        border-bottom-color: transparent;
+    }
+
+    .with-nav-tabs.panel-info .nav-tabs > li.dropdown .dropdown-menu {
+        background-color: #d9edf7;
+        border-color: #bce8f1;
+    }
+
+        .with-nav-tabs.panel-info .nav-tabs > li.dropdown .dropdown-menu > li > a {
+            color: #31708f;
+        }
+
+            .with-nav-tabs.panel-info .nav-tabs > li.dropdown .dropdown-menu > li > a:hover,
+            .with-nav-tabs.panel-info .nav-tabs > li.dropdown .dropdown-menu > li > a:focus {
+                background-color: #bce8f1;
+            }
+
+        .with-nav-tabs.panel-info .nav-tabs > li.dropdown .dropdown-menu > .active > a,
+        .with-nav-tabs.panel-info .nav-tabs > li.dropdown .dropdown-menu > .active > a:hover,
+        .with-nav-tabs.panel-info .nav-tabs > li.dropdown .dropdown-menu > .active > a:focus {
+            color: #fff;
+            background-color: #31708f;
+        }
+    /********************************************************************/
+</style>
+
+@{
+    Utils.SwitchCulture();
+}
+

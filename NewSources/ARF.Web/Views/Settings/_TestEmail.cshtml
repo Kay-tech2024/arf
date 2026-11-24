@@ -1,0 +1,22 @@
+﻿@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("SendTestMessage", "Settings", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        @Html.Label("Email", @LangHelpers.Instance["email"], htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-9">
+            @Html.TextBox("Email", "", new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-3 col-md-9">
+            <input type="submit" value="@LangHelpers.Instance["SendTestMessage"]" class="btn btn-primary btn-lg btn-block" />
+        </div>
+    </div>
+
+}

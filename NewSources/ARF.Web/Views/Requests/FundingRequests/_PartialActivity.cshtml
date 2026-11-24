@@ -1,0 +1,58 @@
+﻿@model CommonFundingRequestViewModel
+
+@{
+
+    var index = ViewBag.Index != null && ViewBag.Index > 0 ? (int)ViewBag.Index : 0;
+
+    if (Model.SuggestedActivities == null || Model.SuggestedActivities.Count == 0)
+    {
+        Model.SuggestedActivities = new List<SuggestedActivityViewModel>
+{
+new SuggestedActivityViewModel
+{
+
+}
+
+};
+    }
+
+    var id = ViewBag.IsTemplate == true ? "SuggestedActivities{index}" : "SuggestedActivities" + index;
+}
+
+<tr data-index="@(ViewBag.IsTemplate == null? index + "" : "{index}")">
+    <td>@(ViewBag.IsTemplate == null ? (index + 1) + "" : "{order}")</td>
+    <td>
+        @if (ViewBag.IsTemplate == null)
+        {
+            <div>
+                @Html.HiddenFor(m => m.SuggestedActivities[index].Id)
+            </div>
+        }
+        @Html.TextBoxFor(m => m.SuggestedActivities[index].Name, new { @class = "form-control", placeholder = LangHelpers.Instance["activity_name"] })
+        @Html.ValidationMessageFor(m => m.SuggestedActivities[index].Name)
+    </td>
+    <td>
+        @Html.DropDownListFor(m => m.SuggestedActivities[index].Type, new SelectList(Model.ActivityTypes, "Value", "Text", Model.SuggestedActivities[index].Type), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown", placeholder = LangHelpers.Instance["activity_type"] })
+
+
+        <div class="other-div" style="display: @(Model.SuggestedActivities[index].Type == null || Model.SuggestedActivities[index].Type  > 0? "none" : "block")">
+            @Html.TextBoxFor(m => m.SuggestedActivities[index].OtherType, new { @class = "form-control", placeholder = LangHelpers.Instance["other_type"] })
+        </div>
+        @Html.ValidationMessageFor(m => m.SuggestedActivities[index].Type)
+    </td>
+    <td>
+        @Html.TextBoxFor(m => m.SuggestedActivities[index].Address, new { @class = "form-control", placeholder = LangHelpers.Instance["activity_address"] })
+        @Html.ValidationMessageFor(m => m.SuggestedActivities[index].Address)
+    </td>
+    <td>
+        @Html.TextBoxFor(m => m.SuggestedActivities[index].Description, new { @class = "form-control", placeholder = LangHelpers.Instance["benefit_description"] })
+        @Html.ValidationMessageFor(m => m.SuggestedActivities[index].Description)
+    </td>
+
+    <td>
+        @if (index > 0 || ViewBag.IsTemplate == true)
+        {
+            <a href="#" class="btnRemoveRow btn btn-danger">@LangHelpers.Instance["remove"]</a>
+        }
+    </td>
+</tr>

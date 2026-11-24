@@ -1,0 +1,358 @@
+﻿@*@model ImportViewModel
+@{
+    ViewBag.Title = "Import";
+}
+
+<ul class="breadcrumb">
+    <li>@Html.ActionLink(EcsStrings.home, "Index", "Home")</li>
+    <li>@LangHelpers.Instance["import"]</li>
+</ul>
+
+
+@if (ViewBag.ResultsLink != null)
+{
+    <div class="alert alert-success">
+        <a href="@ViewBag.ResultsLink">Download results file</a>
+    </div>
+}
+
+@if (TempData["message_data"] != null && TempData["message_data"] is ImportResult)
+{
+    var result = TempData["message_data"] as ImportResult;
+
+
+    <div class="alert alert-@(result.ErrorsNins.Count > 0? "warning" : "success")">
+        <ul class="text-left">
+            <li>@LangHelpers.Instance["Totalrows"] <b>@result.Total</b></li>
+            <li>@LangHelpers.Instance["imported"]: <b>@result.ImportedNins.Count</b></li>
+            <li>@LangHelpers.Instance["updated"]: <b>@result.UpdatedNins.Count</b></li>
+            <li>@LangHelpers.Instance["skip"]: <b>@result.Skipped</b></li>
+            <li>
+                @LangHelpers.Instance["Errorsrows"] <b>@result.ErrorsNins.Count</b>
+                <ul>
+                    @foreach (var kv in result.ErrorsNins.OrderBy(e => e.Key))
+                    {
+                        <li><b>@kv.Key</b>: @kv.Value</li>
+                    }
+                </ul>
+            </li>
+        </ul>
+    </div>
+}
+
+<div class="box box-success">
+
+    @using (Html.BeginForm("Index", "Import", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal maximum-width" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group required">
+                <label class="control-label col-md-3">@LangHelpers.Instance["Format"]</label>
+                <div class="col-md-9">
+                    @Html.DropDownListFor(model => model.Format, new SelectList(Model.ImportFormats), @LangHelpers.Instance["Select"], htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Format, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div id="divProvider" class="form-group required" style="display: none;">
+                <label class="control-label col-md-3">@LangHelpers.Instance["provider_name"]</label>
+                <div class="col-md-6">
+                    @Html.DropDownListFor(m => m.ProviderId, new SelectList(Model.Providers, "Id", "NameEnglish"), EcsStrings.Select, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ProviderId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div id="divJpc" class="form-group required" style="display: none;">
+                <label class="control-label col-md-3">@LangHelpers.Instance["jpcs"]</label>
+                <div class="col-md-6">
+                    @Html.DropDownListFor(m => m.JpcId, new SelectList(Model.JPCs, "Id", "NameEnglish"), EcsStrings.Select, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.JpcId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div id="divOsr" style="display: none;">
+                <div class="form-group required">
+                    <div class="col-md-6 col-md-offset-3">
+                        <label class="checkbox">
+                            @Html.EditorFor(m => m.ReferralOptions.ValidateNIN, new { @class = "form-control" })
+                            Validate NIN
+                        </label>
+                        @Html.ValidationMessageFor(model => model.ReferralOptions.ValidateNIN, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <div class="col-md-6 col-md-offset-3">
+                        <label class="checkbox">
+                            @Html.EditorFor(m => m.ReferralOptions.ValidateFirstAndLastName, new { @class = "form-control" })
+                            Validate first & last name
+                        </label>
+                        @Html.ValidationMessageFor(model => model.ReferralOptions.ValidateFirstAndLastName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <div class="col-md-6 col-md-offset-3">
+                        <label class="checkbox">
+                            @Html.EditorFor(m => m.ReferralOptions.ValidateGender, new { @class = "form-control" })
+                            Validate gender
+                        </label>
+                        @Html.ValidationMessageFor(model => model.ReferralOptions.ValidateGender, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <div class="col-md-6 col-md-offset-3">
+                        <label class="checkbox">
+                            @Html.EditorFor(m => m.ReferralOptions.ValidateEducationLevel, new { @class = "form-control" })
+                            Validate education level
+                        </label>
+                        @Html.ValidationMessageFor(model => model.ReferralOptions.ValidateEducationLevel, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <div class="col-md-6 col-md-offset-3">
+                        <label class="checkbox">
+                            @Html.EditorFor(m => m.ReferralOptions.ValidateReferralSource, new { @class = "form-control" })
+                            Validate referral source
+                        </label>
+                        @Html.ValidationMessageFor(model => model.ReferralOptions.ValidateReferralSource, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <div class="col-md-6 col-md-offset-3">
+                        <label class="checkbox">
+                            @Html.EditorFor(m => m.ReferralOptions.ValidateGosiEligiblity, new { @class = "form-control" })
+                            Validate GOSI eligbility
+                        </label>
+                        @Html.ValidationMessageFor(model => model.ReferralOptions.ValidateGosiEligiblity, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <div class="col-md-6 col-md-offset-3">
+                        <label class="checkbox">
+                            @Html.EditorFor(m => m.ReferralOptions.ValidateMcsEligiblity, new { @class = "form-control" })
+                            Validate MCS eligbility
+                        </label>
+                        @Html.ValidationMessageFor(model => model.ReferralOptions.ValidateMcsEligiblity, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <div class="col-md-6 col-md-offset-3">
+                        <label class="checkbox">
+                            @Html.EditorFor(m => m.ReferralOptions.ValidateMomraEligiblity, new { @class = "form-control" })
+                            Validate MOMRA eligbility
+                        </label>
+                        @Html.ValidationMessageFor(model => model.ReferralOptions.ValidateMomraEligiblity, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <div class="col-md-6 col-md-offset-3">
+                        <label class="checkbox">
+                            @Html.EditorFor(m => m.ReferralOptions.ValidateMoeEligiblity, new { @class = "form-control" })
+                            Validate MOE eligbility
+                        </label>
+                        @Html.ValidationMessageFor(model => model.ReferralOptions.ValidateMoeEligiblity, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <div class="col-md-6 col-md-offset-3">
+                        <label class="checkbox">
+                            @Html.EditorFor(m => m.ReferralOptions.DontReferAlreadyReferredJobseekers, new { @class = "form-control" })
+                            Don't refer already referred jobseekers
+                        </label>
+                        @Html.ValidationMessageFor(model => model.ReferralOptions.DontReferAlreadyReferredJobseekers, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <div class="col-md-6 col-md-offset-3">
+                        <label class="checkbox">
+                            @Html.EditorFor(m => m.ReferralOptions.DontReferOnProgramJobseekers, new { @class = "form-control" })
+                            Don't refer on-program jobseekers
+                        </label>
+                        @Html.ValidationMessageFor(model => model.ReferralOptions.DontReferOnProgramJobseekers, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <div class="col-md-6 col-md-offset-3">
+                        <label class="checkbox">
+                            @Html.EditorFor(m => m.ReferralOptions.DontReferAttachedJobseekers, new { @class = "form-control" })
+                            Don't refer already attached jobseekers
+                        </label>
+                        @Html.ValidationMessageFor(model => model.ReferralOptions.DontReferAttachedJobseekers, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <div class="col-md-6 col-md-offset-3">
+                        <label class="checkbox">
+                            @Html.EditorFor(m => m.ReferralOptions.DontReferPendingAttachmentJobseekers, new { @class = "form-control" })
+                            Don't refer pending-attachment jobseekers
+                        </label>
+                        @Html.ValidationMessageFor(model => model.ReferralOptions.DontReferPendingAttachmentJobseekers, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div id="divClaims" style="display: none;">
+                <div class="form-group required">
+                    <div class="col-md-6 col-md-offset-3">
+                        <label class="checkbox">
+                            @Html.EditorFor(m => m.ClaimOptions.AllowPartialInvoices, new { @class = "form-control" })
+                            Allow partial import
+                        </label>
+                        <label class="checkbox">
+                            @Html.EditorFor(m => m.ClaimOptions.ValidateMissingYearMonth, new { @class = "form-control" })
+                            Validate missing Year/Month invoiced
+                        </label>
+
+                        <label class="checkbox">
+                            @Html.EditorFor(m => m.ClaimOptions.ValidateJpcMismatch, new { @class = "form-control" })
+                            Validate JPC Mismatch
+                        </label>
+
+                        <label class="checkbox">
+                            @Html.EditorFor(m => m.ClaimOptions.ValidateRAGMismatch, new { @class = "form-control" })
+                            Validate RAG Mismatch
+                        </label>
+                        @Html.ValidationMessageFor(model => model.ClaimOptions.AllowPartialInvoices, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <p class="text-center">
+                    <a data-toggle="collapse" data-target="#claimAdvancedOptions" class="btn btn-default">Advanced options</a>
+                </p>
+
+                <div id="claimAdvancedOptions" class="collapse">
+                    <div class="form-group required"> <div class="col-md-6 col-md-offset-3"> <label class="checkbox"> @Html.EditorFor(m => m.ClaimOptions.ValidateNIN, new { @class = "form-control" }) Validate NIN </label></div></div>
+                    <div class="form-group required"> <div class="col-md-6 col-md-offset-3"> <label class="checkbox"> @Html.EditorFor(m => m.ClaimOptions.ValidateMissingName, new { @class = "form-control" }) Validate missing name </label></div></div>
+                    <div class="form-group required"> <div class="col-md-6 col-md-offset-3"> <label class="checkbox"> @Html.EditorFor(m => m.ClaimOptions.ValidateMissingRAG, new { @class = "form-control" }) Validate missing RAG </label></div></div>
+                    <div class="form-group required"> <div class="col-md-6 col-md-offset-3"> <label class="checkbox"> @Html.EditorFor(m => m.ClaimOptions.ValidateMissingAttachmentDate, new { @class = "form-control" }) Validate missing attachmentDate (if unchecked, system guesses the attachment date that ensures minimum journey length) </label></div></div>
+                    <div class="form-group required"> <div class="col-md-6 col-md-offset-3"> <label class="checkbox"> @Html.EditorFor(m => m.ClaimOptions.ValidateMissingInvoiceNumber, new { @class = "form-control" }) Validate missing invoice number (if unchecked, system generates an invoice ID) </label></div></div>
+                    <div class="form-group required"> <div class="col-md-6 col-md-offset-3"> <label class="checkbox"> @Html.EditorFor(m => m.ClaimOptions.ValidateMissingEmployerName, new { @class = "form-control" }) Validate missing employer name (for placement & sustainment claims) </label></div></div>
+                    <div class="form-group required"> <div class="col-md-6 col-md-offset-3"> <label class="checkbox"> @Html.EditorFor(m => m.ClaimOptions.ValidateMissingEvidenceType, new { @class = "form-control" }) Validate missing evidence type (for placement & sustainment claims) </label></div></div>
+                    <div class="form-group required"> <div class="col-md-6 col-md-offset-3"> <label class="checkbox"> @Html.EditorFor(m => m.ClaimOptions.ValidateMissingAttachmentClaim, new { @class = "form-control" }) Validate missing attachment claim </label></div></div>
+                    <div class="form-group required"> <div class="col-md-6 col-md-offset-3"> <label class="checkbox"> @Html.EditorFor(m => m.ClaimOptions.ValidateMissingPlacementClaim, new { @class = "form-control" }) Validate missing placement claim </label></div></div>
+                    <div class="form-group required"> <div class="col-md-6 col-md-offset-3"> <label class="checkbox"> @Html.EditorFor(m => m.ClaimOptions.ValidateDuplicateClaims, new { @class = "form-control" }) Prevent duplicate claims </label></div></div>
+                    <div class="form-group required"> <div class="col-md-6 col-md-offset-3"> <label class="checkbox"> @Html.EditorFor(m => m.ClaimOptions.ValidateZeroClaimAmount, new { @class = "form-control" }) Ensure claim amount higher than zero </label></div></div>
+                    <div class="form-group required"> <div class="col-md-6 col-md-offset-3"> <label class="checkbox"> @Html.EditorFor(m => m.ClaimOptions.ValidateJourneyOverlap, new { @class = "form-control" }) Ensure no journeys overlap </label></div></div>
+                    <div class="form-group required"> <div class="col-md-6 col-md-offset-3"> <label class="checkbox"> @Html.EditorFor(m => m.ClaimOptions.ValidateMissingJPC, new { @class = "form-control" }) Validate missing JPC </label></div></div>
+                    <div class="form-group required"> <div class="col-md-6 col-md-offset-3"> <label class="checkbox"> @Html.EditorFor(m => m.ClaimOptions.ValidateEventDates, new { @class = "form-control" }) Validate missing event date </label></div></div>
+                    <div class="form-group required"> <div class="col-md-6 col-md-offset-3"> <label class="checkbox"> @Html.EditorFor(m => m.ClaimOptions.ValidateContractReferrenceNumber, new { @class = "form-control" }) Validate contract referrence number </label></div></div>
+                    <div class="form-group required"> <div class="col-md-6 col-md-offset-3"> <label class="checkbox"> @Html.EditorFor(m => m.ClaimOptions.DontImportIfClaimExistsWithAmountMoreThanZero, new { @class = "form-control" }) Dont re-import if claim exists with amount more than zero </label></div></div>
+
+
+                    <div class="form-group required"><label class="control-label col-md-3 ">Default Employer Name</label> <div class="col-md-6">  @Html.EditorFor(m => m.ClaimOptions.DefaultEmployerName, new { @class = "form-control" }) </div></div>
+                    <div class="form-group required"><label class="control-label col-md-3">Default Placement Evidence</label>  <div class="col-md-6"> @Html.EditorFor(m => m.ClaimOptions.DefaultPlacementEvidence, new { @class = "form-control" })  </div></div>
+                    <div class="form-group required"><label class="control-label col-md-3">Days between attachment and placement dates (if journey is not found)</label>  <div class="col-md-6"> @Html.EditorFor(m => m.ClaimOptions.DefaultNumberOfDaysBeforePlacement, new { @class = "form-control" }) </div></div>
+                    <div class="form-group required"><label class="control-label col-md-3">Minimum days between conflicting journeys  </label><div class="col-md-6"> @Html.EditorFor(m => m.ClaimOptions.DefaultThresholdForConflictingJourneys, new { @class = "form-control" }) </div></div>
+                </div>
+
+
+            </div>
+
+            <div id="divSimulate" class="form-group required" style="display: none;">
+                <div class="col-md-6 col-md-offset-3">
+                    <label class="checkbox">
+                        @Html.EditorFor(m => m.Simulate, new { @class = "form-control" })
+                        Preview results (don't import)
+                    </label>
+                    @Html.ValidationMessageFor(model => model.Simulate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3">@LangHelpers.Instance["File"]</label>
+                <div class="col-md-9">
+                    <input type="file" name="file" />
+                    @Html.ValidationMessageFor(model => model.File, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div id="divSendToEmail" class="form-group" style="display: none;">
+                <label class="control-label col-md-3">@LangHelpers.Instance["send_results_to"]</label>
+                <div class="col-md-9">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                    <input type="submit" value="@LangHelpers.Instance["UploadFile"]" class="btn btn-success btn-block btn-lg" />
+                </div>
+            </div>
+        </div>
+    }
+    <div class="clearfix"></div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $('#Format').change(function () {
+            hideShowFields();
+        });
+
+        $('#ProviderId').on('change', function () {
+            var selectedProvider = $(this).val();
+            if (selectedProvider != null && selectedProvider != '') {
+                $.getJSON(baseAjaxUrl + 'GetJpcs?providerId=' + selectedProvider, function (jpcs) {
+                    var jpcSelect = $('#JpcId');
+                    jpcSelect.empty();
+                    jpcSelect.html('<option></option>');
+                    $.each(jpcs, function (index, jpc) {
+                        jpcSelect.append($('<option />', {
+                            value: jpc.value,
+                            text: jpc.text
+                        }));
+                    });
+
+                    jpcSelect.selectpicker('refresh');
+                });
+            }
+        });
+
+        var hideShowFields = function () {
+            var format = $('#Format').val();
+            switch (format) {
+
+                case '@ImportFormat.NLG_XML.ToString()':
+                    $('#divProvider').show();
+                    $('#divJpc').show();
+                    $('#divOsr').hide();
+                    $('#divClaims').hide();
+                    $('#divSendToEmail').hide();
+                    $('#divSimulate').hide();
+                    break;
+
+                case '@ImportFormat.OutOfSystemReferrals.ToString()':
+                case '@ImportFormat.Branches_Referrals.ToString()':
+                    $('#divProvider').hide();
+                    $('#divJpc').hide();
+                    $('#divOsr').show();
+                    $('#divClaims').hide();
+                    $('#divSendToEmail').show();
+                    $('#divSimulate').show();
+                    break;
+                case '@ImportFormat.Claims.ToString()':
+                case '@ImportFormat.UnverifiedClaims.ToString()':
+                case '@ImportFormat.Post_ECS_Claim.ToString()':
+                    $('#divProvider').hide();
+                    $('#divJpc').hide();
+                    $('#divOsr').hide();
+                    $('#divClaims').show();
+                    $('#divSendToEmail').show();
+                    $('#divSimulate').show();
+                    break;
+                default:
+                    $('#divProvider').hide();
+                    $('#divJpc').hide();
+                    $('#divOsr').hide();
+                    $('#divClaims').hide();
+                    $('#divSendToEmail').hide();
+                    $('#divSimulate').hide();
+                    break;
+            }
+        };
+
+        hideShowFields();
+    </script>
+}*@

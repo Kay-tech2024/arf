@@ -1,0 +1,54 @@
+﻿@model CommonFundingRequestViewModel
+
+@{
+
+    var index = ViewBag.Index != null && ViewBag.Index > 0 ? (int)ViewBag.Index : 0;
+
+    if (Model.FundingSources == null || Model.FundingSources.Count == 0)
+    {
+        Model.FundingSources = new List<FundingSourceViewModel>
+{
+new FundingSourceViewModel
+{
+
+}
+
+};
+    }
+
+    var id = ViewBag.IsTemplate == true ? "FundingSources{index}" : "FundingSources" + index;
+}
+
+<tr data-index="@(ViewBag.IsTemplate == null? index + "" : "{index}")">
+    <td>@(ViewBag.IsTemplate == null ? (index + 1) + "" : "{order}")</td>
+    <td>
+        @if (ViewBag.IsTemplate == null)
+        {
+            <div>
+                @Html.HiddenFor(m => m.FundingSources[index].Id)
+            </div>
+        }
+
+        @Html.TextBoxFor(m => m.FundingSources[index].Name, new { @class = "form-control", placeholder = LangHelpers.Instance["applied_funding_agency"] })
+        @Html.ValidationMessageFor(m => m.FundingSources[index].Name)
+    </td>
+    <td>
+        @Html.TextBoxFor(m => m.FundingSources[index].Amount, new { @class = "form-control", placeholder = LangHelpers.Instance["applied_funding_amount"] })
+        @Html.ValidationMessageFor(m => m.FundingSources[index].Amount)
+    </td>
+    <td>
+        @Html.TextBoxFor(m => m.FundingSources[index].Duration, new { @class = "form-control", placeholder = LangHelpers.Instance["applied_funding_duration"] })
+        @Html.ValidationMessageFor(m => m.FundingSources[index].Duration)
+    </td>
+    <td>
+        @Html.DropDownListFor(m => m.FundingSources[index].Status, new SelectList(Model.FundingStatuses, "Value", "Text", Model.FundingSources[index].Status), LangHelpers.Instance["select"], new { @class = "form-control", placeholder = LangHelpers.Instance["applied_funding_status"] })
+        @Html.ValidationMessageFor(m => m.FundingSources[index].Status)
+    </td>
+
+    <td>
+        @if (index > 5 || ViewBag.IsTemplate == true)
+        {
+            <a href="#" class="btnRemoveRow btn btn-danger">@LangHelpers.Instance["remove"]</a>
+        }
+    </td>
+</tr>

@@ -1,0 +1,64 @@
+﻿@model ContractTemplateViewModel
+
+@{
+    ViewBag.Title = "Contract";
+}
+<link href="~/Content/css/summernote.css" rel="stylesheet">
+
+<div class="box2 box2-info padding">
+
+    <form method="post" action="@Url.Action("Contract", "Settings")" id="contract-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="DownloadPDF" id="DownloadPDF" value="0" />
+        <div class="form-horizontal" style="max-width: none;">
+            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                <span class="box2 box2-info" style="font-weight: bold;">@LangHelpers.Instance["replaceable_words"]</span>
+                <br />
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ContractArabic, LangHelpers.Instance["contract_arabic"], htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.ContractArabic, new { @class = "form-control editor", rows = 10 })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ContractStartDate, LangHelpers.Instance["contract_start_date"], htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DatePickerFor(m => m.ContractStartDate, ARF.Web.App_Start.Extensions.DateType.Date, new { @class = "form-control allow-edit" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-5">
+                    <input type="submit" value="@LangHelpers.Instance["save"]" class="btn btn-primary btn-lg btn-block" />
+                </div>
+                <div class="col-md-5">
+                    <input type="button" onclick="DownloadPDFEvent()" value="@LangHelpers.Instance["save_and_download_sample_pdf"]" class="btn btn-primary btn-lg btn-block" />
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section scripts
+{
+    <script src="~/Content/js/summernote.js" type="text/javascript" nonce="@Html.ScriptNonce()"></script>
+    <script type="text/javascript" nonce="@Html.ScriptNonce()">
+        $('.editor').summernote({ height: 300 });
+        setTimeout(function () {
+            $(".MsoNormal").css("margin", "0px");
+            $(".MsoNormal").css("text-align", "inherit");
+            $(".MsoNormal").css("text-indent", "0pt");
+            $("#ContractArabic").val($(".note-editable").html());
+        }, 200);
+
+        function DownloadPDFEvent() {
+            $("#DownloadPDF").val("1");
+            $("#contract-form").submit();
+        }
+    </script>
+}

@@ -1,0 +1,27 @@
+﻿@model RequestSummaryViewModel2
+
+<div>
+    <h4 class="title">@LangHelpers.Instance["research_team"]</h4>    
+    <div class="clearfix"></div>
+</div>
+
+<div id="divResearchersPreview" class="panel-group">
+
+    @{
+        var index = -1;
+    }
+
+    @foreach (var c in Model.Researchers)
+    {
+        index++;
+        ViewBag.Index = index;
+
+        @Html.Partial("~/Views/Requests/FundingRequests/_PartialResearcherPreview.cshtml", Model);
+
+    }
+</div>
+
+@{
+    ViewBag.Index = 0;
+    ViewBag.IsTemplate = true;
+}

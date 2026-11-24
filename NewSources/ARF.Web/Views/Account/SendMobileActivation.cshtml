@@ -1,0 +1,101 @@
+﻿@model ResetPasswordViewModel
+@{
+
+    var isPostBack = HttpContextManager.Current.Request.HttpMethod == "POST";
+    var preferences = CommonManager.GetUserPreferences();
+
+    ViewBag.Title = LangHelpers.Instance["resent_mobile_activation"];
+
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+
+
+
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="validation-summary-errors" data-valmsg-summary="true">
+        <ul>
+
+            @foreach (var m in ViewData.ModelState.Keys)
+            {
+                if (ViewData.ModelState[m].Errors.Count == 0)
+                {
+                    continue;
+                }
+
+                if (m.Contains("[") && m.Contains("]"))
+                {
+                    var index1 = m.IndexOf('[');
+                    var index2 = m.IndexOf(']');
+                    var property = m.Substring(0, index1);
+                    var row = int.Parse(m.Substring(index1 + 1, index2 - index1 - 1)) + 1;
+
+                    <li>@(LangHelpers.Instance[property] + " " + LangHelpers.Instance["the_row"] + " " + row + ": " + ViewData.ModelState[m].Errors.First().ErrorMessage)</li>
+                }
+                else
+                {
+                    <li>@ViewData.ModelState[m].Errors.First().ErrorMessage</li>
+                }
+            }
+        </ul>
+
+    </div>
+
+
+}
+
+
+@using (Html.BeginForm("SendMobileActivation", "Account", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div>
+        <input type="hidden" name="SmsKey" value="@(Model.SmsKey == null? "" : Model.SmsKey)" />
+    </div>
+    <div class="row divrtl nd2">
+        <div class="col-md-4 col-xs-4 login-label-bg">
+            <p class="text-center login-label">@LangHelpers.Instance["email"]</p>
+        </div>
+        <div class="col-md-8 col-xs-8">
+            @Html.TextBoxFor(m => m.Email, new { @class = "text-center username login-input login-input-bg" })
+            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="row divrtl nd2">
+        <div class="col-md-4 col-xs-4 login-label-bg">
+            <p class="text-center login-label">@LangHelpers.Instance["mobile"]</p>
+        </div>
+        <div class="col-md-8 col-xs-8">
+            @Html.TextBoxFor(m => m.MobileNumber, new { @class = "text-center username login-input login-input-bg" })
+            @Html.ValidationMessageFor(m => m.MobileNumber, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    if (Model.SmsKey != null)
+    {
+        <div class="row divrtl nd2">
+            <div class="col-md-4 col-xs-4 login-label-bg">
+                <p class="text-center login-label">@LangHelpers.Instance["sms_code"]</p>
+            </div>
+            <div class="col-md-8 col-xs-8">
+                @Html.TextBoxFor(m => m.SmsCode, new { @class = "text-center username login-input login-input-bg" })
+                @Html.ValidationMessageFor(m => m.SmsCode, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+    }
+    <div class="row">
+        <button type="submit" class="text-center btn btn-block btn-info">@LangHelpers.Instance["resent_mobile_activation"]</button>
+    </div>
+
+
+}
+
+
+<div class="row">
+    <small class="link"><a href="~/Account/login" class="text-center">@LangHelpers.Instance["login"]</a></small>
+    <small class="link"><a href="~/Account/register" class="text-center">@LangHelpers.Instance["register_new_user"]</a></small>
+</div>
+

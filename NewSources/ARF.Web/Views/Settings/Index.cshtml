@@ -1,0 +1,30 @@
+﻿@model RequestViewModel
+@{
+    ViewBag.Title = "Settings";
+
+}
+
+<ul class="breadcrumb">
+    <li>@Html.ActionLink(ArfStrings.home, "Index", "Home")</li>
+    <li>@LangHelpers.Instance["settings"]</li>
+</ul>
+
+<div class="box2 box2-info">
+
+    @if (Utils.HasPrivilagesAny(Privilages.settings_email))
+    {
+        <a class="btn btn-default btn-block" href="~/Settings/Email">@LangHelpers.Instance["email_settings"]</a>
+    }
+
+    @if (Utils.HasPrivilagesAny(Privilages.settings_sms))
+    {
+        <a class="btn btn-default btn-block" href="~/Settings/SMS">@LangHelpers.Instance["sms_settings"]</a>
+    }
+
+
+    @if (Utils.HasPrivilagesAny(Privilages.settings_templates))
+    {
+        <a class="btn btn-default btn-block" href="~/Templates/">@LangHelpers.Instance["Templates"]</a>
+    }
+
+</div>

@@ -1,0 +1,34 @@
+﻿@model IEnumerable<TemplateViewModel>
+
+@{
+    ViewBag.Title = "Templates";
+}
+<ul class="breadcrumb">
+    <li><a href="@Url.Action("Index", "Home")">@LangHelpers.Instance["home"]</a></li>
+    <li>@LangHelpers.Instance["templates"]</li>
+</ul>
+
+<div class="box2 box2-info">
+
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayName(@LangHelpers.Instance["template_name"])
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+
+                    <label>@LangHelpers.Instance[item.TemplateKey]</label>
+                </td>
+                <td>
+                    @Html.ActionLink(@LangHelpers.Instance["edit"], "Edit", new { id = item.TemplateKey }, new { @class = "btn btn-info" })
+                </td>
+            </tr>
+        }
+    </table>
+</div>

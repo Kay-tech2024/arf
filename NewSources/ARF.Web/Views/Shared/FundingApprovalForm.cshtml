@@ -1,0 +1,222 @@
+﻿@{
+    ARF.Data.DbModels.ArfDbEntities db = new ARF.Data.DbModels.ArfDbEntities();
+    var preferences = CommonManager.GetUserPreferences();
+    var isArabic = preferences == null || preferences.Language != LanguagePreference.English;
+    //ViewBag.FileUploadRequired = true;
+    //ViewBag.Type = "FundingApproval";
+    TempData["Data1"] = "full";
+
+}
+@model ARF.Web.Models.TermRequestModel
+
+
+<h3>تقرير المتابعة لمنتصف المدة للمشروع البحثي</h3>
+
+<div class="col-md-4">
+    <div class="form-horizontal">
+        <div class="form-group text-center">
+            <label class="col-sm-12 text-center">مسلسل المشروع:</label>
+            <div class="col-sm-12">
+                <input type="text" disabled class="form-control text-center" value="@Model.Id">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="form-horizontal">
+        <div class="form-group text-center">
+            <label class="col-sm-12 text-center">كود الوحدة البحثية:</label>
+            <div class="col-sm-12">
+                <input type="text" disabled class="form-control text-center" value="@Model.ResearchUnitCode">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="form-horizontal">
+        <div class="form-group text-center">
+            <label class="col-sm-12 text-center">السنة:</label>
+            <div class="col-sm-12">
+                <input type="text" disabled class="form-control text-center" value="@Model.ResearchYear">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-md-5">
+            عنوان المشروع باللغة العربية:
+        </label>
+        <div class="col-md-7">
+            <input type="text" disabled class="form-control" value="@Model.TitleArabic">
+        </div>
+    </div>
+</div>
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-md-5">
+            عنوان المشروع باللغة الانجليزية:
+        </label>
+        <div class="col-md-7">
+            <input type="text" disabled class="form-control" value="@Model.TitleEnglish">
+        </div>
+    </div>
+</div>
+
+
+<div class="col-md-6">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-5">
+                ميزانية المقترحة:
+            </label>
+            <input disabled type="text" class="control-label col-md-7" value="@Model.FundingAmount ريال">
+        </div>
+    </div>
+</div>
+
+<div class="col-md-6">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-5">
+                المدة المقترحة:
+            </label>
+            <input disabled type="text" class="control-label col-md-7" value="@Model.FundingDurationMonths شهراً ">
+        </div>
+    </div>
+</div>
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-md-5">
+            نوع مشروع البحث:
+        </label>
+        <div>
+            <label class="radio-inline">
+                <input type="radio" name="optradio">منفرد
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="optradio">مشترك
+            </label>
+        </div>
+    </div>
+</div>
+@{
+
+    var index = 0;
+    foreach (var item in Model.Researchers)
+    {
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @if (index == 0)
+                    {
+                        @Html.Raw("باحث الرئيس:");
+                        index++;
+                    }
+                    else
+                    {
+                        @Html.Raw("باحث المشترك " + index + ":");
+                        index++;
+                    }
+                </label>
+                <input disabled type="text" class="control-label col-md-7" value="@Html.Raw(item.FirstName + " " + item.LastName)">
+            </div>
+        </div>
+    }
+
+}
+
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-md-5" for="GoodComments">
+            أبرز إيجابيات المشروع  :
+        </label>
+        <div class="col-md-7">
+            <textarea class="form-control" rows="5" cols="12" id="GoodComments" name="GoodComments"></textarea>
+        </div>
+    </div>
+</div>
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-md-5" for="BadComments">
+            أبرز سلبيات المشروع  :
+        </label>
+        <div class="col-md-7">
+            <textarea class="form-control" rows="5" cols="12" id="BadComments" name="BadComments"></textarea>
+        </div>
+    </div>
+</div>
+
+
+<div class="form-horizontal">
+    <div class="form-group">
+
+        <label class="control-label">
+            توصية:
+        </label>
+        <div>
+            <div class="radio">
+                <label class="control-label"><input type="radio" name="optradio">صالح التمويل بصورة الحالية</label>
+            </div>
+            <div class="radio">
+                <label class="control-label"><input type="radio" name="optradio">صالح للتمويل بعد العمل بالملحوظات الواردة في التقرير</label>
+            </div>
+            <div class="radio">
+                <label class="control-label"><input type="radio" name="optradio">غير صالح التمويل إطلاقا (اذكر من فضلك المبررات التي جعلت المشروع غير جدير بالتمويل، ويمكن تدوين الملحوظات في ورقة مستقلة)</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <h4>الاسماء المقتر للتحكيم من وحدة / مركز البحوث</h4>
+    <div class="col-md-12">
+        @*<table class="table table-bordered maham">
+            <thead>
+                <tr>
+                    <th>
+                        الاسم
+                    </th>
+                    <th>التخصيص الدقيق </th>
+                    <th> الرتبة العلمية </th>
+                    <th> عنوان العمل </th>
+                    <th> بريرد الإلكتروني  </th>
+                    <th> هاتف   </th>
+                    <th> </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td> <input type="text" class="form-control" /></td>
+                    <td><input type="text" class="form-control" /></td>
+                    <td><input type="text" class="form-control" /></td>
+                    <td><input type="text" class="form-control" /></td>
+                    <td><input type="text" class="form-control" /></td>
+                    <td><input type="text" class="form-control" /></td>
+                </tr>
+
+
+            </tbody>
+        </table>*@
+        <a class="btn btn-success pull-right" id="add-row">اضاف سطر </a>
+    </div>
+
+</div>
+
+@{Html.RenderPartial("~/Views/Shared/_FileUpload.cshtml");}
+
+<div class="form-group">
+    <label class="control-label col-md-2">  توقيع رئيس وحدة البحوث:</label>
+    <div class="col-md-4">
+        <input class="form-control" />
+    </div>
+
+</div>
+
+

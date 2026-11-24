@@ -1,0 +1,383 @@
+﻿@model EditUserViewModel
+
+@{
+    ViewBag.Title = "New user";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<ul class="breadcrumb">
+    <li>@Html.ActionLink(LangHelpers.Instance["homepage"], "Index", "Home")</li>
+    <li>@Html.ActionLink(LangHelpers.Instance["users"], "Index", "Users")</li>
+    <li>@LangHelpers.Instance["new_user"]</li>
+</ul>
+
+<h2 class="page-header">@LangHelpers.Instance["new_user"]</h2>
+<div class="box2 box2-info">
+
+    @using (Html.BeginForm("Create", "Users", FormMethod.Post, new { @class = "form-horizontal" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger alert-validation">
+                    <h5>@LangHelpers.Instance["ValidationSummary"]</h5>
+                    <div class="text-left">
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            }
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.FullName, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3"> رقم الهوية</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.NationalId, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.NationalId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                @Html.LabelFor(expression: model => model.Email, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(expression: model => model.MobileNo, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.MobileNo, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.MobileNo, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3"> @LangHelpers.Instance["username"]</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3"> @LangHelpers.Instance["role"]</label>
+                <div class="col-md-9">
+                    @*Html.DropDownListFor(model => model.RoleId, new SelectList(Model.Roles, dataValueField: "RoleId", dataTextField: "RoleName"), htmlAttributes: new { @class = "form-control" }, optionLabel: @LangHelpers.Instance["select"])*@
+                    <select class="form-control" name="RoleId" id="RoleId">
+                        <option value="">@LangHelpers.Instance["select"]</option>
+                        @foreach (var _role in Model.Roles)
+                        {
+                            <option value="@_role.RoleId" data-rolegroupcode="@_role.VirtualRoleCode">@_role.RoleName</option>
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(model => model.RoleId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            @if (!Utils.IsCollegeUser)
+            {
+                <div id="divCollege" class="form-group" style="display: none;">
+                    @Html.LabelFor(model => model.CollegeId, htmlAttributes: new { @class = "control-label col-md-3" })
+                    <div class="col-md-9">                       
+                        <select class="form-control" name="CollegeId" id="CollegeId">
+                            <option value="">@LangHelpers.Instance["select"]</option>
+                            @foreach (var _college in Model.Colleges)
+                            {
+                                <option value="@_college.Id" data-rolegroupcode="@_college.RoleGroupCode">@_college.Name</option>
+                            }
+                        </select>
+
+                        @Html.ValidationMessageFor(model => model.CollegeId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+            }
+
+            @if (!Utils.IsMajorUser)
+            {
+                <div id="divMajor" class="form-group" style="display: none;">
+                    @Html.LabelFor(model => model.MajorId, htmlAttributes: new { @class = "control-label col-md-3" })
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(model => model.MajorId, new SelectList(Model.Majors, dataValueField: "Id", dataTextField: "Name"), htmlAttributes: new { @class = "form-control" }, optionLabel: @LangHelpers.Instance["select"])
+                        @Html.ValidationMessageFor(model => model.MajorId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+            }
+
+            <div id="divExtraRoles">
+
+                <div class="panel-group div-repeatable" data-key="ExtraRoles">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>@LangHelpers.Instance["sn"]</th>
+                                <th>@LangHelpers.Instance["role_name"]</th>
+                                <th>@LangHelpers.Instance["college_name"]</th>
+                                @*<th>@LangHelpers.Instance["effective_from"]</th>
+                                    <th>@LangHelpers.Instance["effective_to"]</th>*@
+                                <th>@LangHelpers.Instance["is_enabled"]</th>
+                                <th>@LangHelpers.Instance["actions"]</th>
+                            </tr>
+                        </thead>
+                        @{
+                            var index = -1;
+                        }
+                        <tbody>
+                            @foreach (var c in Model.ExtraRoles)
+                            {
+                                index++;
+                                ViewBag.Index = index;
+
+                                @Html.Partial("~/Views/Users/_PartialExtraRoles.cshtml", Model);
+
+                            }
+                        </tbody>
+                    </table>
+
+                    <p class="text-center">
+                        <a href="#" class="btnAddRow btn btn-success" data-key="ExtraRoles">@LangHelpers.Instance["add_extra_role"]</a>
+                    </p>
+                </div>
+
+
+            </div>
+
+
+            <div class="form-group">
+                <label class="control-label col-md-3"> @LangHelpers.Instance["password"]</label>
+                <div class="col-md-9">
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3"> @LangHelpers.Instance["password_confirmation"]</label>
+
+                <div class="col-md-9">
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-9 col-md-offset-3">
+                    <div class="checkbox">
+                        <label>
+                            @Html.EditorFor(model => model.IsActivated)&nbsp;@LangHelpers.Instance["activate_immediately"]
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.IsActivated, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <div class="col-md-9 col-md-offset-3">
+                    <div class="checkbox">
+                        <label>@Html.EditorFor(model => model.EmailConfirmed)&nbsp;@Html.LabelFor(model => model.EmailConfirmed)</label>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.EmailConfirmed, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-9 col-md-offset-3">
+                    <div class="checkbox">
+                        <label>@Html.EditorFor(model => model.PhoneNumberConfirmed)&nbsp;@Html.LabelFor(model => model.PhoneNumberConfirmed)</label>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PhoneNumberConfirmed, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <div class="col-md-9 col-md-offset-3">
+                    <div class="checkbox">
+                        <label>@Html.EditorFor(model => model.ForcePasswordChange)&nbsp;@LangHelpers.Instance["force_password_change"]</label>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ForcePasswordChange, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                    <input type="submit" value="@LangHelpers.Instance["save"]" class="btn btn-primary btn-lg btn-block" />
+                </div>
+            </div>
+        </div>
+    }
+
+    <div>
+    </div>
+</div>
+
+
+@{
+    ViewBag.IsTemplate = true;
+    ViewBag.Index = 0;
+}
+
+
+@section Scripts
+{
+    <script type="text/javascript" nonce="@Html.ScriptNonce()">
+        var _Colleges = [];
+        $('#CollegeId option').each(function () {
+            _Colleges.push({ value: $(this).val(), text: $(this).text(), rolegroupcode: $(this).attr("data-rolegroupcode")});
+        });
+
+        $('#RoleId').change(function () {
+            toggleProvider($("#RoleId option:selected").text());
+        });
+
+        var toggleProvider = function (role) {
+        var ViceDeanForHigherStudiesAndScientificResearch = "@LangHelpers.Instance[ArfUserRole.ViceDeanForHigherStudiesAndScientificResearch.ToString()]".replace(/&amp;/g, '&');
+        var ViceDeanForHigherStudiesAndScientificResearchCollege = "@LangHelpers.Instance.GetLangValueByString("vice_dean_for_higher_studies_and_scientific_research_college")".replace(/&amp;/g, '&');
+        var ViceDeanForHigherStudiesAndScientificResearchInstitute = "@LangHelpers.Instance.GetLangValueByString("vice_dean_for_higher_studies_and_scientific_research_institute")".replace(/&amp;/g, '&');
+
+           switch (role) {
+
+               case "@LangHelpers.Instance[ArfUserRole.ResearchUnitMember.ToString()]":
+               case ViceDeanForHigherStudiesAndScientificResearch:
+               case ViceDeanForHigherStudiesAndScientificResearchCollege:
+               case ViceDeanForHigherStudiesAndScientificResearchInstitute:
+                   $('#divCollege').show();
+                   hideColleges();
+                    $('#divMajor').hide();
+                    break;
+                case "@LangHelpers.Instance[ArfUserRole.Referee.ToString()]":
+                    $('#divCollege').hide();
+                    $('#divMajor').show();
+                    break;
+                default:
+                    $('#divCollege').hide();
+                    $('#divMajor').hide();
+                    break;
+            }
+    };
+
+        toggleProvider($("#RoleId option:selected").text());
+
+
+         var templates = {};
+        templates.ExtraRoles = '@(Html.Raw(Html.Partial("~/Views/Users/_PartialExtraRoles.cshtml", Model).ToHtmlString().Replace("\r\n", " ")))';
+
+         $('.btnAddRow').on('click', function (e) {
+
+             var div = $(this).closest('div');
+             var key = div.attr('data-key');
+             var elms = div.find('tbody tr');
+
+             var rowHtml = templates[key];
+
+             var index = elms.length;
+
+             var el = $(rowHtml.replaceAll('{index}', index).replaceAll('{order}', index + 1).replaceAll('data-id="0"', 'data-id="' + index + '"').replaceAll('_0__', '_' + index + '__').replaceAll('[0]', '[' + index + ']'));
+             el.find('input,select,textarea').val('');
+             el.find('.field-validation-error').remove();
+
+             div.find('table tbody').append(el);
+             e.preventDefault();
+             return false;
+
+         });
+
+         onDomInserted('.btnRemoveRow', function (el) {
+
+             $(el).on('click', function (e) {
+
+
+                 var elm = $(el).closest('tr');
+                 var index = parseInt(elm.attr('data-index'));
+                 var div = elm.closest('.div-repeatable');
+                 var elms = div.find('tbody tr');
+
+                 for (var i = 0; i < elms.length; i++) {
+
+                     if (index == i) {
+                         elm.remove();
+                     } else if (index < i) {
+                         var els = $(elms[i]).find('input,select,textarea');;
+
+                         for (var j = 0; j < els.length; j++) {
+                             var el2 = $(els[j]);
+                             if (!el2.attr('name')) continue;
+                             var tabs = el2.attr('name').split('.');
+                             var name = tabs[0].split('[')[0];
+                             var x = name + '[' + (i - 1) + '].' + prop;
+
+                             var prop = tabs[1];
+                             el2.attr('id', name + (i - 1) + '_' + prop).attr('name', name + '[' + (i - 1) + '].' + prop);
+                         }
+                         $(elms[i]).attr('data-index', i - 1);
+                     }
+                 }
+                 e.preventDefault();
+                 return false;
+
+             });
+        });
+
+        var collegeRoles = @Html.Raw(Utils.SerializeObject(Utils.GetCollegeRoles()));
+
+        var switchCollege = function ($el) {
+
+            window.el = $el;
+            var $otherEl = $el.closest('td').next().find('div');
+            var selected = $el.val();
+            
+
+            var found = false;
+            for (var i = 0; i < collegeRoles.length; i++) {
+                if (collegeRoles[i] == selected) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found) {
+                $otherEl.slideDown();
+            } else {
+                $otherEl.find('input').val('');
+                $otherEl.slideUp();
+            }
+        };
+
+        onDomInserted('.role-dropdown', function (el) {
+
+            $(el).on('change', function (e) {
+                switchCollege($(el));
+                return false;
+            });
+        });
+        toggleProvider($("#RoleId option:selected").text());
+
+        function hideColleges() {
+            $('#CollegeId').find("option").remove();
+
+            var rolegroupcode = $("#RoleId option:selected").attr("data-rolegroupcode");
+            for (var i = 0; i < _Colleges.length; i++) {
+                if (_Colleges[i].rolegroupcode == rolegroupcode || _Colleges[i].value == "") {
+                    $('#CollegeId').append($("<option/>", {
+                        value: _Colleges[i].value,
+                        text: _Colleges[i].text
+                    }));
+                }
+            }            
+        }
+    </script>
+}

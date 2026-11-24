@@ -1,0 +1,118 @@
+﻿@{
+    ViewBag.Title = "List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    @*var gridName = Utils.IsUserLanguageArabic ? "DetailedRequestsReportMvcGridArabic" : "DetailedRequestsReportMvcGridArabic";*@
+    var gridName = "";
+    if (ViewBag.IsMaterial == 1)
+    {
+        gridName = "ViewMaterialRequestsForReports";
+    }
+    else
+    {
+        gridName = "ViewRequestsForReports";
+    }
+}
+
+<style>
+
+    @@media print {
+        a[href]:after {
+            content: none !important;
+        }
+
+        #burger {
+            display: none !important;
+        }
+
+        #menuToggleLang {
+            display: none !important;
+        }
+
+        #content {
+            left: 0px;
+        }
+
+        .container {
+            width: 100%;
+        }
+
+        .alert-info {
+            display: none !important;
+        }
+
+        .printhide {
+            display: none !important;
+        }
+
+        .breadcrumb {
+            display: none !important;
+        }
+
+        .printbtn {
+            display: none !important;
+        }
+        .row {
+            display: none !important;
+        }
+    }
+</style>
+
+<div class="logo printhide" style="background:grey">
+    <img src="/Content/aps/imgs/logo-1.png" class="img-responsive center-block" style="width:200px !important">
+</div>
+
+<h3>@ViewBag.Heading</h3>
+<br />
+<div class="container">
+
+    @Html.Partial("_MVCGridToolbar", new MVCGridToolbarModel()
+    {
+        MVCGridName = gridName,
+        PageSize = true,
+        Export = false,
+
+        GlobalSearch = false
+
+    })
+
+    @Html.MVCGrid(gridName)
+
+
+    <table class="table table-responsive table-striped table-hover" style="display:none">
+
+        <thead>
+            <tr>
+                <th>
+                    نوع طلب النشر
+                </th>
+                <th>
+                    عدد الطلبات المقدمة
+                </th>
+                <th>
+                    عدد الطلبات المقبولة
+                </th>
+                <th>
+                    عدد الطلبات المرفوضة
+                </th>
+                <th>
+                    عدد الطلبات التي تم طباعتها
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+
+
+            <tr class="success">
+                <td></td>
+                <td> </td>
+                <td></td>
+                <td> </td>
+                <td> </td>
+            </tr>
+        </tbody>
+
+    </table>
+
+
+    <button class="btn btn-primary printbtn" onclick="window.print();">@LangHelpers.Instance["print"]&nbsp;&nbsp;<i class="fa fa-print"></i></button>
+</div>

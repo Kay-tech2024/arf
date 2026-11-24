@@ -1,0 +1,481 @@
+﻿@model CommonFundingRequestViewModel
+
+<div>
+    <a id="btnAddRow" href="javascript:;" onclick="AddNewRow()" class="btn btn-success pull-right">@LangHelpers.Instance["add_a_team_member"]</a>
+    <div class="clearfix"></div>
+</div>
+
+<div id="divResearchers" class="panel-group">
+
+    @{
+        var index = -1;
+
+    }
+
+    @foreach (var c in Model.Researchers)
+    {
+        index++;
+        ViewBag.Index = index;
+
+        @Html.Partial("~/Views/Requests/FundingRequests/_PartialResearcher.cshtml", Model);
+
+    }
+</div>
+
+@{
+    ViewBag.Index = 0;
+    ViewBag.IsTemplate = true;
+}
+
+@this.ScriptBlock(
+
+    @<script type="text/javascript" nonce="@Html.ScriptNonce()">
+        var addRowSectionClickEvent = "@Model.Step" == "2";
+
+        //$('#main_researcher').find('input[type=text],input[type=number],input[type=radio],input[type=checkbox],textarea,select').addClass('disabled').attr('readonly', true).attr('disabled', 'disabled');
+        $('#main_researcher').find('input[type=text],input[type=number],input[type=radio],input[type=checkbox],textarea,select').each(function () {
+            elToReadOnly(this, true);
+        });
+        var qualifications = {};
+
+        qualifications.MainResearcher = @Html.Raw(Utils.SerializeObject(Utils.QualificationTypesByResearcherType(ResearcherRole.MainResearcher).Select(r => new { Value = r.ToString(), Text = LangHelpers.Instance[r.ToString()] }) ));
+        qualifications.AssociateResearcher = @Html.Raw(Utils.SerializeObject(Utils.QualificationTypesByResearcherType(ResearcherRole.AssociateResearcher).Select(r => new { Value = r.ToString(), Text = LangHelpers.Instance[r.ToString()] }) ));
+        qualifications.AssistantResearcher = @Html.Raw(Utils.SerializeObject(Utils.QualificationTypesByResearcherType(ResearcherRole.AssistantResearcher).Select(r => new { Value = r.ToString(), Text = LangHelpers.Instance[r.ToString()] }) ));
+        qualifications.Consultant = @Html.Raw(Utils.SerializeObject(Utils.QualificationTypesByResearcherType(ResearcherRole.Consultant).Select(r => new { Value = r.ToString(), Text = LangHelpers.Instance[r.ToString()] }) ));
+
+        var cities = @Html.Raw(Utils.SerializeObject(Model.Cities.Select(r => new { Id = r.Id, Name = r.Name })));
+
+        function AddNewRow() {
+            var div = $('#divResearchers');
+            var elms = div.find('.panel');
+            var rowHtml = '@(Html.Raw(Html.Partial("~/Views/Requests/FundingRequests/_PartialResearcher.cshtml", Model).ToHtmlString().Replace("\r\n", " ")))';
+
+            var index = elms.length;
+
+            var el = $(rowHtml.replaceAll('{index}', index).replaceAll('{order}', index+1).replaceAll('data-id="0"', 'data-id="' + index + '"').replaceAll('_0__', '_' + index + '__').replaceAll('[0]', '[' + index + ']'));
+            el.find('input,select,textarea').val('');
+            el.find('.field-validation-error').remove();
+
+            div.append(el);
+            $('#divResearchers').find('.panel-collapse').removeClass('in');
+            return false;
+
+        };
+
+        onDomInserted('.btnRemoveRow', function (el) {
+
+            $(el).on('click', function (e) {
+
+                var elm = $(el).closest('.panel');
+
+                var index = parseInt(elm.attr('data-index'));
+
+                var div = $('#divResearchers');
+                var elms = div.find('.panel');
+
+                for (var i = 0; i < elms.length; i++) {
+
+                    if (index == i) {
+                        elm.remove();
+                    } else if (index < i) {
+                        $(elms[i]).find('#divResearchers_' + i + '_').attr('id', 'Researchers_' + (i - 1) + '_').attr('name', 'Researchers[' + (i - 1) + ']');
+                        $(elms[i]).attr('data-index', i - 1);
+                    }
+                }
+
+                e.preventDefault();
+                return false;
+
+            });
+        });
+
+
+        onDomInserted('.researcher-name', function (el) {
+
+            $(el).on('input', function (e) {
+                var $panel = $(el).closest('.panel');
+                var index = parseInt($panel.attr('data-index'));
+                var $headingEl = $panel.find('.researcher-name-header');
+                var value = $(el).val();
+
+
+
+                if (index === 0)
+                {
+                    $headingEl.html('<span><b>'+value+' &nbsp; </b>@LangHelpers.Instance["the_main_researcher"]</span>');
+                }
+                else
+                {
+                    $headingEl.html('<span><b>' + value + ' &nbsp; </b>@LangHelpers.Instance["team_member"]</span>');
+                }
+
+
+
+            });
+        });
+
+
+        var switchOther = function ($el) {
+            var $otherEl = $el.closest('.form-group').next();
+            var selected = $el.val();
+            var selectedVal = null;
+            try {
+                selectedVal = parseInt(selected);
+            } catch (e) {
+                return;
+            }
+
+            if (selectedVal == NaN) return;
+
+            if (selectedVal === 0) {
+                $otherEl.slideDown();
+            } else {
+                $otherEl.find('input').val('');
+                $otherEl.slideUp();
+            }
+        };
+
+
+        onDomInserted('.other-dropdown', function (el) {
+
+            $(el).on('change', function (e) {
+                switchOther($(el));
+                return false;
+            });
+        });
+
+        var findFirstError = function () {
+            var $el = $('.field-validation-error');
+
+            if ($el.length > 0) {
+                $el = $($el[0]);
+                var $panel = $el.closest('.panel-collapse');
+                $('#divResearchers').find('.panel-collapse').removeClass('in');
+                var $toElement = $el.prev();
+
+                var $offset = -100;
+                var $speed = 500;
+
+                setTimeout(function () {
+                    $('html, body').animate({
+                        scrollTop: $($toElement).offset().top + $offset
+                    }, $speed);
+
+                    if ($toElement) $($toElement).focus();
+                }, 100)
+
+
+                $panel.addClass('in');
+            }
+        };
+
+        findFirstError();
+
+        if (addRowSectionClickEvent) {
+            onDomInserted('.row-section-header', function (el) {
+
+                $(el).find('a').on('click', function (e) {
+                    var xel = $(el).next('.row-section-details');
+                    var attr = xel.attr('data-is-visible');
+
+                    if (attr === '1') {
+
+                        xel.css('display', 'none').attr('data-is-visible', '0');
+                    } else {
+                        var others = $('.row-section-details');
+                        for (var i = 0; i < others.length; i++) {
+                            $(others[i]).css('display', 'none').attr('data-is-visible', '0');
+                        }
+                        xel.css('display', 'table-row').attr('data-is-visible', '1');
+                    }
+
+                    e.preventDefault();
+                    return false;
+
+                });
+            });
+        }
+        onDomInserted('.ddl-country', function (el) {
+
+
+            $(el).change(function () {
+
+                var $el = $(el);
+                var selected = $el.val();
+
+                var otherEl = $(el).closest('.form-group').next().find('select');
+
+                otherEl.empty();
+
+                var selectedVal = null;
+                try {
+                    selectedVal = parseInt(selected);
+                } catch (e) {
+
+                }
+
+                if (selectedVal === 0) {
+                } else {
+
+                    $.getJSON(baseAjaxUrl + 'GetCities?type=@Model.Type.ToString()&countryId=' + selected + "&others=False", function (cats) {
+                        var secCateSelect = otherEl;
+             secCateSelect.empty();
+                         secCateSelect.append($('<option />', {
+                        value: '', text: '@LangHelpers.Instance["select"]'
+                        }));
+
+                        $.each(cats, function (index, cat) {
+
+
+                            secCateSelect.append($('<option />', {
+                                value: cat.value,
+                                text: cat.text
+                            }));
+                        });
+
+
+                        secCateSelect.append($('<option />', {
+                            value: '0',
+                            text: '@ArfStrings.other'
+                        }));
+
+                        secCateSelect.selectpicker('refresh');
+                    });
+                }
+            });
+        });
+
+
+        onDomInserted({ selector: 'select.ddl-researcher-type' }, function (el) {
+
+
+            $(el).change(function () {
+                var val = $(el).val();
+                window.el = el[0];
+                var cats = [];
+
+                switch (val) {
+                    case 'MainResearcher':
+                        cats = qualifications.MainResearcher;
+                        break;
+                    case 'AssociateResearcher':
+                        cats = qualifications.AssociateResearcher;
+                        break;
+                    case 'Consultant':
+                        cats = qualifications.Consultant;
+                        break;
+                    case 'AssistantResearcher':
+                        cats = qualifications.AssistantResearcher;
+                        break;
+                    default:
+                        break;
+                }
+
+
+                var otherEl = $(el).closest('.form-group').next().find('select');
+
+                otherEl.empty()
+
+                otherEl.append($('<option />', {
+                    value: '',
+                    text: '@ArfStrings.select'
+                }));
+
+                $.each(cats, function (index, cat) {
+                    otherEl.append($('<option />', {
+                        value: cat.value,
+                        text: cat.text
+                    }));
+                });
+
+                otherEl.selectpicker('refresh');
+
+            })
+        });
+
+
+
+
+          onDomInserted('.ddl-university', function (el) {
+
+            $(el).change(function () {
+
+                var $el = $(el);
+                var selected = $el.val();
+
+                var uniEl = $el;
+                var otherEl = $(el).closest('.form-group').next().find('select');
+                var depEl = otherEl.closest('.form-group').next().find('select');
+
+                if (otherEl == null || otherEl.length === 0 || !otherEl.attr('name').endsWith('CollegeID')) {
+                    otherEl = $(el).closest('.form-group').next().next().find('select');
+                    depEl = otherEl.closest('.form-group').next().next().find('select');
+                }
+
+                var hasSelectPicker = false &&  isFunction(otherEl.selectpicker) && otherEl.hasClass('selectpicker');
+
+                otherEl.empty();
+                depEl.empty();
+
+                if (uniEl.val() != 1) {
+                    otherEl.append($('<option />', {
+                        value: '0',
+                        text: '@ArfStrings.other'
+                    }));
+
+                    depEl.append($('<option />', {
+                        value: '0',
+                        text: '@ArfStrings.other'
+                    }));
+                }
+
+
+
+
+
+
+                switchOther(otherEl);
+                switchOther(depEl);
+
+
+                if (hasSelectPicker) {
+                    otherEl.selectpicker('refresh');
+                    depEl.selectpicker('refresh');
+
+
+                }
+
+                var selectedVal = null;
+                try {
+                    selectedVal = parseInt(selected);
+                } catch (e) {
+
+                }
+
+                if (selectedVal === 0) {
+
+                } else {
+
+                    $.getJSON(baseAjaxUrl + 'GetColleges?type=@Model.Type.ToString()&dontFilter=1&universityId=' + selected + "&others=False", function (cats) {
+                        var secCateSelect = otherEl;
+         secCateSelect.empty();
+                         secCateSelect.append($('<option />', {
+                        value: '', text: '@LangHelpers.Instance["select"]'
+                        }));
+
+                        $.each(cats, function (index, cat) {
+
+                            secCateSelect.append($('<option />', {
+                                value: cat.value,
+                                text: cat.text
+                            }));
+                        });
+
+
+
+                        if (uniEl.val() != 1) {
+                            secCateSelect.append($('<option />', {
+                                value: '0',
+                                text: '@ArfStrings.other'
+                            }));
+                        }
+
+
+                        if (cats.length === 0) {
+                            secCateSelect.val('0');
+                            switchOther(secCateSelect);
+                        }
+
+                        if (hasSelectPicker) {
+                            secCateSelect.selectpicker('refresh');
+                            otherEl.selectpicker('refresh');
+                        }
+
+                    });
+                }
+            });
+        });
+
+         onDomInserted('.ddl-college', function (el) {
+
+            $(el).change(function () {
+
+                var $el = $(el);
+                var selected = $el.val();
+
+                var uniEl = $(el).closest('.form-group').prev().find('select');
+                var otherEl = $(el).closest('.form-group').next().find('select');
+
+                if (otherEl == null || otherEl.length === 0 || !otherEl.attr('name').endsWith('DepartmentId')) {
+                    otherEl = $(el).closest('.form-group').next().next().find('select');
+
+                    uniEl = $(el).closest('.form-group').prev().prev().find('select');
+                }
+
+                var hasSelectPicker = false &&  isFunction(otherEl.selectpicker) && otherEl.hasClass('selectpicker');
+
+                otherEl.empty();
+
+                if (uniEl.val() != 1) {
+                    otherEl.append($('<option />', {
+                        value: '0',
+                        text: '@ArfStrings.other'
+                    }));
+                }
+
+                switchOther(otherEl);
+
+                if (hasSelectPicker) {
+                    otherEl.selectpicker('refresh');
+
+                }
+
+                var selectedVal = null;
+                try {
+                    selectedVal = parseInt(selected);
+                } catch (e) {
+
+                }
+
+                if (selectedVal === 0) {
+                } else {
+
+                    $.getJSON(baseAjaxUrl + 'GetDepartments?type=@Model.Type.ToString()&dontFilter=1&&collegeId=' + selected + "&others=False", function (cats) {
+                        var secCateSelect = otherEl;
+                       secCateSelect.empty();
+                         secCateSelect.append($('<option />', {
+                        value: '', text: '@LangHelpers.Instance["select"]'
+                        }));
+
+                        $.each(cats, function (index, cat) {
+
+                            secCateSelect.append($('<option />', {
+                                value: cat.value,
+                                text: cat.text
+                            }));
+                        });
+
+                        if (uniEl.val() != 1) {
+                            secCateSelect.append($('<option />', {
+                                value: '0',
+                                text: '@ArfStrings.other'
+                            }));
+                        }
+
+
+                        if (cats.length === 0) {
+                            secCateSelect.val('0');
+                            switchOther(secCateSelect);
+                        }
+
+                        if (hasSelectPicker) {
+                            secCateSelect.selectpicker('refresh');
+                            otherEl.selectpicker('refresh');
+                        }
+
+                    });
+                }
+            });
+        });
+    </script>
+                                                                                        )

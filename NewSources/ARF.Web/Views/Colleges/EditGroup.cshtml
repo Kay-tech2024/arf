@@ -1,0 +1,85 @@
+﻿@model GroupViewModel
+
+@{
+    ViewBag.Title = LangHelpers.Instance["edit_group"];
+    var isDepartmentRole = Utils.IsCollegeUser;
+}
+
+<ul class="breadcrumb">
+    <li><a href="@Url.Action("Index", "Home")">@LangHelpers.Instance["homepage"]</a></li>
+
+    @if (!isDepartmentRole)
+    {
+        <li><a href="@Url.Action("Index", "Departments")">@LangHelpers.Instance["departments"]</a></li>
+        <li><a href="@Url.Action("Details", "Departments", new { id = Model.CollegeId })">@Model.CollegeName</a></li>
+        <li><a href="@Url.Action("Groups", "Departments", new { id = Model.CollegeId })">@LangHelpers.Instance["groups"]</a></li>
+    }
+    else
+    {
+        <li><a href="@Url.Action("Details", "Departments")">@LangHelpers.Instance["department_profile"]</a></li>
+        <li><a href="@Url.Action("Groups", "Departments")">@LangHelpers.Instance["groups"]</a></li>
+    }
+
+    <li>@LangHelpers.Instance["edit_group"]</li>
+</ul>
+
+<div class="box2 box2-info">
+
+    @using (Html.BeginForm("EditGroup", "Departments", new { id = Model.Id }, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.Id)
+
+            @if (!Utils.IsCollegeUser)
+            {
+                <div class="row">
+                    <div class="form-group required">
+                        <label class="control-label col-md-3">@LangHelpers.Instance["department_name"]</label>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.CollegeId, new SelectList(Model.Departments, "Id", "NameEnglish"), @LangHelpers.Instance["select"], new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.CollegeId, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                @Html.HiddenFor(m => m.CollegeId)
+            }
+
+            <div class="form-group hide">
+                @Html.LabelFor(model => model.NameEnglish, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.NameEnglish, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.NameEnglish, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group required">
+                @Html.LabelFor(model => model.NameArabic, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.NameArabic, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.NameArabic, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+          
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                    <input id="btnSubmit" type="submit" value="@LangHelpers.Instance["save"]" class="btn btn-primary btn-lg btn-block" />
+                </div>
+            </div>
+        </div>
+    }
+
+    <div>
+    </div>
+</div>
+
+@section Scripts
+{
+
+}

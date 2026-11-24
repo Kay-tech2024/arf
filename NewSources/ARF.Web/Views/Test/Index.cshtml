@@ -1,0 +1,31 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var t = 0;
+    if(!string.IsNullOrWhiteSpace(Request["t"]))
+    {
+        int.TryParse(Request["t"], out t);
+    }
+
+    switch (t)
+    {
+        case 1:
+            @Html.Partial("~/Views/Shared/MidTermFollowUpForm.cshtml", new FundingRequestViewModel());
+            break;
+        case 2:
+            @Html.Partial("~/Views/Shared/ExaminationOfExistingMidTermForm.cshtml");
+            break;
+        case 3:
+            @Html.Partial("~/Views/Shared/FundingApprovalForm.cshtml");
+            break;
+        case 4:
+           @Html.Partial("~/Views/Shared/TermFollowUpForm.cshtml");
+            break;
+        case 5:
+            @Html.Partial("~/Views/Shared/TermRequestApproval.cshtml");
+            break;
+    }
+
+}

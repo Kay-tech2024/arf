@@ -1,0 +1,56 @@
+﻿@model string
+
+@{
+    Layout = null;
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Omar Shaaban">
+
+    <title>@ArfStrings.site_title_long</title>
+
+    <!-- Bootstrap core CSS -->
+
+    <link href="//getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body style="direction: rtl;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-12 text-center">
+                <div style="padding: 20px;">
+                    @Html.Raw(Model)
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" nonce="@Html.ScriptNonce()"></script>
+    <script src="https://getbootstrap.com/dist/js/bootstrap.min.js" nonce="@Html.ScriptNonce()"></script>
+
+
+
+
+    @if (!Utils.IsLocalhost)
+    {
+
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-115800046-1" nonce="@Html.ScriptNonce()"></script>
+        <script nonce="@Html.ScriptNonce()">
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+
+            gtag('config', 'UA-115800046-1');
+        </script>
+
+    }
+
+</body>
+</html>

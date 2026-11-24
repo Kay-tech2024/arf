@@ -1,0 +1,978 @@
+﻿@model FundingRequestViewModel
+
+@{
+    ViewBag.Title = LangHelpers.Instance["new_publish"];
+    var isActionable = Model.AllowedActions != null && Model.AllowedActions.Count > 1;
+    var allowReplacingFiles = isActionable && Model.CreatedByUserId == Utils.RequestUtils.CurrentUser.Id;
+
+    var fileCount = Model.Files == null ? 0 : Model.Files.Count;
+    var commentsLabelText = LangHelpers.Instance["comments"];
+    if (Utils.HasRolesAny(ArfUserRole.ResearchUnitMember) || Utils.HasRolesAny(ArfUserRole.MembersOfTheStandingCommitteeForFinancingResearchProjects))
+    {
+        commentsLabelText = LangHelpers.Instance["Recommendation"];
+    }
+
+    var showForm2Editable = false;
+    if (Utils.HasRolesAny(ArfUserRole.ViceDeanForHigherStudiesAndScientificResearch) && (Model.Request.Status == (long)RequestStatus.FundingRequestRecievedByViceDeanOfGraduateStudies || Model.Request.Status == (long)RequestStatus.FundingRequestPendingCollegeCommittee))
+    {
+        showForm2Editable = true;
+    }
+
+}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.3.3/d3.min.js" nonce="@Html.ScriptNonce()"></script>
+<link href="~/Content/css/summernote.css" rel="stylesheet">
+<script src="~/Content/js/summernote.js" type="text/javascript" nonce="@Html.ScriptNonce()"></script>
+
+<ul class="breadcrumb">
+    <li>@Html.ActionLink(LangHelpers.Instance["home"], "Index", "Home")</li>
+    <li>@Html.ActionLink(LangHelpers.Instance["requests"], "Index", "Requests")</li>
+    <li>@LangHelpers.Instance["edit_request"]</li>
+</ul>
+
+@using (Html.BeginForm("Edit", "Requests", new { id = Model.Id }, FormMethod.Post, new { id = "frmCreateRequest", enctype = "multipart/form-data", @class = "form-horizontal maximum-width " + (isActionable ? "" : "disabled") }))
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" id="RequestCreatedBy" value="@Model.CreatedByUserId" />
+    if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger alert-validation">
+            <h5>@LangHelpers.Instance["ValidationSummary"]</h5>
+            <div class="text-left">
+                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    }
+
+    <div class="box2 box2-info padding">
+        @if (Model.Type == RequestType.FundingRequest.ToString())
+        {
+            <div class="form-group disabled">
+                <label class="control-label col-md-3">@LangHelpers.Instance["request_number"]</label>
+                <div class="col-md-6">
+                    <span class="form-control disabled">@Model.UniqueId</span>
+                </div>
+            </div>
+        }
+        <div class="form-group disabled">
+            <label class="control-label col-md-3">@LangHelpers.Instance["request_type"]</label>
+            <div class="col-md-6">
+                <span class="form-control disabled">@Model.Type</span>
+            </div>
+        </div>
+
+        <div class="form-group disabled">
+            <label class="control-label col-md-3">@LangHelpers.Instance["title"]</label>
+            <div class="col-md-6">
+                <span class="form-control disabled">@Model.Title</span>
+            </div>
+        </div>
+
+        <div class="form-group disabled">
+            <label class="control-label col-md-3">تاريخ بداية الدورة</label>
+            <div class="col-md-6">
+                <span class="form-control disabled">@Model.AnnouncementStartDate</span>
+            </div>
+        </div>
+
+        <div class="form-group disabled">
+            <label class="control-label col-md-3">تاريخ نهاية الدورة</label>
+            <div class="col-md-6">
+                <span class="form-control disabled">@Model.AnnouncementEndDate</span>
+            </div>
+        </div>
+
+        @if (!Utils.HasRolesAny(ArfUserRole.Referee))
+        {
+            <div class="form-group disabled">
+                <label class="control-label col-md-3">@LangHelpers.Instance["author_name"]</label>
+                <div class="col-md-6">
+                    <span class="form-control disabled">@Model.AuthorDetails.Name</span>
+                </div>
+            </div>
+        }
+
+        @if (Model.RequestType == RequestType.FundingRequest)
+        {
+            <p class="text-center">
+                <a data-toggle="modal" data-target="#publicationDetails" class="btn btn-default">@LangHelpers.Instance["publication_details"]</a>
+                &nbsp;&nbsp;&nbsp;
+                @if (Utils.HasRolesAny(ArfUserRole.PrincipalResearcher) && (Model.Request.Status == (long)RequestStatus.FundingRequestPendingModificationsByResearcher || Model.Request.Status == (long)RequestStatus.FundingRequestReturnedToResearcher))
+                {
+                    <a href="@Utils.GetFundingRequestLink((ReqFieldType)Model.Request.FieldType, null, Model.Request.Id)" class="btn btn-info">@LangHelpers.Instance["update_request"]</a>
+                }
+            </p>
+            <div class="modal fade bs-example-modal-lg" id="publicationDetails" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog modal-lg" role="document" style="width:90%;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">@LangHelpers.Instance["publication_details"]</h4>
+                        </div>
+                        <div class="modal-body">
+                            @*<div id="publicationDetails" class="collapse">*@
+                            @Html.Partial("_RequestSummaryTabbedPartial", WebUtils.GetTabbedRequestSummary(Model.Id.Value, (ReqFieldType)Model.Request.FieldType))
+                            @*</div>*@
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">@LangHelpers.Instance["close"]</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+
+    if (!showForm2Editable && !Utils.HasRolesAny(ArfUserRole.PrincipalResearcher) && !Utils.HasRolesAny(ArfUserRole.ResearchUnitMember) && !Utils.HasRolesAny(ArfUserRole.MembersOfTheStandingCommitteeForFinancingResearchProjects) && Model.Type != LangHelpers.Instance[RequestType.MidTermProgressReport.ToString()])
+    {
+        <div class="box2 box2-info padding">
+            <div class="form-group">
+                <label class="control-label col-md-3">@LangHelpers.Instance["ProjectAdvantages"]</label>
+                <div class="col-md-6">
+                    <span class="form-control disabled">@Model.ProjectAdvantages</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3">@LangHelpers.Instance["ProjectDisadvantages"]</label>
+                <div class="col-md-6">
+                    <span class="form-control disabled">@Model.ProjectDisadvantages</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">@LangHelpers.Instance["Recommendation"]</label>
+                <div class="col-md-6">
+                    <span class="form-control disabled">@Model.RecommendationText </span>
+                    @Html.HiddenFor(m => m.Recommendation)
+                </div>
+            </div>
+            <div class="form-group" id="divReasonForInvalidRecommendation">
+                <label class="control-label col-md-3">@LangHelpers.Instance["ReasonForInvalidRecommendation"]</label>
+                <div class="col-md-6">
+                    <span class="form-control disabled">@Model.ReasonForInvalidRecommendation</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">@LangHelpers.Instance["MeetingNumber"]</label>
+                <div class="col-md-6">
+                    <span class="form-control disabled">@Model.MeetingNumber</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">@LangHelpers.Instance["MeetingDate"]</label>
+                <div class="col-md-6">
+                    <span class="form-control disabled">@Model.MeetingDate</span>
+                </div>
+            </div>
+
+            @if (
+                    ((Utils.HasRolesAny(ArfUserRole.SecretaryOfTheStandingCommitteeForFinancingResearchProjects) && Model.AllowedActions.Count <= 1)
+                    || Utils.HasRolesAny(ArfUserRole.DirectorOfTheProgramOfFinancingResearchProjectsAndTeachingStaffMembers)
+                    || Utils.HasRolesAny(ArfUserRole.ViceDeanshipofResearchcCentersAndDatabases)
+                    || Utils.HasRolesAny(ArfUserRole.SystemAdmin))
+                    && (Model.Request.Status != (long)RequestStatus.FundingRequestRecivedByViceDeanOfResearchCenterAndDatabases && Model.Request.Status != (long)RequestStatus.FundingRequestReceivedByDirectorOfProgramOfFinancing)
+                )
+            {
+                <div class="form-group">
+                    <label class="control-label col-md-3">@LangHelpers.Instance["SecretaryMeetingNumber"]</label>
+                    <div class="col-md-6">
+                        <span class="form-control disabled">@Model.SecretaryMeetingNumber</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">@LangHelpers.Instance["SecretaryMeetingDate"]</label>
+                    <div class="col-md-6">
+                        <span class="form-control disabled">@Model.SecretaryMeetingDate</span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    if (Utils.HasRolesAny(ArfUserRole.Referee) && ViewBag.ShowRefereeFeedbackForm && isActionable)
+    {
+        int RefereeId = Convert.ToInt32(ViewBag.RefereeId);
+        @Html.Partial("~/Views/Requests/_RefereeRequestFeedbackFormQuestionsPartial.cshtml", WebUtils.GetRefereeFundingRequestFeedbackDetails(Model.Id.Value, RefereeId, (ReqFieldType)Model.Request.FieldType, !isActionable))
+    }
+
+    if (Model.AllowedActions != null && Model.AllowedActions.Count > 1)
+    {
+        <div class="box box2-info box-actions">
+            <div class="form-group">
+                <label class="control-label">الإجراء</label>
+                @Html.DropDownListFor(m => m.Action, new SelectList(Model.AllowedActions, "Value", "Display"), new { @class = "form-control" })
+            </div>
+        </div>
+    }
+
+    if (Utils.HasRolesAny(ArfUserRole.DirectorOfTheProgramOfFinancingResearchProjectsAndTeachingStaffMembers) && Model.Request.Status == (long)RequestStatus.FundingRequestWaitingForContractPreparation)
+    {
+        <div class="box box2-info" id="ResearcherContractBox" style="display: none;">
+            <div class="form-group">
+                <div class="col-md-2">
+                    @Html.LabelFor(model => model.ResearcherContractText, LangHelpers.Instance["ResearcherContractText"], htmlAttributes: new { @class = "control-label col-md-2" })
+                </div>
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.ResearcherContractText, new { @class = "form-control editor", rows = 10 })
+                </div>
+            </div>
+        </div>
+    }
+
+    if (!Utils.HasRolesAny(ArfUserRole.PrincipalResearcher) && !Utils.HasRolesAny(ArfUserRole.ResearchUnitMember))
+    {
+        <div id="divSuggestedReferees" class="panel-group div-repeatable suggested-referees-box" style="width: 600px; margin: 0 auto;">
+            @{
+                var index = -1;
+            }
+            @foreach (var c in Model.SuggestedReferees)
+            {
+                index++;
+                ViewBag.Index = index;
+                @Html.Partial("~/Views/Requests/FundingRequests/_PartialRefereeVDAR.cshtml", Model);
+            }
+        </div>
+        <br /><br />
+    }
+
+    if (showForm2Editable)
+    {
+        <div class="box2 box2-info padding" id="vice_dean_fields">
+            <div class="form-group">
+                <label class="control-label col-md-3">@LangHelpers.Instance["ProjectAdvantages"]</label>
+                <div class="col-md-6">
+                    @Html.TextAreaFor(model => model.ProjectAdvantages, htmlAttributes: new { @class = "form-control", rows = 5, cols = 5, placeholder = @LangHelpers.Instance["ProjectAdvantages"] })
+                    @Html.ValidationMessageFor(model => model.ProjectAdvantages, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3">@LangHelpers.Instance["ProjectDisadvantages"]</label>
+                <div class="col-md-6">
+                    @Html.TextAreaFor(model => model.ProjectDisadvantages, htmlAttributes: new { @class = "form-control", rows = 5, cols = 5, placeholder = @LangHelpers.Instance["ProjectDisadvantages"] })
+                    @Html.ValidationMessageFor(model => model.ProjectDisadvantages, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-md-3">@LangHelpers.Instance["Recommendation"]</label>
+                <div class="col-md-6">
+                    @Html.DropDownListFor(m => m.Recommendation, new SelectList(Model.Recommendations, "Value", "Text"), new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group" id="divReasonForInvalidRecommendation">
+                <label class="control-label col-md-3">@LangHelpers.Instance["ReasonForInvalidRecommendation"]</label>
+                <div class="col-md-6">
+                    @Html.TextAreaFor(model => model.ReasonForInvalidRecommendation, htmlAttributes: new { @class = "form-control", rows = 5, cols = 5, placeholder = @LangHelpers.Instance["ReasonForInvalidRecommendation"] })
+                    @Html.ValidationMessageFor(model => model.ReasonForInvalidRecommendation, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-md-3">@LangHelpers.Instance["MeetingNumber"]</label>
+                <div class="col-md-6">
+                    @Html.TextBoxFor(model => model.MeetingNumber, htmlAttributes: new { @class = "form-control", placeholder = @LangHelpers.Instance["MeetingNumber"] })
+                    @Html.ValidationMessageFor(model => model.MeetingNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group required">
+                <label class="control-label col-md-3">@LangHelpers.Instance["MeetingDate"]</label>
+                <div class="col-md-6">
+                    @Html.DatePickerFor(m => m.MeetingDate, ARF.Web.App_Start.Extensions.DateType.Date, new { @class = "form-control allow-edit" })
+                    @Html.ValidationMessageFor(model => model.MeetingDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+    }
+
+    var i = 0;
+    var requiredFiles = isActionable != true ? new List<FileType>() : Utils.RequestUtils.RequiredFiles(Model.Request);
+
+    if (Model.Type == LangHelpers.Instance[RequestType.MidTermProgressReport.ToString()])
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">Form 4</div>
+            <div class="panel-body">
+                <div>
+                    <h4 class="title">@LangHelpers.Instance["budget_summary"]</h4>
+                </div>
+                <br />
+                <table id="budgetSummary" class="table table-striped table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th>@ArfStrings.name</th>
+                            <th>@ArfStrings.researcher_role</th>
+                            <th>@ArfStrings.first_period_active_months</th>
+                            <th>@ArfStrings.first_period_cost</th>
+                            @*<th>@ArfStrings.second_period_active_months</th>
+                                <th>@ArfStrings.second_period_cost</th>*@
+                            @*<th>@ArfStrings.total_active_months</th>*@
+                            @*<th>@ArfStrings.total_cost</th>*@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var m in Model.BudgetSummaryPerPerson)
+                        {
+                            <tr>
+                                <td>@m.Name</td>
+                                <td>@m.ResearcherRole</td>
+                                <td>@(m.IsConsultant ? LangHelpers.Instance.GetLangValueByString("number_of_visits", false, Model.FieldType == ReqFieldType.AppliedScienceField ? "en" : null) + ": " + m.FirstPeriodActiveMonths : m.FirstPeriodActiveMonths)</td>
+                                <td>@m.FirstPeriodCost</td>
+                                @*<td>@(m.IsConsultant ? LangHelpers.Instance.GetLangValueByString("number_of_visits", false, Model.FieldType == ReqFieldType.AppliedScienceField ? "en" : null) + ": " + m.SecondPeriodActiveMonths : m.SecondPeriodActiveMonths)</td>*@
+                                @*<td>@m.SecondPeriodCost</td>*@
+                                @*<td>@m.TotalActiveMonths</td>*@
+                                @*<td>@m.TotalCost</td>*@
+                            </tr>
+                        }
+                        @if (Model.FieldType == ReqFieldType.AppliedScienceField)
+                        {
+                            <tr>
+                                <td>@ArfStrings.materials_total_cost</td>
+                                <td></td>
+                                <td></td>
+                                @*<td></td>*@
+                                @*<td></td>
+                                    <td></td>
+                                    <td></td>*@
+                                <td>@Model.MaterialsTotalCost</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td>@ArfStrings.first_period_total_cost</td>
+                            <td></td>
+                            <td></td>
+                            @*<td></td>*@
+                            @*<td></td>
+                                <td></td>
+                                <td></td>*@
+                            <td>@Model.FirstPeriodTotalCost</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <hr />
+                <table id="midTermReport" class="table table-striped table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th>@ArfStrings.s_no</th>
+                            <th>@ArfStrings.task</th>
+                            <th>@ArfStrings.completion_rate</th>
+                            <th>@ArfStrings.reasons_for_delay</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int ii = 0; ii < Model.Forms.Count(); ii++)
+                        {
+                            @Html.HiddenFor(m => m.Forms[ii].Id)
+                            <tr>
+                                <td>@(1 + ii)</td>
+                                <td>@Html.DisplayFor(m => m.Forms[ii].TaskName)</td>
+                                <td>
+                                    @Html.DropDownListFor(m => m.Forms[ii].CompletionRate, new SelectList(ViewBag.dropdownlist, "Value", "Text", Model.Forms[ii].CompletionRate), LangHelpers.Instance["select"], new { @class = "form-control" })
+                                </td>
+                                <td>
+                                    @Html.TextAreaFor(m => m.Forms[ii].Reasons, htmlAttributes: new { @class = "form-control", rows = 5, cols = 5, placeholder = @LangHelpers.Instance["reasons_for_delay"] })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <hr />
+    }
+    if (Model.Files != null && Model.Files.Count > 0)
+    {
+        <div class="row">
+            <h4 class="col-md-offset-3 col-md-6 text-center">@LangHelpers.Instance["attachments"]</h4>
+        </div>
+
+        foreach (var item in Model.Files)
+        {
+            <div class="form-group">
+                <div class="col-md-3"></div>
+                <div class="col-md-6">
+                    @Html.ActionLink((item.Type != FileType.Unspecified ? LangHelpers.Instance[item.Type.ToString()] + ": " : "") + item.FileName, "Index", "GetFile", new { id = item.FileId }, new { @class = "btn btn-success", target = "_blank" })
+                    @if (requiredFiles.Count(f => f == item.Type) > 0)
+                    {
+                        <div id="fileButton@(i)" class="custom-file-upload hide">
+                            <input data-i="@(i)" class="replace-with-file-input" type="file" name="Files[@(i)].Content" />
+                        </div>
+
+                        <span class="replace-with-file-button-@(i) btn btn-xs btn-danger pull-right" onclick="$('#fileButton@(i) input').click();">@LangHelpers.Instance["ReplaceThisFile"]</span>
+                    }
+
+                    @Html.HiddenFor(m => m.Files[i].FileId)
+                    @Html.HiddenFor(m => m.Files[i].Type)
+                </div>
+            </div>
+            <hr style="border: 1px dashed #ddd;" />
+
+            <div>
+                @Html.HiddenFor(m => m.Files[i].FileId)
+                @Html.HiddenFor(m => m.Files[i].Type)
+            </div>
+
+            i++;
+
+        }
+
+    }
+    if (Model.Type != LangHelpers.Instance[RequestType.MidTermProgressReport.ToString()])
+    {
+        if (isActionable)
+        {
+
+            var k = i;
+            foreach (var f in requiredFiles)
+            {
+                <div class="form-group required">
+                    <label class="control-label col-md-3">@LangHelpers.Instance[f.ToString()]</label>
+                    <input type="hidden" name="Files[@(k)].Type" value="@f.ToString()" />
+                    <div class="col-md-6">
+                        <div class="custom-file-upload">
+                            <input type="file" id="file" name="Files[@(k)].Content" />
+                        </div>
+                    </div>
+                </div>
+
+                k++;
+            }
+
+            <div id="attachment-upload-row" class="form-group @(!ViewBag.AllowToUploadAttachment ? "hidden" : "")">
+                <label class="control-label col-md-3">@LangHelpers.Instance["new_attachments"]</label>
+                <div class="col-md-6">
+                    <div class="custom-file-upload">
+                        <input type="hidden" name="Files[@(k)].Type" value="@FileType.Other.ToString()" />
+                        <input type="file" id="file" name="Files[@(k)].Content" multiple />
+                    </div>
+                </div>
+            </div>
+
+            if (Utils.HasRolesAny(ArfUserRole.SecretaryOfTheStandingCommitteeForFinancingResearchProjects))
+            {
+                <div class="form-group required SecretaryMeetingFields" style="display: none;">
+                    <label class="control-label col-md-3">@LangHelpers.Instance["SecretaryMeetingNumber"]</label>
+                    <div class="col-md-6">
+                        @Html.TextBoxFor(model => model.SecretaryMeetingNumber, htmlAttributes: new { @class = "form-control", placeholder = @LangHelpers.Instance["SecretaryMeetingNumber"] })
+                        @Html.ValidationMessageFor(model => model.SecretaryMeetingNumber, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group required SecretaryMeetingFields" style="display: none;">
+                    <label class="control-label col-md-3">@LangHelpers.Instance["SecretaryMeetingDate"]</label>
+                    <div class="col-md-6">
+                        @Html.DatePickerFor(m => m.SecretaryMeetingDate, ARF.Web.App_Start.Extensions.DateType.Date, new { @class = "form-control allow-edit" })
+                        @Html.ValidationMessageFor(model => model.SecretaryMeetingDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            }
+
+        }
+        else
+        {
+            <br />
+            <div class="form-group">
+                <label class="control-label col-md-3">@LangHelpers.Instance["status"]</label>
+                <div class="col-md-6">
+                    <em>@Model.Status</em>
+                </div>
+            </div>
+            if (Model.CurrentlyWithUserId != null)
+            {
+                <div class="form-group">
+                    <label class="control-label col-md-3">@LangHelpers.Instance["currently_with"]</label>
+                    <div class="col-md-6">
+                        <em>@Model.CurrentlyWithUserName</em>
+                    </div>
+                </div>
+            }
+        }
+    }
+    if (Utils.HasRolesAny(ArfUserRole.Referee) && ViewBag.ShowRefereeFeedbackForm && !isActionable)
+    {
+        int RefereeId = Convert.ToInt32(ViewBag.RefereeId);
+        @Html.Partial("~/Views/Requests/_RefereeRequestFeedbackFormQuestionsPartial.cshtml", WebUtils.GetRefereeFundingRequestFeedbackDetails(Model.Id.Value, RefereeId, (ReqFieldType)Model.Request.FieldType, !isActionable))
+    }
+
+    if (Model.AllowedActions != null && Model.AllowedActions.Count > 1)
+    {
+        <div id="divSelectedReferees"></div>
+
+        <div class="box box2-info">
+            @if (Model.CanSelectReferees)
+            {
+                if (Model.Referees == null)
+                {
+                    Model.Referees = new List<RefereeViewModel>();
+                }
+                <div>
+                    <script type="text/javascript" nonce="@Html.ScriptNonce()">
+                                                                            var maxReferees = @Model.MaxRefereeCount;
+                                                                            var minReferees = @Model.MinRefereeCount;
+                        var selectedReferees = [];
+                        var preSelected = @Html.Raw(Utils.SerializeObject(Model.Referees));
+                                                                            document.addEventListener("DOMContentLoaded", function (event) {
+
+                                                                                var validateAction = function () {
+                                                                                    var isValid = true;
+                                                                                    var action = $('#Action').val();
+
+                                                                                    switch (action) {
+                                                                                        case 'ForwardToInitialReferee':
+                                                                                        case 'SelectReferees':
+                                                                                        case '':
+                                                                                            if (selectedReferees.length > maxReferees || selectedReferees.length < minReferees) {
+                                                                                                isValid = false;
+                                                                                            }
+                                                                                            break;
+                                                                                        default:
+
+                                                                                            break;
+                                                                                    }
+
+                                                                                    if (isValid) {
+                                                                                        $('#btnSubmit').removeClass("disabled").removeProp('disabled');
+                                                                                    }
+                                                                                    else {
+                                                                                        $('#btnSubmit').addClass("disabled").prop('disabled', 'disabled');
+                                                                                    }
+
+                                                                                    return isValid;
+                                                                                };
+
+                                                                                window.onRefreeSelectionChanged = function () {
+                                                                                    validateAction();
+                                                                                };
+
+                                                                                $('#Action').change(function () {
+                                                                                    validateAction();
+                                                                                });
+
+                                                                                $('#frmCreateRequest').submit(function (e) {
+                                                                                    if (!validateAction()) {
+                                                                                        e.preventDefault();
+                                                                                        return false;
+                                                                                    }
+
+                                                                                    $('#divSelectedReferees').empty();
+
+                                                                                    for (var i = 0; i < selectedReferees.length; i++) {
+                                                                                        $('#divSelectedReferees').append('<input type="hidden" name="Referees[' + i + '].Id" value="' + selectedReferees[i].id + '" />')
+                                                                                        $('#divSelectedReferees').append('<input type="hidden" name="Referees[' + i + '].FullName" value="' + selectedReferees[i].fullName + '" />')
+                                                                                        $('#divSelectedReferees').append('<input type="hidden" name="Referees[' + i + '].IsPrime" value="' + selectedReferees[i].isPrime + '" />')
+                                                                                    }
+
+                                                                                });
+                                                                            });
+                    </script>
+                </div>
+
+                <div id="divRefereeSelection" style="display: none;">
+                    @Html.Partial("~/Views/Requests/_RefereeSelection.cshtml")
+                </div>
+            }
+        </div>
+
+        <div class="box2 box2-info">
+            <div class="row">
+                <div class="form-group">
+                    <label class="control-label col-md-3">@commentsLabelText</label>
+                    <div class="col-md-6">
+                        @Html.TextAreaFor(model => model.Comments, htmlAttributes: new { @class = "form-control", rows = 5, cols = 5, placeholder = @commentsLabelText })
+                        @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="box box2-info box-actions">
+            <div class="form-group">
+                <button id="btnSubmit" data-toggle="modal" data-target="" class="btn btn-success btn-block">إرسال</button>
+            </div>
+        </div>
+    }
+
+    if (Model.RequestCoresearcherResponses.Count > 0)
+    {
+        <div class="box2 box2-info">
+            <h4 class="text-center">@LangHelpers.Instance["research_team"]</h4>
+            <table class="table table-responsive" style="margin: 0 auto; table-layout: fixed;">
+                <thead>
+                    <tr>
+                        <th style="max-width: 150px;">@LangHelpers.Instance["name"]</th>
+                        <th style="max-width: 50px;">@LangHelpers.Instance["action"]</th>
+                        <th style="max-width: 50px;">@LangHelpers.Instance["sent_on"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var coresearcher in Model.RequestCoresearcherResponses)
+                    {
+                        <tr>
+                            <td>@coresearcher.RequestCoresearcher.Researcher.GetFullName()</td>
+                            <td>@LangHelpers.Instance[((ARF.Data.RequestCoresearcherResponseStatus)coresearcher.Status.Value).ToString()]</td>
+                            <td>@(coresearcher.SentOn != null ? coresearcher.SentOn.Value.FormatDate(true) : "")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    if (Model.CouncilMembers != null && Model.CanSeeCouncilMembers && Model.CouncilMembers.Count > 0)
+    {
+        <div class="box2 box2-info">
+            <h4 class="text-center">@LangHelpers.Instance["council_members"]</h4>
+
+            <table class="table table-responsive" style="margin: 0 auto; table-layout: fixed;">
+                <thead>
+                    <tr>
+                        <th style="max-width: 150px;">@LangHelpers.Instance["name"]</th>
+                        <th style="max-width: 50px;">@LangHelpers.Instance["action"]</th>
+                        <th>@LangHelpers.Instance["Recommendation"]</th>
+                        <th style="max-width: 150px;">@LangHelpers.Instance["download_attachment"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        i = 0;
+                    }
+
+                    @foreach (var member in Model.CouncilMembers)
+                    {
+
+                        <tr class="@(++i % 2 == 0 ? "alt-row" : "")">
+                            <td style="max-width: 150px;">@member.FullName</td>
+                            <td style="max-width: 50px;">@member.Action</td>
+                            <td style="word-wrap: break-word;">
+                                @member.Comments
+                            </td>
+                            <td style="max-width: 150px;">
+                                @if (!string.IsNullOrWhiteSpace(member.FileId))
+                                {
+                                    <a class="btn btn-xs btn-success" target="_blank" href="@(Utils.GetApplicationUrl() + "f/" + member.FileId)">  @member.FileName</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <br />
+
+    }
+
+    if ((Model.Referees != null && Model.Referees.Count > 0 && Model.CanViewReferees == true) || (Model.AllowedActions != null && Model.AllowedActions.Count > 0 && Model.CanSelectReferees) || ViewBag.CanViewRefereeComments == true)
+    {
+
+        <div class="modal fade bs-example-modal-lg" id="referee_feedback_modal" tabindex="-1" role="dialog" aria-labelledby="myModalreferee_feedback">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalreferee_feedback">@LangHelpers.Instance["referee_feedback"]</h4>
+                    </div>
+                    <div class="modal-body" id="referee_feedback_content">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">@LangHelpers.Instance["close"]</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        if (Model.Referees.Count > 0)
+        {
+            <div class="box2 box2-info">
+                <h4 class="text-center">@LangHelpers.Instance["referees"]</h4>
+
+                <table class="table table-responsive">
+                    <thead>
+                        <tr>
+
+                            @if (!Utils.HasRolesAny(ArfUserRole.PrincipalResearcher))
+                            {
+                                <th>@LangHelpers.Instance["name"]</th>
+                                <th style="max-width: 50px">@LangHelpers.Instance["major"]</th>
+                            }
+
+                            <th style="max-width: 50px">@LangHelpers.Instance["action"]</th>
+                            <th>@LangHelpers.Instance["comments"]</th>
+                            <th style="max-width: 50px">@LangHelpers.Instance["download_attachment"]</th>
+                            <th>@LangHelpers.Instance["sent_on"]</th>
+                            <th>@LangHelpers.Instance["feedback_details"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            i = 0;
+                        }
+
+                        @foreach (var referee in Model.Referees)
+                        {
+                            var fullname = referee.FullName;
+                            if (Utils.HasRolesAny(ArfUserRole.PrincipalResearcher) && String.IsNullOrEmpty(@referee.Action) && String.IsNullOrEmpty(@referee.Comments))
+                            {
+                                continue;
+                            }
+
+
+                            if (Model.Referees.Count > 2)
+                            {
+                                fullname += " <span class=\"badge bg-" + (i < 2 ? "info" : "warning") + "\">(" + (i < 2 ? LangHelpers.Instance["prime_referee"] : LangHelpers.Instance["reserve_referee"]) + ")</span>";
+                            }
+                            if (referee.UserId == null)
+                            {
+                                fullname += "&nbsp;<span class='badge1 bg-primary'>" + LangHelpers.Instance["external_referee"] + "</span>";
+                            }
+                            <tr class="@(++i % 2 == 0 ? "alt-row" : "")">
+
+                                @if (!Utils.HasRolesAny(ArfUserRole.PrincipalResearcher))
+                                {
+                                    <td style="font-size: 12px;">@Html.Raw(fullname)</td>
+                                    <td style="max-width: 50px">@referee.MajorName</td>
+
+                                }
+
+                                <td>
+                                    @referee.Action
+                                </td>
+                                <td>
+                                    @referee.Comments
+                                </td>
+                                <td style="max-width: 50px">
+                                    @if (!string.IsNullOrWhiteSpace(referee.FileId))
+                                    {
+                                        <a class="btn btn-xs btn-success" target="_blank" href="@(Utils.GetApplicationUrl() + "f/" + referee.FileId)">  @referee.FileName</a>
+                                    }
+                                </td>
+                                <td>@referee.ReviewSentOnStr</td>
+                                <td>
+                                    @if (!String.IsNullOrEmpty(@referee.Action))
+                                    {
+                                        <a data-toggle="modal" data-requestid="@Model.Id" data-refereeid="@referee.Id" data-reqfieldtype="@Model.Request.FieldType" data-target="#referee_feedback_modal" class="btn btn-info referee_form_detail_link">@LangHelpers.Instance["details"]</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <br />
+            </div>
+        }
+    }
+    <br />
+    if (Utils.HasRolesAny(ArfUserRole.DeanofDeanshipofScientificResearch, ArfUserRole.PrincipalResearcher))
+    {
+        if ((Model.StatusNo == (long?)RequestStatus.FundingRequestContractIssuedWaitingForResearcher && Model.StatusNo != null) || (Model.StatusNo == (long?)RequestStatus.FundingRequestContractReceivedByDeanOfScientificResearchAfterResearcher && Model.StatusNo != null))
+        {
+            <div>
+                <script type="text/javascript" nonce="@Html.ScriptNonce()">
+                    function changes(key) {
+                        if (key == 'signature') {
+                            $('span[id^="spansignature"]').remove();
+                        } else {
+                            $('span[id^="spancheckbox"]').remove();
+                        }
+                    }
+                    $(document).ready(function () {
+                        var isSignatureProvided = false;
+                        $('#btnSubmit').on('click', function (e) {
+                            var approve = $('#Action').val();
+                            if (approve != "Approve") {
+                                $('#eSignatureModal').modal('hide');
+                            }
+                            else {
+                                $('#eSignatureModal').modal('show');
+                                $('#frmCreateRequest').submit(function (e) {
+                                    if (!isSignatureProvided) {
+                                        e.preventDefault();
+                                        return false;
+                                    }
+                                });
+                            }
+                        });
+
+                        $("#btnesignature").click(function () {
+                            var signature = $('#Signature').val();
+                            var checkbox = $('input[type=checkbox]#Checkbox').prop('checked');
+                            if (signature != ""&&checkbox) {
+                                isSignatureProvided = true;
+                                $('#frmCreateRequest').submit();
+                            }
+                            else {
+                                if (signature == "") {
+                                    $('span[id^="spansignature"]').remove();
+                                    $("#signaturerequired").append("<span id='spansignature' class='text-danger'>" + '@LangHelpers.Instance["please_enter_signature"]' + '</span>');
+                                }
+                                if (!checkbox) {
+                                    $('span[id^="spancheckbox"]').remove();
+                                    $("#checkboxrequired").append("<span id='spancheckbox' class='text-danger'>" + '@LangHelpers.Instance["please_check_the_checkbox"]' + '</span>');
+                                }
+                            }
+                        });
+
+
+                    });
+                </script>
+            </div>
+            <!-- line modal E-Signature Modal -->
+            <div class="modal fade" id="eSignatureModal" tabindex="-1" role="dialog" aria-labelledby="eSignatureModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                            <h3 class="modal-title" id="lineModalLabel">@LangHelpers.Instance["terms_of_acceptance_and_e_signature"]</h3>
+                        </div>
+                        <div class="modal-body">
+                            <!-- content goes here -->
+                            <form>
+                                <div class="form-group">
+                                    <p class="text-center">@LangHelpers.Instance["terms_of_acceptance_and_e_signature_message"]</p>
+                                </div>
+                                <div class="form-group" id="signaturerequired">
+                                    @*<div class="col-sm-4">*@
+                                    <label class="control-label col-md-3">@LangHelpers.Instance["electronic_signature"]</label>
+                                    @*</div>*@
+                                    <div class="col-md-6">
+                                        @Html.TextBoxFor(model => model.Signature, htmlAttributes: new { @class = "form-control", onchange = "changes('signature')", placeholder = LangHelpers.Instance["electronic_signature"] })
+                                        @Html.ValidationMessageFor(model => model.Signature, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group" id="checkboxrequired">
+                                    <div class="col-sm-1">
+                                        @Html.CheckBoxFor(model => model.Checkbox, htmlAttributes: new { @class = "checkbox", onchange = "changes('checkbox')" })
+                                        @Html.ValidationMessageFor(model => model.Checkbox, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-sm-11">
+                                        <p>
+                                            @LangHelpers.Instance["terms_of_acceptance_and_e_signature_message_for_checkbox"]
+                                        </p>
+                                    </div>
+
+                                    @*<div class="col-md-6">
+
+
+                                        </div>*@
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">@LangHelpers.Instance["close"]</button>
+                            <button type="submit" id="btnesignature" class="btn btn-primary">@LangHelpers.Instance["send"]</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    if (Utils.IsLocalhost)
+    {
+        <p>status: @Model.Status</p><p>Statusno:@Model.StatusNo</p>
+        <p>action:@Model.Action</p>
+    }
+}
+
+@if (ViewBag.ShowRequestHistory)
+{
+    @Html.Partial("_PartialHistory", Model)
+}
+
+<div class="row text-center">
+    <a class="btn btn-default" href="~/Home/Return">العودة</a>
+    <br />
+</div>
+
+@section scripts{
+    <script type="text/javascript" src="~/Content/js/hijri-date.js" nonce="@Html.ScriptNonce()"></script>
+    <script type="text/javascript" src="~/Content/js/calendar.js" nonce="@Html.ScriptNonce()"></script>
+    <script type="text/javascript" src="~/Content/js/site.js" nonce="@Html.ScriptNonce()"></script>
+    <script nonce="@Html.ScriptNonce()">
+
+        $(document).ready(function () {
+            if ($("#vice_dean_fields").length > 0) {
+                $(".suggested-referees-box").hide();
+                $("#vice_dean_fields").hide();
+                $("#attachment-upload-row").hide();
+            }
+
+            $('.editor').summernote({ height: 300 });
+        });
+        function makeSummaryFormReadonly() {
+            $('#publicationDetails').find('input[type=text],input[type=number],input[type=radio],input[type=checkbox],textarea,select').each(function () {
+                elToReadOnly(this);
+            });
+
+            $('#divRefereeSelection').hide();
+            $('#divSelectedReferees').hide();
+            $("#external_refree_add_link").hide();
+
+            $('#publicationDetails').find('.required').removeClass('required');
+            $('#publicationDetails').find('#btnAddRow').remove();
+            $('#publicationDetails').find('.btnAddRow').remove();
+            $('#publicationDetails').find('.btnRemoveRow').remove();
+        }
+        $(".referee_form_detail_link").on("click", function () {
+            var _params = {
+                RequestId: $(this).data("requestid"),
+                RefereeId: $(this).data("refereeid"),
+                FieldType: $(this).data("reqfieldtype")
+            };
+            $("#referee_feedback_content").html("");
+            $.post(baseAjaxUrl + "LoadRefereeRequestFeedbackFormPartial", _params, function (_result) {
+                $("#referee_feedback_content").html(_result);
+            });
+
+        });
+        $("#Action").on("change", function () {
+            $('#divRefereeSelection').hide();
+            $('#divSelectedReferees').hide();
+            $("#external_refree_add_link").hide();
+            $(".SecretaryMeetingFields").hide();
+            $("#ResearcherContractBox").hide();
+
+            if ($("#vice_dean_fields").length > 0) {
+                $(".suggested-referees-box").show();
+                $("#vice_dean_fields").show();
+                $("#attachment-upload-row").show();
+            }
+
+            var _val = $(this).val();
+            if (_val == "ApproveAndSelectReferees") {
+                $('#divRefereeSelection').show();
+                $('#divSelectedReferees').show();
+                $("#external_refree_add_link").show();
+                $(".SecretaryMeetingFields").show();
+            }
+            else if (_val == "SendToCommiteeMembers" || _val == "ReturnToResearcher") {
+                $(".suggested-referees-box").hide();
+                $("#vice_dean_fields").hide();
+                //if (_val != "ReturnToResearcher") {
+                $("#attachment-upload-row").hide();
+                //}
+            }
+            else if (_val == "SendToViceDeanForResearchCentersAndDatabases" && $("#ResearcherContractText").length > 0) {
+                $("#ResearcherContractBox").show();
+            }
+        });
+
+        $("#Recommendation").change(function () {
+            // jQuery
+            //var selectedVal = $(this).find(':selected').val();
+            toggleRecommendation();
+        });
+        function toggleRecommendation() {
+            var selectedVal = $('#Recommendation').find(':selected').val();
+            if (selectedVal == undefined) {
+                selectedVal = $('#Recommendation').val();
+            }
+            if (selectedVal != '2') {
+                $("#divReasonForInvalidRecommendation").hide();
+            }
+            else {
+                $("#divReasonForInvalidRecommendation").show();
+            }
+        }
+
+        toggleRecommendation();
+        makeSummaryFormReadonly();
+    </script>
+}

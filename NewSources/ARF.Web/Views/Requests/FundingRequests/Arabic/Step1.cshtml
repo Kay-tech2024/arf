@@ -1,0 +1,471 @@
+﻿@model CommonFundingRequestViewModel
+
+<div class="form-group required">
+    <label class="control-label col-md-4">@LangHelpers.Instance["research_college"]</label>
+    <div class="col-md-8">
+        @Html.DropDownListFor(m => m.CollegeID, new SelectList(Model.Colleges, "Value", "Text"), LangHelpers.Instance["select"], new { @class = "form-control field-required" })
+        <span class="help-block">@Html.ValidationMessageFor(m => m.CollegeID)</span>
+    </div>
+</div>
+
+<div class="form-group required">
+    <label class="control-label col-md-4">@LangHelpers.Instance["research_department"]</label>
+    <div class="col-md-8">
+        @Html.DropDownListFor(m => m.DepartmentId, new SelectList(Model.Departments, "Value", "Text"), LangHelpers.Instance["select"], new { @class = "form-control field-required" })
+        <span class="help-block">@Html.ValidationMessageFor(m => m.DepartmentId)</span>
+    </div>
+</div>
+
+<div id="divSecondaryCategoryOther" class="form-group required">
+    <label class="control-label col-md-4">@LangHelpers.Instance["other_secondary_category"]</label>
+    <div class="col-md-8">
+        @Html.TextBoxFor(m => m.SecondaryCategoryOther, new { @class = "form-control field-required" })
+        <span class="help-block">@Html.ValidationMessageFor(m => m.SecondaryCategoryOther)</span>
+    </div>
+</div>
+
+<div class="form-group required">
+    <label class="control-label col-md-4">@LangHelpers.Instance["title_in_arabic"]</label>
+    <div class="col-md-8">
+        @Html.TextBoxFor(m => m.TitleArabic, new { @class = "form-control field-required" })
+        <span class="help-block">@Html.ValidationMessageFor(m => m.TitleArabic)</span>
+    </div>
+</div>
+
+<div class="form-group @(Model.Type == ReqFieldType.AppliedScienceField? "required" : "")">
+    <label class="control-label col-md-4">@LangHelpers.Instance["title_in_english"]</label>
+    <div class="col-md-8">
+        @Html.TextBoxFor(m => m.TitleEnglish, new { @class = "form-control" })
+        <span class="help-block">@Html.ValidationMessageFor(m => m.TitleEnglish)</span>
+    </div>
+</div>
+
+<div class="form-group required">
+    <label class="control-label col-md-4">@LangHelpers.Instance["duration_in_months"]</label>
+    <div class="col-md-8">
+        @Html.DropDownListFor(m => m.Duration, new SelectList(Model.Durations, "Value", "Text"), LangHelpers.Instance["select"], new { @class = "form-control field-required" })
+        <span class="help-block">@Html.ValidationMessageFor(m => m.Duration)</span>
+    </div>
+</div>
+
+<div class="form-group required hide">
+    <label class="control-label col-md-4">@LangHelpers.Instance["primary_category"]</label>
+    <div class="col-md-8">
+        @Html.DropDownListFor(m => m.PrimaryCategory, new SelectList(Model.PrimaryCategories, "Value", "Text"), LangHelpers.Instance["select"], new { @class = "form-control field-required" })
+        <span class="help-block">@Html.ValidationMessageFor(m => m.PrimaryCategory)</span>
+    </div>
+</div>
+
+<div id="divPrimaryCategoryOther hide" class="form-group required hide" style="display: @(Model.PrimaryCategory == null || Model.PrimaryCategory > 0? "none" : "block")">
+    <label class="control-label col-md-4">@LangHelpers.Instance["other_primary_category"]</label>
+    <div class="col-md-8">
+        @Html.TextBoxFor(m => m.PrimaryCategoryOther, new { @class = "form-control field-required" })
+        <span class="help-block">@Html.ValidationMessageFor(m => m.PrimaryCategoryOther)</span>
+    </div>
+</div>
+
+<div id="divSecondaryCategory" class="form-group required hide" style="display: @(Model.PrimaryCategory == null || Model.PrimaryCategory > 0? "block" : "none")">
+    <label class="control-label col-md-4">@LangHelpers.Instance["secondary_category"]</label>
+    <div class="col-md-8">
+        @Html.DropDownListFor(m => m.SecondaryCategory, new SelectList(Model.SecondaryCategories, "Value", "Text"), LangHelpers.Instance["select"], new { @class = "form-control field-required" })
+        <span class="help-block">@Html.ValidationMessageFor(m => m.SecondaryCategory)</span>
+    </div>
+</div>
+
+<div class="form-group required">
+    <label class="control-label col-md-4">@LangHelpers.Instance["is_previously_applied"]</label>
+    <div class="col-md-8">
+        @Html.RadioButtonFor(m => m.IsPreviouslyApplied, true, new { @class = "radio-inline" }) <span>
+            @LangHelpers.Instance["yes_answer"]
+        </span>
+        @Html.RadioButtonFor(m => m.IsPreviouslyApplied, false, new { @class = "radio-inline" }) <span>
+            @LangHelpers.Instance["no_answer"]
+        </span>
+        <span class="help-block">@Html.ValidationMessageFor(m => m.IsPreviouslyApplied)</span>
+    </div>
+    <div class="clearfix"></div>
+</div>
+
+<div id="divWasAccepted" class="form-group required" style="display: @(Model.IsPreviouslyApplied == true? "block" : "none")">
+    <label class="control-label col-md-4">@LangHelpers.Instance["WasProposalAccepted"]</label>
+    <div class="col-md-8">
+        @Html.RadioButtonFor(m => m.WasProposalAccepted, true, new { @class = "radio-inline" }) <span>
+            @LangHelpers.Instance["yes_answer"]
+        </span>
+        @Html.RadioButtonFor(m => m.WasProposalAccepted, false, new { @class = "radio-inline" }) <span>
+            @LangHelpers.Instance["no_answer"]
+        </span>
+        <span class="help-block">@Html.ValidationMessageFor(m => m.WasProposalAccepted)</span>
+    </div>
+    <div class="clearfix"></div>
+</div>
+
+<div id="divRefusal" class="form-group required" style="display: @(Model.WasProposalAccepted == false? "block" : "none")">
+    <label class="control-label col-md-4">@LangHelpers.Instance["RefusalReason"]</label>
+    <div class="col-md-8">
+        @Html.TextBoxFor(m => m.RefusalReason, new { @class = "form-control" })
+        <span class="help-block">@Html.ValidationMessageFor(m => m.RefusalReason)</span>
+    </div>
+</div>
+
+<div id="divApplicationNumber" class="form-group required" style="display: @(Model.IsPreviouslyApplied == true? "block" : "none")">
+    <label class="control-label col-md-4">@LangHelpers.Instance["application_no"]</label>
+    <div class="col-md-8">
+        @Html.TextBoxFor(m => m.ApplicationNumber, new { @class = "form-control field-required" })
+        <span class="help-block">@Html.ValidationMessageFor(m => m.ApplicationNumber)</span>
+    </div>
+</div>
+
+<div class="form-group required">
+    <label class="control-label col-md-4">@LangHelpers.Instance["number_of_funded_projects"]</label>
+    <div class="col-md-8">
+        @Html.TextBoxFor(m => m.NumberOfFundedProjects, new { @class = "form-control field-required field-number" })
+        <span class="help-block">@Html.ValidationMessageFor(m => m.NumberOfFundedProjects)</span>
+    </div>
+</div>
+
+<div class="form-group required">
+    <label class="control-label col-md-4">@LangHelpers.Instance["number_of_expected_publications"]</label>
+    <div class="col-md-8">
+        @Html.TextBoxFor(m => m.NumberOfExpectedPublications, new { @class = "form-control field-required field-number" })
+        <span class="help-block">@Html.ValidationMessageFor(m => m.NumberOfExpectedPublications)</span>
+    </div>
+</div>
+
+<!-- IsWithinPriority: Does the research project for funding fall within the priorities of scientific research for the Scientific Department in which you work?!-->
+<div class="form-group required">
+    <label class="control-label col-md-4">@LangHelpers.Instance["is_within_priority"]</label>
+    <div class="col-md-8">
+        @Html.RadioButtonFor(m => m.IsWithinPriority, true, new { @class = "radio-inline" }) <span>
+            @LangHelpers.Instance["yes_answer"]
+        </span>
+        @Html.RadioButtonFor(m => m.IsWithinPriority, false, new { @class = "radio-inline" }) <span>
+            @LangHelpers.Instance["no_answer"]
+        </span>
+        <span class="help-block">@Html.ValidationMessageFor(m => m.IsWithinPriority)</span>
+    </div>
+    <div class="clearfix"></div>
+</div>
+
+<div id="divPriority" style="display: @(Model.IsWithinPriority == true? "block" : "none")">
+
+    <div class="form-group required">
+
+        <label class="control-label col-md-4">@LangHelpers.Instance["priority"]</label>
+        <div class="col-md-8">
+            @Html.DropDownListFor(m => m.PriorityId, new SelectList(Model.Priorities, "Value", "Text"), LangHelpers.Instance["select"], new { @class = "form-control field-required other-dropdown" })
+            <span class="help-block">@Html.ValidationMessageFor(m => m.PriorityId)</span>
+        </div>
+    </div>
+
+    <div class="form-group required div-priority-other" style="display: @(Model.PriorityId == null || Model.PriorityId  > 0? "none" : "block")">
+        <label class="control-label col-md-4"> @LangHelpers.Instance["other_priority"]</label>
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.PriorityOther, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.PriorityOther)
+        </div>
+    </div>
+</div>
+
+@this.ScriptBlock(
+
+    @<script type="text/javascript" nonce="@Html.ScriptNonce()">
+        var initialDepartmentId = @(Model.DepartmentId > 0 ? ""+ Model.DepartmentId.Value : "null");
+        var initialSecondaryCategory = @(Model.SecondaryCategory > 0 ? ""+ Model.SecondaryCategory.Value : "null");
+
+        var switchPrimaryCategoryOther = function () {
+            var $el = $('#PrimaryCategory');
+            var $otherEl = $('#divPrimaryCategoryOther');
+            var $ElSecondary = $('#divSecondaryCategory');
+            var $otherElSecondary = $('#divSecondaryCategoryOther dsadadaadda');
+            var selected = $el.val();
+
+            $('#SecondaryCategory').empty();
+
+            var selectedVal = null;
+            try {
+                selectedVal = parseInt(selected);
+            } catch (e) {
+
+            }
+
+            if (selectedVal === 0) {
+                $otherEl.slideDown();
+                $ElSecondary.slideUp();
+                //$otherElSecondary.slideDown();
+            } else {
+
+                $('#PrimaryCategoryOther').val('');
+                //$('#SecondaryCategoryOther').val('');
+
+                $ElSecondary.slideDown();
+                //$otherElSecondary.slideUp();
+                $otherEl.slideUp();
+
+                $.getJSON(baseAjaxUrl + 'GetCategories?categoryId=' + selected + "&level=2", function (cats) {
+                    var secCateSelect = $('#SecondaryCategory');
+                    secCateSelect.empty();
+
+                    var isThere = false;
+
+                    secCateSelect.append($('<option />', {
+                        value: '',
+                        text: '@LangHelpers.Instance["select"]'
+                    }));
+
+
+                    $.each(cats, function (index, cat) {
+                        if (initialSecondaryCategory > 0 && cat.value == initialSecondaryCategory) {
+                            isThere = true;
+                        }
+
+                        secCateSelect.append($('<option />', {
+                            value: cat.value,
+                            text: cat.text
+                        }));
+                    });
+
+                    secCateSelect.append($('<option />', {
+                        value: '0',
+                        text: '@LangHelpers.Instance["other"]'
+                    }));
+
+                    if (isThere) {
+                        secCateSelect.val(initialSecondaryCategory);
+                    }
+
+                    switchSecondayCategoryOther();
+
+                    secCateSelect.selectpicker('refresh');
+                });
+            }
+        };
+
+        var switchSecondayCategoryOther = function () {
+            var $el = $('#SecondaryCategory');
+            var $otherEl = $('#divSecondaryCategoryOther xasasddada');
+            var selected = $el.val();
+            var selectedVal = null;
+            try {
+                selectedVal = parseInt(selected);
+            } catch (e) {
+
+            }
+
+            if (selectedVal === 0) {
+                $otherEl.slideDown();
+            } else {
+                //$('#SecondaryCategoryOther').val('');
+                $otherEl.slideUp();
+            }
+        };
+
+        var switchApplicationNumber = function () {
+            var $otherEl = $('#divApplicationNumber');
+            var selected = $('input[name=IsPreviouslyApplied]:checked').val();
+
+            if (selected === 'True') {
+                $otherEl.slideDown();
+                switchRefusalReason();
+            } else {
+                $('#ApplicationNumber').val('');
+                $otherEl.slideUp();
+                $('#divRefusal').slideUp();
+
+            }
+        };
+
+        var switchWasAccepted = function () {
+            var $otherEl = $('#divWasAccepted');
+            var selected = $('input[name=IsPreviouslyApplied]:checked').val();
+
+            if (selected === 'True') {
+                $otherEl.slideDown();
+            } else {
+                $otherEl.slideUp();
+            }
+        };
+
+        var switchRefusalReason = function () {
+            var $otherEl = $('#divRefusal');
+            var selected = $('input[name=WasProposalAccepted]:checked').val();
+
+            if (selected === 'False') {
+                $('#divApplicationNumber').removeClass('required');
+                $otherEl.slideDown();
+            } else {
+                $('#divApplicationNumber').addClass('required');
+                $otherEl.slideUp();
+            }
+        };
+
+        $('#PrimaryCategory').change(function () {
+            switchPrimaryCategoryOther();
+        });
+
+        $('#SecondaryCategory').change(function () {
+            switchSecondayCategoryOther();
+
+        });
+
+        $('input[name=IsPreviouslyApplied]').change(function () {
+            switchWasAccepted();
+            switchApplicationNumber();
+        });
+
+        $('input[name=WasProposalAccepted]').change(function () {
+            switchRefusalReason();
+        });
+
+        switchPrimaryCategoryOther();
+        if (initialSecondaryCategory === null)
+            switchSecondayCategoryOther();
+
+        switchApplicationNumber();
+
+        $('#CollegeID').change(function () {
+
+            var $el = $('#CollegeID');
+            var selected = $el.val();
+
+            $('#DepartmentId').empty();
+            $('#PriorityId').empty();
+
+            var selectedVal = null;
+            try {
+                selectedVal = parseInt(selected);
+            } catch (e) {
+
+            }
+
+            if (selectedVal === 0) {
+            } else {
+
+                $.getJSON(baseAjaxUrl + 'GetDepartments?type=@Model.Type.ToString()&collegeId=' + selected + "&others=False", function (cats) {
+                    var secCateSelect = $('#DepartmentId');
+                 secCateSelect.empty();
+                         secCateSelect.append($('<option />', {
+                        value: '', text: '@LangHelpers.Instance["select"]'
+                        }));
+
+                    var isThere = false;
+                    $.each(cats, function (index, cat) {
+                        if (initialDepartmentId > 0 && cat.value == initialDepartmentId) {
+                            isThere = true;
+                        }
+
+                        secCateSelect.append($('<option />', {
+                            value: cat.value,
+                            text: cat.text
+                        }));
+                    });
+
+                    if (isThere) {
+                        secCateSelect.val(initialDepartmentId);
+                    }
+
+                    secCateSelect.selectpicker('refresh');
+                });
+            }
+        });
+
+        var initialPriorityId = @(Model.PriorityId > 0 ? ""+ Model.PriorityId.Value : "null");
+
+        var switchPriority = function () {
+            var $otherEl = $('#divPriority');
+            var selected = $('input[name=IsWithinPriority]:checked').val();
+
+            if (selected === 'True') {
+                $otherEl.slideDown();
+            } else {
+                $otherEl.slideUp();
+            }
+        };
+
+        $('input[name=IsWithinPriority]').change(function () {
+            switchPriority();
+        });
+
+        $('#DepartmentId').change(function () {
+
+            var $el = $('#DepartmentId');
+            var selected = $el.val();
+
+            $('#PriorityId').val('');
+            $('#PriorityId').empty();
+
+            var selectedVal = null;
+            try {
+                selectedVal = parseInt(selected);
+            } catch (e) {
+
+            }
+
+            if (selectedVal === 0) {
+            } else {
+
+                $.getJSON(baseAjaxUrl + 'GetPriorities?departmentId=' + selected + "&others=False", function (cats) {
+                    var secCateSelect = $('#PriorityId');
+
+                   secCateSelect.empty();
+                         secCateSelect.append($('<option />', {
+                        value: '', text: '@LangHelpers.Instance["select"]'
+                        }));
+
+                    var isThere = false;
+                    $.each(cats, function (index, cat) {
+                        if (initialPriorityId > 0 && cat.value == initialPriorityId) {
+                            isThere = true;
+                        }
+
+                        secCateSelect.append($('<option />', {
+                            value: cat.value,
+                            text: cat.text
+                        }));
+                    });
+
+                    secCateSelect.append($('<option />', {
+                        value: '0',
+                        text: '@LangHelpers.Instance["other"]'
+                    }));
+
+                    if (isThere) {
+                        secCateSelect.val(initialPriorityId);
+                    }
+
+                    secCateSelect.selectpicker('refresh');
+                });
+            }
+        });
+
+        switchPriority();
+
+        var switchOther = function ($el) {
+            var $otherEl = $el.closest('.form-group').next();
+            var selected = $el.val();
+            var selectedVal = null;
+            try {
+                selectedVal = parseInt(selected);
+            } catch (e) {
+                return;
+            }
+
+            if (selectedVal == NaN) return;
+
+            if (selectedVal === 0) {
+                $otherEl.slideDown();
+            } else {
+                $otherEl.find('input').val('');
+                $otherEl.slideUp();
+            }
+        };
+
+        onDomInserted('.other-dropdown', function (el) {
+
+            $(el).on('change', function (e) {
+                switchOther($(el));
+                return false;
+            });
+        });
+</script>
+                                )

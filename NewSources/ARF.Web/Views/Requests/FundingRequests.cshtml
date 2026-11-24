@@ -1,0 +1,77 @@
+﻿@model List<FundedProjectViewModel>
+@{
+    ViewBag.Title = "طلبات التمويل";
+}
+
+<h4 class="title">@LangHelpers.Instance["perform_mid_term_report"]</h4>
+<div class="box box2-info">
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-hover">
+                <tr>
+                    <th>@LangHelpers.Instance["ResearchProjectNumber"]</th>
+                    <th>@LangHelpers.Instance["ResearchProjectTitle"]</th>
+                    <th>@LangHelpers.Instance["start_date"]</th>
+                    <th>@LangHelpers.Instance["end_date"]</th>
+                    <th>@LangHelpers.Instance["action"]</th>
+                </tr>
+                @{
+                    if (Model.Count > 0)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.Title</td>
+                                <td>@item.StartDate</td>
+                                <td>@item.EndDate</td>
+                                <td>
+
+                                    @if (item.MidTermReportRequestId > 0)
+                                    {
+                                        <a href="@Url.Action("View", "Requests")/@item.MidTermReportRequestId?type=@RequestType.MidTermProgressReport.ToString()" class="btn btn-xs btn-info command-edit">@LangHelpers.Instance["view_mid_term_report"]</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Create", "Requests")/@item.Id?type=@RequestType.MidTermProgressReport.ToString()" class="btn btn-xs btn-danger command-edit">@LangHelpers.Instance["submit_mid_term_report"]</a>
+                                    }
+
+                                    @if (item.FullTermReportRequestId > 0)
+                                    {
+                                        <a href="@Url.Action("View", "Requests")/@item.FullTermReportRequestId?type=@RequestType.FulltermProgressReport.ToString()" class="btn btn-xs btn-info command-edit">@LangHelpers.Instance["view_final_term_report"]</a>
+                                    }
+                                    else if (item.MidTermReportRequestId > 0)
+                                    {
+                                        <a href="@Url.Action("Create", "Requests")/@item.Id?type=@RequestType.FulltermProgressReport.ToString()" class="btn btn-xs btn-danger command-edit">@LangHelpers.Instance["submit_final_term_report"]</a>
+                                    }
+
+                                    @if ((item.MidTermReportRequestId == 0 || item.MidTermReportRequestId == null) && (item.EditRequestRequestId == null || item.EditRequestRequestId == 0))
+                                    {
+                                        <a href="@Url.Action("Create", "Requests")/@item.Id?type=@RequestType.EditFundingRequest.ToString()" class="btn btn-xs btn-danger command-edit">@LangHelpers.Instance["edit_funding_request"]</a>
+                                    }
+
+                                    @if (item.FieldType == ReqFieldType.AppliedScienceField && item.MaterialRequestRequestId == null && item.RequestedMaterialCount > 0)
+                                    {
+                                        <a href="@Url.Action("Create", "Requests")/@item.Id?type=@RequestType.MaterialRequest.ToString()" class="btn btn-xs btn-danger command-edit">@LangHelpers.Instance["submit_material_request"]</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6">
+                                <div class="alert alert-info">
+                                    @LangHelpers.Instance["none"]
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+

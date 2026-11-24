@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewBag.Title = "TestRequest";
+    Layout = "~/Views/Shared/_LayoutEmpty.cshtml";
+}
+
+@using (Html.BeginForm("Create", "Requests", FormMethod.Post, new { /*id = "frmCreateRequest",*/ enctype = "multipart/form-data", @class = "form-horizontal maximum-width" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Partial("PrincipleResearcherForm")
+
+    <input id="btnSubmit" type="submit" value="@LangHelpers.Instance["submit"]" class="btn btn-primary btn-lg btn-block" />
+}

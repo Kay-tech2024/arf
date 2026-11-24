@@ -1,0 +1,51 @@
+﻿@model CommonFundingRequestViewModel
+
+@{
+
+    var index = ViewBag.Index != null && ViewBag.Index > 0 ? (int)ViewBag.Index : 0;
+
+    if (Model.PublishContainers == null || Model.PublishContainers.Count == 0)
+    {
+        Model.PublishContainers = new List<PublishContainerViewModel>
+{
+new PublishContainerViewModel
+{
+
+}
+
+};
+    }
+
+    var id = ViewBag.IsTemplate == true ? "PublishContainers{index}" : "PublishContainers" + index;
+}
+
+<tr data-index="@(ViewBag.IsTemplate == null? index + "" : "{index}")">
+    <td>@(ViewBag.IsTemplate == null ? (index + 1) + "" : "{order}")</td>
+    <td>
+        @if (ViewBag.IsTemplate == null)
+        {
+            <div>
+                @Html.HiddenFor(m => m.PublishContainers[index].Id)
+            </div>
+        }
+
+
+        @Html.TextBoxFor(m => m.PublishContainers[index].Name, new { @class = "form-control", placeholder = LangHelpers.Instance["container_name"] })
+        @Html.ValidationMessageFor(m => m.PublishContainers[index].Name)
+    </td>
+    <td>
+        @Html.TextBoxFor(m => m.PublishContainers[index].Address, new { @class = "form-control", placeholder = LangHelpers.Instance["container_address"] })
+        @Html.ValidationMessageFor(m => m.PublishContainers[index].Address)
+    </td>
+    <td>
+        @Html.TextBoxFor(m => m.PublishContainers[index].SelectionReason, new { @class = "form-control", placeholder = LangHelpers.Instance["selection_reason"] })
+        @Html.ValidationMessageFor(m => m.PublishContainers[index].SelectionReason)
+    </td>
+
+    <td>
+        @if (index > 0 || ViewBag.IsTemplate == true)
+        {
+        <a href="#" class="btnRemoveRow btn btn-danger">@LangHelpers.Instance["remove"]</a>
+        }
+    </td>
+</tr>

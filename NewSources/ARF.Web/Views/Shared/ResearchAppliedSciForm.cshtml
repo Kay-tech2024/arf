@@ -1,0 +1,2954 @@
+﻿<div class="row">
+    <div class="col-lg-12">
+        @using (Html.BeginForm("AppliedScience", "FormsViews", FormMethod.Post, new { @class = "form-horizontal" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group" style="border:1px solid #333; padding:10px;">
+                <label class="control-label col-md-4">
+                    @LangHelpers.Instance["ProjectSeries"]
+                </label>
+                <label class="control-label col-md-4">
+                    @LangHelpers.Instance["ResearchUnitCode"]
+                </label>
+                <label class="control-label col-md-4">
+                    @LangHelpers.Instance["Year"]
+                </label>
+                <div class="col-md-4">
+                    @Html.TextBox("ResearchSerial", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-4">
+                    @Html.TextBox("ResearchUnitCode", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-4">
+                    @Html.TextBox("ResearchYear", null, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group" style="border:1px solid #333; padding:10px;">
+                <label class="control-label col-md-12">
+                    @LangHelpers.Instance["ArabicTitleOfProposedProject"]:
+                </label>
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["ProposedBudget"]
+                </label>
+                <div class="col-md-3">
+                    <div class="input-group">
+                        @Html.TextBox("CostEstimate", null, new { @class = "form-control" })
+                        <span class="input-group-addon">
+                            @LangHelpers.Instance["SR"]
+                        </span>
+                    </div>
+                </div>
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["ProposedDuration"]
+                </label>
+                <div class="col-md-3">
+                    <div class="input-group">
+                        @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                        <span class="input-group-addon">
+                            @LangHelpers.Instance["Month"]
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" style="border:1px solid #333; padding:10px;">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["SearchProjectType"]
+                </label>
+                <div class="col-md-9">
+                    <div class="checkbox-inline">
+                        <label>
+                            @Html.CheckBox("ResearchType", false, new { @class = "checkbox" }) @LangHelpers.Instance["Single"]
+                        </label>
+                    </div>
+                    <div class="checkbox-inline">
+                        <label>
+                            @Html.CheckBox("ResearchType", false, new { @class = "checkbox" }) @LangHelpers.Instance["Joint"]
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" style="border:1px solid #333; padding:10px;">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["ResearchTeam"]
+                </label>
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["MainResearcher"]
+                </label>
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["CoResearcher1IfAny"]
+                </label>
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["CoResearcher2IfAny"]
+                </label>
+                <br /><br />
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["name"]
+                </label>
+                <div class="col-md-3">
+                    @Html.TextBox("MainName", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerName1", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerName2", null, new { @class = "form-control" })
+                </div>
+                <br /><br />
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["ScientificLevel"]
+                </label>
+                <div class="col-md-3">
+                    @Html.TextBox("MainEduLevel", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerEduLevel1", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerEduLevel2", null, new { @class = "form-control" })
+                </div>
+                <br /><br />
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["university"]
+                </label>
+                <div class="col-md-3">
+                    @Html.TextBox("MainUni", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerUni1", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerUni2", null, new { @class = "form-control" })
+                </div>
+                <br /><br />
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["college"]
+                </label>
+                <div class="col-md-3">
+                    @Html.TextBox("MainCollege", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerCollege1", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerCollege2", null, new { @class = "form-control" })
+                </div>
+                <br /><br />
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["ScientificSection"]
+                </label>
+                <div class="col-md-3">
+                    @Html.TextBox("MainSciDept", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerSciDept1", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerSciDept2", null, new { @class = "form-control" })
+                </div>
+                <br /><br />
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["PhoneMobile"]
+                </label>
+                <div class="col-md-3">
+                    @Html.TextBox("MainMobile", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerMobile1", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerMobile2", null, new { @class = "form-control" })
+                </div>
+                <br /><br />
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["email"]
+                </label>
+                <div class="col-md-3">
+                    @Html.TextBox("MainEmail", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerEmail1", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerEmail2", null, new { @class = "form-control" })
+                </div>
+                <br /><br />
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["IdentityAccommodation"]
+                </label>
+                <div class="col-md-3">
+                    @Html.TextBox("MainNationalId", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerNationalId1", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerNationalId2", null, new { @class = "form-control" })
+                </div>
+                <br /><br />
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["nationality"]
+                </label>
+                <div class="col-md-3">
+                    @Html.TextBox("MainNationality", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerNationality1", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBox("ContributerNationality2", null, new { @class = "form-control" })
+                </div>
+
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">@LangHelpers.Instance["ProjectField"]:</label>
+                <div class="col-md-9">
+                    <label class="control-label col-md-3">@LangHelpers.Instance["GeneralSpecialization"]: </label>
+                    <div class="col-md-3">
+                        @Html.TextBox("GeneralSpec", null, new { @class = "form-control" })
+                    </div>
+                    <label class="control-label col-md-3">@LangHelpers.Instance["CarefulSpecialization"]: </label>
+                    <div class="col-md-3">
+                        @Html.TextBox("SpecificSpec", null, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-12">@LangHelpers.Instance["HasTheProposalBeenSubmittedToTheUnitResearchCentreAtPreviousSessions"]</label>
+                <div class="col-md-12">
+                    <div class="radio-inline col-md-6">
+                        <label class="col-md-2">
+                            @Html.RadioButton("ProposalChk", false, new { @class = "radio" }) @LangHelpers.Instance["yes"]
+                        </label>
+                        <div class="col-md-10">
+                            <label class="control-label col-md-4">
+                                @LangHelpers.Instance["ProposedNo"]:
+                            </label>
+                            <div class="col-md-6">
+                                @Html.TextBox("ProposalNum", null, new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="radio-inline col-md-5">
+                        <label class="col-md-4">
+                            @Html.RadioButton("ProposalChk", false, new { @class = "radio" }) @LangHelpers.Instance["No"]
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-6">@LangHelpers.Instance["NumberOfResearchesPreviouslyFundedByThePrincipalResearcherFromTheDeanshipOfScientificResearch"]</label>
+                <div class="col-md-3">
+                    @Html.TextBox("NumResearch", null, new { @class = "form-control", @type = "number" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-6">@LangHelpers.Instance["NumberOfResearchPapersToBePublishedFromTheProject"]</label>
+                <div class="col-md-3">
+                    @Html.TextBox("NumPapers", null, new { @class = "form-control", @type = "number" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-5">
+                    @LangHelpers.Instance["KeywordsToSearch6To10Words"]
+                </label>
+                <div class="col-md-5">
+                    @Html.TextArea("Keywords", new { @class = "form-control", rows = 5 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-9">
+                    @LangHelpers.Instance["DoesTheResearchProjectForFinanceFallWithinThePrioritiesOfScientificResearchForTheScientificSectionYouWorkWith"]
+                </label>
+                <div class="col-md-3">
+                    <div class="radio-inline col-md-5">
+                        <label class="col-md-4">
+                            @Html.RadioButton("FundFirst", false, new { @class = "radio" }) @LangHelpers.Instance["yes"]
+                        </label>
+                    </div>
+                    <div class="radio-inline col-md-5">
+                        <label class="col-md-4">
+                            @Html.RadioButton("FundFirst", false, new { @class = "radio" })@LangHelpers.Instance["No"]
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-12">@LangHelpers.Instance["IfYesWhatIsThatPriority"]:</label>
+                <label class="control-label col-md-3">@LangHelpers.Instance["PriorityNumber"]:</label>
+                <div class="col-md-1">
+                    @Html.TextBox("PriorityNum", null, new { @class = "form-control", @type = "number" })
+                </div>
+                <label class="control-label col-md-3">@LangHelpers.Instance["ProvidesFor"]:</label>
+                <br /><br /><br /><br />
+                <div class="col-md-12">
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>@Html.TextBox("PriorityNo1", null, new { @class = "form-control" })</td>
+                            <td>@Html.TextBox("PriorityNo2", null, new { @class = "form-control" })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.TextBox("PriorityNo1", null, new { @class = "form-control" })</td>
+                            <td>@Html.TextBox("PriorityNo2", null, new { @class = "form-control" })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.TextBox("PriorityNo1", null, new { @class = "form-control" })</td>
+                            <td>@Html.TextBox("PriorityNo2", null, new { @class = "form-control" })</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="form-group" style="direction:ltr">
+                <label class="col-md-12 text-left">
+                    @LangHelpers.Instance["CompleteBelowInFullDoNotModifyRemoveSectionsIfNotApplicableToYouPleaseIndicateNA"]
+                </label>
+                <table class="table table-bordered">
+                    <tr>
+                        <th colspan="3" style="text-align:left">
+                            @LangHelpers.Instance["ResearchProjectTitle"]
+                        </th>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <div class="checkbox">
+                                <label>
+                                    <input style="float:left" type="checkbox">@LangHelpers.Instance["Medical"]
+                                </label>
+                                (
+                                <div class="radio-inline" style="padding-top: 0px;">
+                                    <label>
+                                        <input type="radio"> @LangHelpers.Instance["Clinical"]
+                                    </label>
+                                </div>
+                                <div class="radio-inline" style="padding-top: 0px;">
+                                    <label>
+                                        <input type="radio"> @LangHelpers.Instance["Biomedical"]
+                                    </label>
+                                </div>
+                                )
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input style="float:left" type="checkbox"> @LangHelpers.Instance["Science"]
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input style="float:left" type="checkbox"> @LangHelpers.Instance["Engineering"]
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input style="float:left" type="checkbox"> @LangHelpers.Instance["Computing"]
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="3" style="text-align:left">
+                            @LangHelpers.Instance["PrincipalInvestigatorApplicant"]
+                        </th>
+                    </tr>
+                    <tr>
+                        <td><label>@LangHelpers.Instance["fullname"]</label></td>
+                        <td colspan="2">
+                            @Html.TextBox("FullName", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>
+                                @LangHelpers.Instance["AcadamicAppoinment"]
+                            </label>
+                        </td>
+                        <td>
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["title"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("Tile", null, new { @class = "form-control" })
+                            </div>
+                        </td>
+                        <td>
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["DeptCollege"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("College", null, new { @class = "form-control" })
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>
+                                @LangHelpers.Instance["ContactInformation"]
+                            </label>
+                        </td>
+                        <td>
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["Telephone"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("Phone", null, new { @class = "form-control" })
+                            </div>
+                        </td>
+                        <td>
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["email"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("Email", null, new { @class = "form-control" })
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">
+                            <label>@LangHelpers.Instance["address"]</label>
+                        </td>
+                        <td colspan="2" scope="colgroup">
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["StreetAndSuiteUnit"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("Address", null, new { @class = "form-control" })
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <td>
+                                        <label class="control-label col-md-3" style="float:left">
+                                            @LangHelpers.Instance["CityTown"]
+                                        </label>
+                                        <div class="col-md-9" style="float:left">
+                                            @Html.TextBox("City", null, new { @class = "form-control" })
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <label class="control-label col-md-3" style="float:left">
+                                            @LangHelpers.Instance["Province"]
+                                        </label>
+                                        <div class="col-md-9" style="float:left">
+                                            @Html.TextBox("Province", null, new { @class = "form-control" })
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <label class="control-label col-md-3" style="float:left">
+                                            @LangHelpers.Instance["PostalCode"]
+                                        </label>
+                                        <div class="col-md-9" style="float:left">
+                                            @Html.TextBox("PostalCode", null, new { @class = "form-control", @type = "number" })
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="3" style="text-align:left">
+                            @LangHelpers.Instance["FundingRequestedMaximumPerYearForUpToTwoYears"]
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["YearOne"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("YearOne", null, new { @class = "form-control", @type = "number" })
+                            </div>
+                        </td>
+                        <td>
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["YearTwo"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("YearTwo", null, new { @class = "form-control", @type = "number" })
+                            </div>
+                        </td>
+                        <td>
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["TotalAmountRequested"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("TotalAmount", null, new { @class = "form-control", @type = "number" })
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["DurationOfProject"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("YearOne", null, new { @class = "form-control", @type = "number" })
+                                @LangHelpers.Instance["MaximumTwoYears"]
+                            </div>
+                        </td>
+                        <td>
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["ProjectStartDate"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("YearTwo", null, new { @class = "form-control", @type = "date" })
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="3" style="text-align:left">
+                            @LangHelpers.Instance["CoPrincipalInvestigatorInformation"]
+                        </th>
+                    </tr>
+                    <tr>
+                        <td><label>@LangHelpers.Instance["fullname"]</label></td>
+                        <td colspan="2">
+                            @Html.TextBox("FullName", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>
+                                @LangHelpers.Instance["ProjectRoleOfCoPIselectone"]
+                            </label>
+                        </td>
+                        <td>
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["supervisor"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("Tile", null, new { @class = "form-control" })
+                            </div>
+                        </td>
+                        <td>
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["Peer"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("College", null, new { @class = "form-control" })
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>
+                                @LangHelpers.Instance["ClinicalOrTechAppointment"]
+                            </label>
+                        </td>
+                        <td>
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["title"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("Tile", null, new { @class = "form-control" })
+                            </div>
+                        </td>
+                        <td>
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["Institution"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("College", null, new { @class = "form-control" })
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>
+                                @LangHelpers.Instance["AcademicAppointment"]
+                            </label>
+                        </td>
+                        <td>
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["title"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("Tile", null, new { @class = "form-control" })
+                            </div>
+                        </td>
+                        <td>
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["Institution"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("College", null, new { @class = "form-control" })
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>
+                                @LangHelpers.Instance["ContactInformation"]
+                            </label>
+                        </td>
+                        <td>
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["Telephone"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("Phone", null, new { @class = "form-control" })
+                            </div>
+                        </td>
+                        <td>
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["email"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("Email", null, new { @class = "form-control" })
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">
+                            <label>@LangHelpers.Instance["address"]</label>
+                        </td>
+                        <td colspan="2" scope="colgroup">
+                            <label class="control-label col-md-3" style="float:left">
+                                @LangHelpers.Instance["StreetAndSuiteUnit"]
+                            </label>
+                            <div class="col-md-9" style="float:left">
+                                @Html.TextBox("Address", null, new { @class = "form-control" })
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <td>
+                                        <label class="control-label col-md-3" style="float:left">
+                                            @LangHelpers.Instance["CityTown"]
+                                        </label>
+                                        <div class="col-md-9" style="float:left">
+                                            @Html.TextBox("City", null, new { @class = "form-control" })
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <label class="control-label col-md-3" style="float:left">
+                                            @LangHelpers.Instance["Province"]
+                                        </label>
+                                        <div class="col-md-9" style="float:left">
+                                            @Html.TextBox("Province", null, new { @class = "form-control" })
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <label class="control-label col-md-3" style="float:left">
+                                            @LangHelpers.Instance["PostalCode"]
+                                        </label>
+                                        <div class="col-md-9" style="float:left">
+                                            @Html.TextBox("PostalCode", null, new { @class = "form-control", @type = "number" })
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <label class="control-label col-md-5" style="float:left">
+                                @LangHelpers.Instance["CoInvestigatorsMaximumOfThreeCoInvestigatorsCVsAreRequired"]
+                            </label>
+                            <div class="col-md-7" style="float:left">
+                                <input type="file" name="cv" />
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="form-group" style="direction:ltr">
+                <table class="table table-bordered">
+                    <tr>
+                        <th style="text-align:left">
+                            @LangHelpers.Instance["fullname"]
+                        </th>
+                        <th style="text-align:left">
+                            @LangHelpers.Instance["TitleAndInstitutionClinicalAcademicAppointment"]
+                        </th>
+                        <th style="text-align:left">
+                            @LangHelpers.Instance["ProjectRoleExpertise"]
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.TextBox("FullName", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("FullName", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("FullName", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.TextBox("FullName", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("FullName", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("FullName", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="3" style="text-align:left">
+                            @LangHelpers.Instance["CollaboratorsAddRowsAsNeededToListAllCollaboratorsCVsAreNotRequiredLettersOfSupportAreRequired"]
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="text-align:left">
+                            @LangHelpers.Instance["fullname"]
+                        </th>
+                        <th style="text-align:left">
+                            @LangHelpers.Instance["TitleAndInstitutionClinicalAcademicAppointment"]
+                        </th>
+                        <th style="text-align:left">
+                            @LangHelpers.Instance["ProjectRoleExpertise"]
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.TextBox("FullName", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("FullName", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("FullName", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.TextBox("FullName", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("FullName", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("FullName", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="3" style="text-align:left">
+                            @LangHelpers.Instance["LaySummaryDescriptionOfProjectMaximum200WordsDescribeObjectivesAndMethodologyInPlainLanguageIfFundedThisDescriptionWillBeUsedToDescribeYourProjectInCommunications"]
+                        </th>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            @Html.TextArea("FullName", null, new { @class = "form-control", rows = 10 })
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="form-group" style="direction:ltr">
+                <h4 class="title">@LangHelpers.Instance["OtherFunding"]</h4>
+                <p>
+                    @LangHelpers.Instance["ResultsOfFundingFromOtherSourcesMayAffectYourApprovedBudgetThereforePleaseNotifyTheDeanshipOfScientificResearchImmediatelyIfYouHaveReceivedOtherFundingHaveYouAppliedIntendingToApplyForOtherFundingForThisStudyYesNoIfYesCompleteBelowAddRowsAsNecessary"]:
+                </p>
+            </div>
+            <div class="form-group" style="direction:ltr">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>@LangHelpers.Instance["FundingAgency"]</th>
+                        <th>@LangHelpers.Instance["AmountRequestedDuration"]</th>
+                        <th>@LangHelpers.Instance["AmountRequestedDecision"]</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.TextBox("Agency", null, new { @class = "form-control" })
+                        </td>
+
+                        <td>
+                            @Html.TextBox("Agency", null, new { @class = "form-control", @type = "date" })
+                        </td>
+                        <td>
+                            <div class="checkbox-inline col-md-3">
+                                <label>
+                                    <input type="checkbox"> @LangHelpers.Instance["approved"]
+                                </label>
+                            </div>
+                            <div class="checkbox-inline col-md-3">
+                                <label>
+                                    <input type="checkbox"> @LangHelpers.Instance["Decline"]
+                                </label>
+                            </div>
+                            <div class="checkbox-inline col-md-3">
+                                <label>
+                                    <input type="checkbox"> @LangHelpers.Instance["pending"]
+                                </label>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="control-label col-md-5">
+                                    @LangHelpers.Instance["ExpectedDateOfDecision"]
+                                </label>
+                                <div class="col-md-5">
+                                    @Html.TextBox("Agency", null, new { @class = "form-control", @type = "date" })
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="form-group" style="direction:ltr">
+                <h4 class="title">@LangHelpers.Instance["SuggestedExternalReviewers"]</h4>
+                <p>
+                    @LangHelpers.Instance["CompleteBelowInFullAllFourFieldsToSuggestIndividualsWhoHaveTheAppropriateExpertiseForTheFoundationToPotentiallyAskToPeerReviewYourResearchGrantProposalSuggestedReviewersMustNotBeAssociatedInAnyWayWithYourProjectOrOtherResearchActivitiesYourHospitalOrAcademicInstitutionTheyAlsoShouldNotBeAnyoneWhoYouTrainedOrRecentlyCollaboratedWithOrSupervised"]
+                </p>
+            </div>
+            <div class="form-group">
+                <label class="col-md-12 text-center">
+                    2- @LangHelpers.Instance["ProjectMethodologicalPlan"]
+                </label>
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["ImportanceOfTheProject"]
+                </label>
+                <div class="col-md-9">
+                    @Html.TextArea("ImportantsofProject", new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["Problem"]
+                </label>
+                <div class="col-md-9">
+                    @Html.TextArea("problems", new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["Goals"]
+                </label>
+                <div class="col-md-9">
+                    @Html.TextArea("Goals", new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["StatisticalAssumptions"]
+                </label>
+                <div class="col-md-7">
+                    @Html.TextArea("StatisAssum", new { @class = "form-control", rows = 10 })
+                </div>
+                <div class="checkbox-inline col-md-2">
+                    <label>
+                        @Html.CheckBox("NotReq_StatisAssum", false, new { @class = "radio" })@LangHelpers.Instance["NotApplicable"]
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["TerminologyAndConcepts"]
+                </label>
+                <div class="col-md-9">
+                    @Html.TextArea("Terminologies", new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["SubstantiveLimitsTheSubstantiveDimension"]:
+                </label>
+                <div class="col-md-7">
+                    @Html.TextArea("SubjectScope", new { @class = "form-control", rows = 10 })
+                </div>
+                <div class="checkbox-inline col-md-2">
+                    <label>
+                        @Html.CheckBox("NotReq_SubjectScope", false, new { @class = "radio" })@LangHelpers.Instance["NotApplicable"]
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["SpatialBoundariesSpatialDimension"]
+                </label>
+                <div class="col-md-7">
+                    @Html.TextArea("PlaceScope", new { @class = "form-control", rows = 10 })
+                </div>
+                <div class="checkbox-inline col-md-2">
+                    <label>
+                        @Html.CheckBox("NotReq_PlaceScope", false, new { @class = "radio" })@LangHelpers.Instance["NotApplicable"]
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["TemporalBoundariesTemporalDimension"]
+                </label>
+                <div class="col-md-7">
+                    @Html.TextArea("TimeScope", new { @class = "form-control", rows = 10 })
+                </div>
+                <div class="checkbox-inline col-md-2">
+                    <label>
+                        @Html.CheckBox("NotReq_TimeScope", false, new { @class = "radio" })@LangHelpers.Instance["NotApplicable"]
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["ProjectReferenceTheoreticalFrameIfAny"]:
+                </label>
+                <div class="col-md-7">
+                    @Html.TextArea("ReferFrame", new { @class = "form-control", rows = 10 })
+                </div>
+                <div class="checkbox-inline col-md-2">
+                    <label>
+                        @Html.CheckBox("NotReq_ReferFrame", false, new { @class = "radio" })@LangHelpers.Instance["NotApplicable"]
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["PreviousStudies"]
+                </label>
+                <div class="col-md-9">
+                    @Html.TextArea("PreStudies", new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["Curriculum"]
+                </label>
+                <div class="col-md-9">
+                    @Html.TextArea("Method", new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["CommunityAndSample"]
+                </label>
+                <div class="col-md-9">
+                    @Html.TextArea("ScoietySample", new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["Gadgets"]
+                </label>
+                <div class="col-md-9">
+                    @Html.TextArea("Tools", new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["SearchDivisionsSectionsAndChapter"]
+                </label>
+                <div class="col-md-9">
+                    @Html.TextArea("ResearchParts", new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["ReferencesAndProposedSources"]
+                </label>
+                <div class="col-md-9">
+                    @Html.TextArea("ProposeResourse", new { @class = "form-control", rows = 10 })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-12 text-center">
+                    3- @LangHelpers.Instance["ProjectImplementationTimeline"]
+                </label>
+                <label class="control-label col-md-2">
+                    @LangHelpers.Instance["StartDate"]
+                </label>
+                <div class="col-md-3">
+                    @Html.TextBox("StartDate", null, new { @class = "form-control", @type = "date" })
+                </div>
+            </div>
+            <div class="form-group">
+                <table class="table table-bordered">
+                    <col>
+                    <col>
+                    <colgroup span="12"></colgroup>
+                    <tr>
+                        <th scope="col" rowspan="2">@LangHelpers.Instance["Item"]</th>
+                        <th scope="col" rowspan="2">@LangHelpers.Instance["MissionAndCharged"] @LangHelpers.Instance["PlannedSequenceOfMajorTasks"]</th>
+                        <th colspan="12" scope="colgroup">@LangHelpers.Instance["FirstYear12Months"]</th>
+                    </tr>
+                    <tr>
+                        <th scope="col">1</th>
+                        <th scope="col">2</th>
+                        <th scope="col">3</th>
+                        <th scope="col">4</th>
+                        <th scope="col">5</th>
+                        <th scope="col">6</th>
+                        <th scope="col">7</th>
+                        <th scope="col">8</th>
+                        <th scope="col">9</th>
+                        <th scope="col">10</th>
+                        <th scope="col">11</th>
+                        <th scope="col">12</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.TextBox("ItemsNo1", null, new { @class = "form-control" })
+                        </td>
+                        <td>@Html.TextBox("TaskNo1", null, new { @class = "form-control" })</td>
+                        <td>@Html.TextBox("Jan", null, new { @class = "form-control" })</td>
+                        <td>@Html.TextBox("Feb", null, new { @class = "form-control" })</td>
+                        <td>@Html.TextBox("Mar", null, new { @class = "form-control" })</td>
+                        <td>@Html.TextBox("Apr", null, new { @class = "form-control" })</td>
+                        <td>@Html.TextBox("May", null, new { @class = "form-control" })</td>
+                        <td>@Html.TextBox("Jun", null, new { @class = "form-control" })</td>
+                        <td>@Html.TextBox("Jul", null, new { @class = "form-control" })</td>
+                        <td>@Html.TextBox("Aug", null, new { @class = "form-control" })</td>
+                        <td>@Html.TextBox("Sep", null, new { @class = "form-control" })</td>
+                        <td>@Html.TextBox("Oct", null, new { @class = "form-control" })</td>
+                        <td>@Html.TextBox("Nov", null, new { @class = "form-control" })</td>
+                        <td>@Html.TextBox("Dec", null, new { @class = "form-control" })</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="form-group">
+                <label class="col-md-12 text-center">4- @LangHelpers.Instance["TotalProjectBudget"]</label>
+            </div>
+            <div class="form-group">
+                <table class="col-md-12 table table-bordered text-center">
+                    <tr>
+                        <th>م</th>
+                        <th>@LangHelpers.Instance["Item"]</th>
+                        <th>@LangHelpers.Instance["ValueInRiyal"]</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>@LangHelpers.Instance["FirstPeriodBonuses"]</td>
+                        <td>
+                            @Html.TextBox("FirstPrice", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>@LangHelpers.Instance["SecondPeriodBonuses"]</td>
+                        <td>
+                            @Html.TextBox("SecondPrice", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>@LangHelpers.Instance["RewardsForTheThirdSixMonths"]</td>
+                        <td>
+                            @Html.TextBox("ThirdPrice", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>@LangHelpers.Instance["RewardsForTheFourthSixMonths"]</td>
+                        <td>
+                            @Html.TextBox("ForthPrice", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">@LangHelpers.Instance["total"]</td>
+                        <td>
+                            @Html.TextBox("FirstPrice", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="form-group">
+                <label class="col-md-12 text-center">
+                    5- @LangHelpers.Instance["DetailedProjectBudget"]
+                </label>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3">
+                    @LangHelpers.Instance["RewardsOfResearchersDuringTheFirstPeriod"]
+                </label>
+                <table class="col-md-9 table table-bordered">
+                    <tr>
+                        <th rowspan="7" style="transform: rotate(-90deg);position: relative;top: 15px;vertical-align: middle;">@LangHelpers.Instance["researchers"]</th>
+                        <th>م</th>
+                        <th>@LangHelpers.Instance["name"]</th>
+                        <th>@LangHelpers.Instance["Adjective"]</th>
+                        <th>@LangHelpers.Instance["NumberOfMonthsOfWork"]</th>
+                        <th>@LangHelpers.Instance["AmountPayableInSR"]</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["MainResearcher"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                                <span class="input-group-addon">
+                                    1200 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["AssociateResearcher1"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                                <span class="input-group-addon">
+                                    1000 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["AssociateResearcher2"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                                <span class="input-group-addon">
+                                    1000 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["Adviser1"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["Adviser2"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="text-center">@LangHelpers.Instance["GroupItem1ForResearchers"]</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+            <div class="form-group">
+                <table class="table table-bordered">
+                    <tr>
+                        <th rowspan="18" style="transform: rotate(-90deg);position: relative;top: 15px;vertical-align: middle;">@LangHelpers.Instance["Helpers"]</th>
+                        <th>م</th>
+                        <th>@LangHelpers.Instance["name"]</th>
+                        <th>@LangHelpers.Instance["Adjective"]</th>
+                        <th>@LangHelpers.Instance["NumberOfMonthsOfWork"]</th>
+                        <th>@LangHelpers.Instance["AmountPayableInSR"]</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>@LangHelpers.Instance["AssistantOfTheMastersCampaign"]</td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>@LangHelpers.Instance["AssistantOfTheBachelorCampaign"]</td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                                <span class="input-group-addon">
+                                    600 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>@LangHelpers.Instance["CollegeStudent"]</td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                                <span class="input-group-addon">
+                                    400 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>@LangHelpers.Instance["TechnicianProfessional"]</td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                                <span class="input-group-addon">
+                                    @LangHelpers.Instance["ByQualification"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>15</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            @LangHelpers.Instance["GroupItem1ForHelpers"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            @LangHelpers.Instance["TotalSummationForItem1"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3">
+                    @LangHelpers.Instance["RewardsOfResearchersDuringTheSecondPeriod"]:
+                </label>
+                <table class="col-md-9 table table-bordered">
+                    <tr>
+                        <th rowspan="7" style="transform: rotate(-90deg);position: relative;top: 15px;vertical-align: middle;">@LangHelpers.Instance["researchers"]</th>
+                        <th>م</th>
+                        <th>@LangHelpers.Instance["name"]</th>
+                        <th>@LangHelpers.Instance["Adjective"]</th>
+                        <th>@LangHelpers.Instance["NumberOfMonthsOfWork"]</th>
+                        <th>@LangHelpers.Instance["AmountPayableInSR"]</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["MainResearcher"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                                <span class="input-group-addon">
+                                    1200 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["CoResearcher1"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                                <span class="input-group-addon">
+                                    1000 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["CoResearcher2"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                                <span class="input-group-addon">
+                                    1000 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["Adviser1"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["Adviser2"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="text-center">@LangHelpers.Instance["ItemSet1ForResearchers"]</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+            <div class="form-group">
+                <table class="table table-bordered">
+                    <tr>
+                        <th rowspan="18" style="transform: rotate(-90deg);position: relative;top: 15px;vertical-align: middle;">@LangHelpers.Instance["Helpers"]</th>
+                        <th>م</th>
+                        <th>@LangHelpers.Instance["name"]</th>
+                        <th>@LangHelpers.Instance["Adjective"]</th>
+                        <th>@LangHelpers.Instance["NumberOfMonthsOfWork"]</th>
+                        <th>@LangHelpers.Instance["AmountPayableInSR"]</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>@LangHelpers.Instance["AssistantOfTheMastersCampaign"]</td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>@LangHelpers.Instance["AssistantOfTheBachelorCampaign"]</td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                                <span class="input-group-addon">
+                                    600 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>@LangHelpers.Instance["CollegeStudent"]</td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                                <span class="input-group-addon">
+                                    400 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>@LangHelpers.Instance["TechnicianProfessional"]</td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                                <span class="input-group-addon">
+                                    @LangHelpers.Instance["ByQualification"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>15</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            @LangHelpers.Instance["GroupItem1ForHelpers"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            @LangHelpers.Instance["TotalSummationForItem1"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3">
+                    @LangHelpers.Instance["RewardsOfResearchersDuringTheThirdPeriod"]:
+                </label>
+                <table class="col-md-9 table table-bordered">
+                    <tr>
+                        <th rowspan="7" style="transform: rotate(-90deg);position: relative;top: 15px;vertical-align: middle;">@LangHelpers.Instance["researchers"]</th>
+                        <th>م</th>
+                        <th>@LangHelpers.Instance["name"]</th>
+                        <th>@LangHelpers.Instance["Adjective"]</th>
+                        <th>@LangHelpers.Instance["NumberOfMonthsOfWork"]</th>
+                        <th>@LangHelpers.Instance["AmountPayableInSR"]</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["MainResearcher"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                                <span class="input-group-addon">
+                                    1200 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["AssociateResearcher1"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                                <span class="input-group-addon">
+                                    1000 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["AssociateResearcher2"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                                <span class="input-group-addon">
+                                    1000 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["Adviser1"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["Adviser2"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="text-center">@LangHelpers.Instance["GroupItem1ForResearchers"]</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+            <div class="form-group">
+                <table class="table table-bordered">
+                    <tr>
+                        <th rowspan="18" style="transform: rotate(-90deg);position: relative;top: 15px;vertical-align: middle;">@LangHelpers.Instance["Helpers"]</th>
+                        <th>م</th>
+                        <th>@LangHelpers.Instance["name"]</th>
+                        <th>@LangHelpers.Instance["Adjective"]</th>
+                        <th>@LangHelpers.Instance["NumberOfMonthsOfWork"]</th>
+                        <th>@LangHelpers.Instance["AmountPayableInSR"]</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>@LangHelpers.Instance["AssistantOfTheMastersCampaign"]</td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>@LangHelpers.Instance["AssistantOfTheBachelorCampaign"]</td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                                <span class="input-group-addon">
+                                    600 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>@LangHelpers.Instance["CollegeStudent"]</td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                                <span class="input-group-addon">
+                                    400 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>@LangHelpers.Instance["TechnicianProfessional"]</td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                                <span class="input-group-addon">
+                                    @LangHelpers.Instance["ByQualification"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>15</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            @LangHelpers.Instance["GroupItem1ForHelpers"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            @LangHelpers.Instance["TotalSummationForItem1"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3">
+                    @LangHelpers.Instance["RewardsOfResearchersDuringTheFourthPeriod"]:
+                </label>
+                <table class="col-md-9 table table-bordered">
+                    <tr>
+                        <th rowspan="7" style="transform: rotate(-90deg);position: relative;top: 15px;vertical-align: middle;">@LangHelpers.Instance["researchers"]</th>
+                        <th>م</th>
+                        <th>@LangHelpers.Instance["name"]</th>
+                        <th>@LangHelpers.Instance["Adjective"]</th>
+                        <th>@LangHelpers.Instance["NumberOfMonthsOfWork"]</th>
+                        <th>@LangHelpers.Instance["AmountPayableInSR"]</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["MainResearcher"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                                <span class="input-group-addon">
+                                    1200 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["AssociateResearcher1"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                                <span class="input-group-addon">
+                                    1000 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["AssociateResearcher2"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                                <span class="input-group-addon">
+                                    1000 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["Adviser1"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @LangHelpers.Instance["Adviser2"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("TimeEstimate", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="text-center">@LangHelpers.Instance["GroupItem1ForResearchers"]</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+            <div class="form-group">
+                <table class="table table-bordered">
+                    <tr>
+                        <th rowspan="18" style="transform: rotate(-90deg);position: relative;top: 15px;vertical-align: middle;">@LangHelpers.Instance["Helpers"]</th>
+                        <th>م</th>
+                        <th>@LangHelpers.Instance["name"]</th>
+                        <th>@LangHelpers.Instance["Adjective"]</th>
+                        <th>@LangHelpers.Instance["NumberOfMonthsOfWork"]</th>
+                        <th>@LangHelpers.Instance["AmountPayableInSR"]</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>@LangHelpers.Instance["AssistantOfTheMastersCampaign"]</td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>@LangHelpers.Instance["AssistantOfTheBachelorCampaign"]</td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                                <span class="input-group-addon">
+                                    600 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>@LangHelpers.Instance["CollegeStudent"]</td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                                <span class="input-group-addon">
+                                    400 * @LangHelpers.Instance["Month"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>@LangHelpers.Instance["TechnicianProfessional"]</td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                                <span class="input-group-addon">
+                                    @LangHelpers.Instance["ByQualification"]
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>15</td>
+                        <td>
+                            @Html.TextBox("Name1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Qualities1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MonthCount1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            @LangHelpers.Instance["GroupItem1ForHelpers"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            @LangHelpers.Instance["TotalSummationForItem1"]
+                        </td>
+                        <td>
+                            @Html.TextBox("Price1", null, new { @class = "form-control", @type = "number" })
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="form-group">
+                <label class="col-md-12 text-center">
+                    6- @LangHelpers.Instance["ProposedNamesForArbitration"]
+                </label>
+                <label class="col-md-12 text-center">
+                    @LangHelpers.Instance["FiveSpecializedSpecialistsInTheDomainCoveredByTheResearchProjectFromInsideAndOutsideTheJournal"]
+                </label>
+            </div>
+            <div class="form-group">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>م</th>
+                        <th>@LangHelpers.Instance["name"]</th>
+                        <th>@LangHelpers.Instance["ScientificLevel"]</th>
+                        <th>@LangHelpers.Instance["WorkAddress"]</th>
+                        <th>@LangHelpers.Instance["email"]</th>
+                        <th>@LangHelpers.Instance["PhoneMobile"]</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            @Html.TextBox("Name2", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("EduLevel2", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Address", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Email", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Phone", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>
+                            @Html.TextBox("Name2", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("EduLevel2", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Address", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Email", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Phone", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>
+                            @Html.TextBox("Name2", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("EduLevel2", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Address", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Email", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Phone", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>
+                            @Html.TextBox("Name2", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("EduLevel2", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Address", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Email", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Phone", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>
+                            @Html.TextBox("Name2", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("EduLevel2", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Address", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Email", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Phone", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="form-group">
+                <label class="col-md-12 text-center">
+                    7- @LangHelpers.Instance["ProposedActivities"]
+                </label>
+                <label class="col-md-12 text-center">
+                    @LangHelpers.Instance["ThreeActivitiesOrEventsArisingFromTheResearchToServeTheCommunity"]
+                </label>
+            </div>
+            <div class="form-group">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>م</th>
+                        <th>@LangHelpers.Instance["EventName"]</th>
+                        <th> @LangHelpers.Instance["Itstype"]</th>
+                        <th>@LangHelpers.Instance["Itsplace"]</th>
+                        <th> @LangHelpers.Instance["Itshistory"]</th>
+                        <th>@LangHelpers.Instance["ItsDescribe"]</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            @Html.TextBox("OccName", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("OccType", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("OccPlace", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("OccDate", null, new { @class = "form-control", @type = "date" })
+                        </td>
+                        <td>
+                            @Html.TextBox("OccQualities", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>
+                            @Html.TextBox("OccName", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("OccType", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("OccPlace", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("OccDate", null, new { @class = "form-control", @type = "date" })
+                        </td>
+                        <td>
+                            @Html.TextBox("OccQualities", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>
+                            @Html.TextBox("OccName", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("OccType", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("OccPlace", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("OccDate", null, new { @class = "form-control", @type = "date" })
+                        </td>
+                        <td>
+                            @Html.TextBox("OccQualities", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="form-group">
+                <label class="col-md-12 text-center">
+                    8- @LangHelpers.Instance["BeneficiariesOfTheResearchOutputs"]
+                </label>
+            </div>
+            <div class="form-group">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>م</th>
+                        <th>Organization</th>
+                        <th>@LangHelpers.Instance["ItsAddress"]</th>
+                        <th>@LangHelpers.Instance["DescribeTheirUtilization"]</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            @Html.TextBox("Org1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("OrgAddress", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("BenefitQualties", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>
+                            @Html.TextBox("Org1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("OrgAddress", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("BenefitQualties", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>
+                            @Html.TextBox("Org1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("OrgAddress", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("BenefitQualties", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>
+                            @Html.TextBox("Org1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("OrgAddress", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("BenefitQualties", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>
+                            @Html.TextBox("Org1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("OrgAddress", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("BenefitQualties", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="form-group">
+                <label class="col-md-12 text-center">
+                    8- @LangHelpers.Instance["PublishingFrameworkSuitableForPublishingTheResearch"]
+                </label>
+            </div>
+            <div class="form-group">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>م</th>
+                        <th>@LangHelpers.Instance["PublishingFrameworkName"]</th>
+                        <th>@LangHelpers.Instance["ItsAddress1"]</th>
+                        <th>@LangHelpers.Instance["TheReasonForHisSelection"]</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            @Html.TextBox("PublishName1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("PublishAddress1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("PublishReason1", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>
+                            @Html.TextBox("PublishName1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("PublishAddress1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("PublishReason1", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>
+                            @Html.TextBox("PublishName1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("PublishAddress1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("PublishReason1", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>
+                            @Html.TextBox("PublishName1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("PublishAddress1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("PublishReason1", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>
+                            @Html.TextBox("PublishName1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("PublishAddress1", null, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.TextBox("PublishReason1", null, new { @class = "form-control" })
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="form-group">
+                <label class="col-md-12 text-center">10- @LangHelpers.Instance["CVOfTheResearchers"]</label>
+                <label class="col-md-12 text-center">
+                    @LangHelpers.Instance["ThisIsLimitedToThePrincipalResearcherResearcherCoResearchersAndAdvisorAdvisors"]
+                </label>
+            </div>
+            <div class="form-group">
+                @Html.TextArea("CV", null, new { @class = "form-control", rows = 10 })
+            </div>
+            <div class="form-group">
+                <div class="col-md-4 col-md-offset-4">
+                    <input type="submit" class="btn btn-block btn-primary" value=@LangHelpers.Instance["submit"] />
+                </div>
+            </div>
+
+        }
+
+    </div>
+
+</div>

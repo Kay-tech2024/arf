@@ -1,0 +1,152 @@
+﻿@model List<ARF.Data.DbModels.ViewRequestsByResearchTeamTypesReport>
+@{
+    ViewBag.Title = "Types";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var totalsubmitted = 0;
+    var totalapproved = 0;
+    var totalrejected = 0;
+    var totalamount = 0;
+}
+
+
+<style>
+
+    @@media print {
+        a[href]:after {
+            content: none !important;
+        }
+
+        #burger {
+            display: none !important;
+        }
+
+        #menuToggleLang {
+            display: none !important;
+        }
+
+        #content {
+            left: 0px;
+        }
+
+        .container {
+            width: 100%;
+        }
+
+        .alert-info {
+            display: none !important;
+        }
+
+        .printhide {
+            display: none !important;
+        }
+
+        .breadcrumb {
+            display: none !important;
+        }
+
+        .printbtn {
+            display: none !important;
+        }
+    }
+</style>
+
+
+<ul class="breadcrumb printbtn">
+    <li>@Html.ActionLink(LangHelpers.Instance["homepage"], "Index", "Home")</li>
+
+    <li>@Html.ActionLink(LangHelpers.Instance["reports"], "Index", "Reports")</li>
+
+    <li>@LangHelpers.Instance["research_team_financial_report"]</li>
+</ul>
+
+<div class="logo printhide" style="background:grey">
+    <img src="/Content/aps/imgs/logo-1.png" class="img-responsive center-block" style="width:300px !important">
+</div>
+
+<h3>@LangHelpers.Instance["research_team_financial_report"]</h3>
+<br />
+
+<div class="container">
+    <table class="table table-responsive table-striped table-hover">
+        <thead>
+            <tr>
+                <th>
+                    نوع الشخص
+                </th>
+                <th>
+                    عدد طلبات الصرف
+                </th>
+                <th>
+                    عدد الطلبات المقبولة
+                </th>
+                <th>
+                    عدد الطلبات المرفوضة
+                </th>
+                <th>
+                    إجمالي المبلغ المصروف
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                if (item.ApprovedRequests != null)
+                {
+                    totalapproved += (int)item.ApprovedRequests;
+                }
+                else
+                {
+                    totalapproved += 0;
+                }
+
+                if (item.SubmittedRequests != null)
+                {
+                    totalsubmitted += (int)item.SubmittedRequests;
+                }
+                else
+                {
+                    totalsubmitted += 0;
+                }
+
+
+                if (item.RejectedRequests != null)
+                {
+                    totalrejected += (int)item.RejectedRequests;
+                }
+                else
+                {
+                    totalrejected += 0;
+                }
+
+                if (item.TotalAmount != null)
+                {
+                    totalamount += (int)item.TotalAmount;
+                }
+                else
+                {
+                    totalamount += 0;
+                }
+
+                <tr>
+                    <td>@LangHelpers.Instance[item.UserRole]</td>
+                    <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=2&RequestStatus=1&UserRole=@item.UserRoleId">@item.SubmittedRequests</a></td>
+                    <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=2&RequestStatus=2&UserRole=@item.UserRoleId">@item.ApprovedRequests</a></td>
+                    <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=2&RequestStatus=3&UserRole=@item.UserRoleId">@item.RejectedRequests</a></td>
+                    <td>@item.TotalAmount</td>
+                </tr>
+            }
+
+
+            <tr class="success">
+                <td>@LangHelpers.Instance["totalA"]</td>
+                <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=2&RequestStatus=1&UserRole=0">@totalsubmitted </a></td>
+                <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=2&RequestStatus=2&UserRole=0">@totalapproved</a></td>
+                <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=2&RequestStatus=3&UserRole=0">@totalrejected </a></td>
+                <td>@totalamount </td>
+            </tr>
+        </tbody>
+
+    </table>
+
+    <button class="btn btn-primary printbtn" onclick="window.print();">@LangHelpers.Instance["print"]&nbsp;&nbsp;<i class="fa fa-print"></i></button>
+</div>

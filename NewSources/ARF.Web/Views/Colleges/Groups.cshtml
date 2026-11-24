@@ -1,0 +1,57 @@
+﻿@model List<GroupViewModel>
+
+@{
+    ViewBag.Title = LangHelpers.Instance["groups"];
+    var isDepartmentRole = Utils.IsCollegeUser;
+}
+
+<ul class="breadcrumb">
+    <li><a href="@Url.Action("Index", "Home")">@LangHelpers.Instance["homepage"]</a></li>
+
+    @if (!isDepartmentRole)
+    {
+        <li><a href="@Url.Action("Index", "Departments")">@LangHelpers.Instance["departments"]</a></li>
+        <li><a href="@Url.Action("Details", "Departments", new { id = ViewBag.CollegeId })">@ViewBag.CollegeName</a></li>
+    }
+    else
+    {
+        <li><a href="@Url.Action("Details", "Departments")">@LangHelpers.Instance["department_profile"]</a></li>
+    }
+
+    <li>@LangHelpers.Instance["groups"]</li>
+</ul>
+
+<a class="btn btn-icon btn-success btn-add btn-lg" href="~/Departments/CreateGroup/@(isDepartmentRole?"":ViewBag.CollegeId)"><i class="fa fa-plus-circle"></i>@LangHelpers.Instance["create"]</a>
+
+<div class="box2 box2-info">
+
+    @if (Model == null || Model.Count() == 0)
+    {
+        <p class="text-center">
+            <em>@LangHelpers.Instance["no_groups"]</em>
+        </p>
+    }
+    else
+    {
+        <table class="table">
+            <tr>
+                <th>@LangHelpers.Instance["name"]</th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+                {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                  
+                    <td>
+                        <a href="@Url.Action("EditGroup", new { id = item.Id })" class="btn btn-xs btn-warning" title="@LangHelpers.Instance["edit"]"><i class="fa fa-pencil"></i></a>
+                        <a href="@Url.Action("DeleteGroup", new { id = item.Id })" class="btn btn-xs btn-danger" title="@LangHelpers.Instance["delete"]"><i class="fa fa-times"></i></a>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+</div>

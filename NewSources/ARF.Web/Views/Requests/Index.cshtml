@@ -1,0 +1,363 @@
+﻿@{
+    ViewBag.Title = LangHelpers.Instance["requests"];
+
+    var nin = Request.QueryString["nin"] != null && CommonManager.IsValidNationalId(Request.QueryString["nin"]) ? Request.QueryString["nin"] : null;
+
+    var controller = HttpContextManager.Current.Request.RequestContext.RouteData.Values["controller"].ToString();
+    var action = HttpContextManager.Current.Request.RequestContext.RouteData.Values["action"].ToString();
+    var historyOnly = action == "History" || Request.QueryString["history"] != null && (Request.QueryString["history"].Trim() == "1" || Request.QueryString["history"].Trim().ToLower() == "yes" || Request.QueryString["history"].Trim().ToLower() == "y");
+    var migratedOnly = action == "Migrated" || Request.QueryString["migrated"] != null && (Request.QueryString["migrated"].Trim() == "1" || Request.QueryString["migrated"].Trim().ToLower() == "yes" || Request.QueryString["migrated"].Trim().ToLower() == "y");
+    var actionableOnly = Request.QueryString["a"] != null && Request.QueryString["a"].Trim() == "1";
+    var canceledOnly = action == "ViewCanceled";
+
+
+    var collegeId = Utils.RequestUtils.CurrentUser.CollegeId;
+    var CollegeId = Utils.RequestUtils.CurrentUser.CollegeId;
+    var type = (RequestType?)null;
+    var status = (RequestViewStatus?)null;
+
+
+    if (Request.QueryString["p"] != null && !Utils.IsCollegeUser)
+    {
+        int p = 0;
+        if (int.TryParse(Request.QueryString["p"], out p) && p > 0)
+        {
+            collegeId = p;
+        }
+    }
+
+    if (Request.QueryString["j"] != null && !Utils.IsMajorUser)
+    {
+        int j = 0;
+        if (int.TryParse(Request.QueryString["j"], out j) && j > 0)
+        {
+            CollegeId = j;
+        }
+    }
+
+    if (Request.QueryString["t"] != null)
+    {
+        int t = 0;
+        if (int.TryParse(Request.QueryString["t"], out t) && t > 0 && t <= ((byte)Enum.GetValues(typeof(RequestType)).Cast<RequestType>().Last()))
+        {
+            type = (RequestType)t;
+        }
+    }
+
+    if (Request.QueryString["a"] != null)
+    {
+        int a = 0;
+        if (int.TryParse(Request.QueryString["a"], out a) && a > 0 && a <= ((byte)Enum.GetValues(typeof(RequestViewStatus)).Cast<RequestViewStatus>().Last()))
+        {
+            status = (RequestViewStatus)a;
+        }
+    }
+
+
+    if (CollegeId > 0 && collegeId == null)
+    {
+        var jpc = Utils.RequestUtils.DbContext.Departments.FirstOrDefault(j => j.Id == CollegeId);
+        if (jpc != null)
+        {
+            collegeId = jpc.CollegeId;
+        }
+        else
+        {
+            CollegeId = null;
+        }
+    }
+
+}
+<ul class="breadcrumb">
+    <li>@Html.ActionLink(LangHelpers.Instance["homepage"], "Index", "Home")</li>
+
+    <li>@LangHelpers.Instance["requests"]</li>
+
+</ul>
+
+@if (Utils.HasPrivilagesAny(Privilages.requests_create))
+{
+    <a class="btn btn-icon btn-success btn-add btn-lg" href="~/Requests/Create"><i class="fa fa-plus-circle"></i>@LangHelpers.Instance["create"]</a>
+}
+
+<div class="box2 box2-info">
+
+    <ul class="nav nav-tabs nav-tabs-responsive">
+        <li><a data-target="#pending" data-toggle="tab"><span class="text">@LangHelpers.Instance["pending"]</span></a></li>
+
+        <li><a data-target="#archive" data-toggle="tab"><span class="text">@LangHelpers.Instance["archive"]</span></a></li>
+
+    </ul>
+
+    <div class="loading" style="display: none;top: 10%;" id="loadingdiv1">@LangHelpers.Instance["wait"]</div>
+    <div class="tab-content">
+
+        <div class="tab-pane" id="pending">
+            <div class="table-responsive">
+                <table id="grdAll" style="width:100%" class="data-table-command table table-striped table-small-font table-vmiddle">
+                    <thead>
+                        <tr>
+                            <th scope="col" data-column-id="updated" data-width="50px" data-visible="false" data-order="desc"></th>
+                            <th scope="col" data-column-id="uniqueId" data-width="50px" data-identifier="true" data-visible="true">
+                                @LangHelpers.Instance["num"]
+                            </th>
+
+
+                            <th scope="col" data-column-id="title">
+                                @LangHelpers.Instance["title"]
+                            </th>
+
+
+
+                            @if (!Utils.IsCollegeUser)
+                            {
+                                <th style="width: 100%" scope="col" data-column-id="collegeName">
+                                    @LangHelpers.Instance["college_name"]
+                                </th>
+                            }
+
+
+                            <th scope="col" data-column-id="type">
+                                @LangHelpers.Instance["request_type"]
+                            </th>
+
+                            <th scope="col" data-column-id="dateUpdated" data-width="100px" data-formatter="datetime">
+                                @LangHelpers.Instance["last_updated"]
+                            </th>
+                            <th scope="col" data-column-id="status" data-formatter="RequestStatus">
+                                @LangHelpers.Instance["status"]
+                            </th>
+
+
+                            <th scope="col" data-column-id="commands" data-formatter="commands" data-sortable="false">@LangHelpers.Instance["actions"]</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+
+        <div class="tab-pane" id="archive">
+            <div class="table-responsive">
+                <table id="grdInbox" style="width:100%" class="data-table-command table table-striped table-small-font table-vmiddle">
+                    <thead>
+                        <tr>
+                            <th scope="col" data-column-id="updated" data-width="50px" data-visible="false" data-order="desc"></th>
+                            <th scope="col" data-column-id="id" data-width="50px" data-identifier="true" data-visible="true">
+                                @LangHelpers.Instance["num"]
+                            </th>
+
+                            <th scope="col" data-column-id="title">
+                                @LangHelpers.Instance["title"]
+                            </th>
+
+
+                            @if (!Utils.IsCollegeUser)
+                            {
+                                <th scope="col" data-column-id="collegeName">
+                                    @LangHelpers.Instance["college_name"]
+                                </th>
+                            }
+
+                            <th scope="col" data-column-id="type">
+                                @LangHelpers.Instance["request_type"]
+                            </th>
+
+                            <th scope="col" data-column-id="dateUpdated" data-width="100px" date-formatter="datetime">
+                                @LangHelpers.Instance["last_updated"]
+                            </th>
+                            <th scope="col" data-column-id="status" data-formatter="RequestStatus">
+                                @LangHelpers.Instance["status"]
+                            </th>
+
+
+                            <th scope="col" data-column-id="commands" data-formatter="commands" data-sortable="false">@LangHelpers.Instance["actions"]</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+
+    @section Scripts{
+        <script type="text/javascript" nonce="@Html.ScriptNonce()">
+            var type = null;
+            var defaultType = 'pending'
+
+            var url = document.location.toString();
+            if (url.match('#') && url.split('#').length > 1) {
+                type = url.split('#')[1];
+            } else {
+                type = defaultType;
+            }
+
+            var toGrid = function (selector) {
+                if (!selector) return;
+
+                if ($(selector).hasClass('bootgrid-table')) {
+                    $(selector).bootgrid('reload');
+                    return;
+                }
+
+                var grid = $(selector).bootgrid({
+                    ajax: true,
+                    rowCount: 20,
+                    url: function () { return baseAjaxUrl + "ListRequests?status=" + type; },
+                    ajaxSettings: {
+                        method: "GET",
+                        cache: false
+                    },
+                    searchSettings: {
+                        delay: 3000
+                    },
+                    labels: {
+                        all: '@LangHelpers.Instance["all"]',
+                        infos: '@LangHelpers.Instance["from"] {{ctx.start}} @LangHelpers.Instance["to"] {{ctx.end}} (@LangHelpers.Instance["total"] {{ctx.total}})',
+                        loading: '@LangHelpers.Instance["wait"]',
+                        search: '@LangHelpers.Instance["search"]',
+                        noResults: "@LangHelpers.Instance["no_results"]"
+                    },
+                    css: {
+                        icon: 'fa icon',
+                        iconColumns: 'fa-view-module',
+                        iconDown: 'fa-sort-alpha-asc',
+                        iconRefresh: 'fa-refresh',
+                        iconUp: 'fa-sort-alpha-desc',
+                        iconSearch: 'fa-search'
+                    },
+                    formatters: {
+                        "Requestlink": function (column, row) {
+                            alert('hi');
+                            if (row.jobSeekerName)
+                                // return '<a href="' + baseUrl + 'Requests/View/' + row.id +'">' + row.name + '</a>';
+                                return '<a href="' + baseUrl + 'Requests/View/' + row.id + '">' + row.name + '</a>';
+                            else return '';
+
+                        },
+                        "datetime": function (column, row) {
+                            var tip = '';
+                            if (row.dateUpdatedActual) {
+                                tip = row.dateUpdatedActual;
+                            }
+
+                            return '<span title="' + tip + '">' + row.dateUpdated + '</span>';
+
+                        },
+                        "commands": function (column, row) {
+                            var buttonsHtml = '';
+
+                            var isActionable = row.actionable === true;
+
+                            if (isActionable) {
+                                buttonsHtml += '<a href="@Url.Action("View", "Requests")/' + row.id + '" class="btn btn-xs btn-danger command-edit">اتخاذ إجراء</a>';
+
+                            }
+                            else {
+                                buttonsHtml += '<a href="@Url.Action("View", "Requests")/' + row.id + '" class="btn btn-xs btn-info command-edit">التفاصيل</a>';
+
+                            }
+
+                            return buttonsHtml;
+                        },
+                        "phone": function (column, row) {
+                            if (row.mobileNumber !== undefined && row.mobileNumber.length >= 8) {
+                                if (row.mobileNumber[0] === '5')
+                                    row.mobileNumber = "0" + row.mobileNumber;
+                                return '<a href="tel:' + row.mobileNumber + '">' + row.mobileNumber + '</a>';
+                            } else {
+                                return '';
+                            }
+
+                        },
+
+                    }
+                }).on("loaded.rs.jquery.bootgrid", function () {
+                    $('html, body').animate({
+                        scrollTop: 0
+                    }, 300);
+                    var pages = grid.bootgrid('getTotalPageCount');
+                    if (pages <= 1) {
+                        $(selector).next('.bootgrid-footer').find('.pagination').hide();
+                    } else {
+                        $(selector).next('.bootgrid-footer').find('.pagination').show();
+                    }
+
+                    grid.fadeIn();
+
+                    grid.find(".command-approve, .command-reject").on("click", function (e) {
+
+                        var that = $(this);
+
+                        var id = $(this).data("row-id");
+
+                        swal({
+                            title: "Are you sure?",
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#DD6B55",
+                            confirmButtonText: "Yes!",
+                            closeOnConfirm: false,
+                            cancelButtonText: 'Cancel'
+
+                        }, function () {
+                            var isApproved = that.hasClass('command-approve');
+
+                            if (isApproved) {
+                                $.ajax({
+                                    url: baseAjaxUrl + "ApproveRequest?cid=" + id,
+                                    context: document.body
+                                }).done(function () {
+                                    swal.close();
+                                    grid.bootgrid("reload");
+                                });
+                            } else {
+                                $.ajax({
+                                    url: baseAjaxUrl + "RejectRequest?cid=" + id,
+                                    context: document.body
+                                }).done(function () {
+                                    swal.close();
+                                    grid.bootgrid("reload");
+                                });
+                            }
+                        });
+
+                    });
+
+
+                });
+
+                return grid;
+            }
+
+            toGrid('#' + $('.tab-pane.active .table').attr('id'));
+
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var target = $(e.target).data('target');
+
+                switch (target) {
+                    case '#pending':
+                        type = 'pending';
+                        break;
+                    case '#archive':
+                        type = 'archive';
+                        break;
+
+                    default:
+                        type = defaultType;
+                        break;
+                }
+
+                toGrid('#' + $('.tab-pane.active .table').attr('id'));
+            });
+
+            var url = document.location.toString();
+            if (!url.match('#') || url.split('#').length <= 1 || url.split('#')[1].toLowerCase() == defaultType) {
+                type = defaultType;
+                $('.nav-tabs a[data-target=\'#' + defaultType + '\']').tab('show');
+            }
+
+        </script>
+
+    }
+</div>

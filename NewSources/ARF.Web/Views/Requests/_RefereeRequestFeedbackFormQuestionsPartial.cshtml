@@ -1,0 +1,128 @@
+﻿@model RefereeFundingRequestFeedbackPartialViewModel
+
+@{
+    int maxMarks = 0;
+    int obtainedMarks = 0;
+    int counter = 0;
+}
+
+<div class="alert alert-danger" id="errorBox" style="display: none;">@LangHelpers.Instance["please_add_marks_for_all_questions"]</div>
+
+<div style="@(!Model.IsReadonly ? "width: 70%" : ""); margin: 0 auto;" id="referee_form">
+    <table class="table table-striped transition-less">
+        <thead>
+            <tr>
+                <th>@LangHelpers.Instance["feedback_question"]</th>
+                <th>@LangHelpers.Instance["marks"]</th>
+                <th>@LangHelpers.Instance["action"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var _question in Model.FeedbackFormQuestions)
+            {
+                counter++;
+                maxMarks = maxMarks + _question.MaxMarks;
+                obtainedMarks = obtainedMarks + _question.GivenMarks;
+                <tr class="row-section-header-referee-form">
+                    <td width="75%"><span class="counter">@counter</span>&nbsp;&nbsp;@_question.QuestionText</td>
+                    <td width="20%">
+                        <input type="hidden" name="RefereeFeedbackForm[@(counter-1)].FeedbackFormQuestionId" value="@_question.FeedbackFormQuestionId" />
+                        <select class="form-control obtained-marks" style="width: 75px;" name="RefereeFeedbackForm[@(counter-1)].GivenMarks">
+                            @for (int i = 0; i <= _question.MaxMarks; i++)
+                            {
+                                <option value="@i" @(i == _question.GivenMarks ? "selected='selected'" : "" )>@i</option>
+                            }
+                        </select>
+                    </td>
+                    <td width="5%">
+                        <a class="field-caption referee_feedback_section btn btn-warning" href="#" data-toggle="dont-collapse" data-target="#referee_feedback_section_row_@_question.FeedbackFormQuestionId">@LangHelpers.Instance["comments"]</a>
+                    </td>
+                </tr>
+                <tr class="collapse row-section-details" id="referee_feedback_section_row_@_question.FeedbackFormQuestionId">
+                    <td colspan="3">
+                        <textarea rows="10" placeholder="@(_question.QuestionText + " " + LangHelpers.Instance["comments"] )" name="RefereeFeedbackForm[@(counter-1)].Comments" class="form-control">@_question.Comments</textarea>
+                    </td>
+                </tr>
+            }
+            <tr class="row-section-header required">
+                <td></td>
+                <td>
+                    <h3><span id="obtained_marks">@obtainedMarks</span> / @maxMarks</h3>
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script nonce="@Html.ScriptNonce()">
+    var actionVals = [];
+    var IsReadonly = "@Model.IsReadonly";
+    var cutOffMarks = @Model.CutOffMarks;
+    var maxMarks = @maxMarks;
+    $(document).ready(function () {
+        if (IsReadonly == "True") {
+            $('#referee_form').find('input[type=text],input[type=number],input[type=radio],input[type=checkbox],textarea,select').each(function () {
+                elToReadOnly(this);
+            });
+        }
+        else {
+            $("#Action option").each(function () {
+                actionVals.push({ text: $(this).text(), val: $(this).val() });
+            });
+
+            showObtainedMarks();
+            $(".obtained-marks").on("change", function () {
+                showObtainedMarks();
+            });
+        }
+
+        onDomInserted('.row-section-header-referee-form', function (el) {
+            $(el).find('a').on('click', function (e) {
+
+                var xel = $(el).next('.row-section-details');
+                var attr = xel.attr('data-is-visible');
+
+                if (attr === '1') {
+
+                    xel.css('display', 'none').attr('data-is-visible', '0');
+                } else {
+                    var others = $('.row-section-details');
+                    for (var i = 0; i < others.length; i++) {
+                        $(others[i]).css('display', 'none').attr('data-is-visible', '0');
+                    }
+                    xel.css('display', 'table-row').attr('data-is-visible', '1');
+                }
+
+                e.preventDefault();
+                return false;
+
+            });
+        });
+    });
+
+    function showObtainedMarks() {
+        var marks = 0;
+        $(".obtained-marks").each(function () {
+            marks = marks + ($(this).val() * 1);
+        });
+        $("#obtained_marks").html(marks);
+        var _percentage = (marks / maxMarks) * 100;
+
+        if (_percentage < cutOffMarks) {
+            $("#Action").find("option").remove();
+            for (var i = 0; i < actionVals.length; i++) {
+                if (actionVals[i].val == "" || actionVals[i].val == "Reject") {
+                    $('#Action').append($("<option></option>").attr("value", actionVals[i].val).text(actionVals[i].text));
+                }
+            }
+        }
+        else {
+            $("#Action").find("option").remove();
+            for (var i = 0; i < actionVals.length; i++) {
+                if (actionVals[i].val == "" || actionVals[i].val != "Reject") {
+                    $('#Action').append($("<option></option>").attr("value", actionVals[i].val).text(actionVals[i].text));
+                }
+            }
+        }
+    }
+</script>

@@ -1,0 +1,51 @@
+
+.tickY{
+	stroke: black;
+}
+
+.task-bar {
+	fill: #FF8B00;
+}
+
+.task-progress-bar {
+	fill: #64AAD0;
+}
+
+.task-bar:hover {
+	fill: #FFBF73;
+	stroke: #64AAD0;
+}
+
+.task-label {
+	fill: #034569;
+}
+
+.milestone-mark {
+	stroke: #A65A00;
+	stroke-width: 3;
+}
+
+.milestone-label {
+	fill: #034569;
+}
+
+.dateline-line {
+	stroke: red;
+	stroke-width: 2;
+}
+
+.dateline-label{
+	fill: grey;
+}
+
+.chart {
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+}
+
+.xaxis-group path,.xaxis-group line {
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
+}
+

@@ -1,0 +1,53 @@
+﻿@model GroupViewModel
+
+@{
+    ViewBag.Title = "Delete JPC";
+    var isProviderRole = Utils.IsCollegeUser;
+}
+
+<ul class="breadcrumb">
+    <li><a href="@Url.Action("Index", "Home")">@LangHelpers.Instance["homepage"]</a></li>
+    @if (!isProviderRole)
+    {
+        <li><a href="@Url.Action("Index", "Providers")">@LangHelpers.Instance["departments"]</a></li>
+        <li><a href="@Url.Action("Details", "Providers", new { id = Model.CollegeId })">@Model.Departments</a></li>
+        <li><a href="@Url.Action("Groups", "Providers", new { id = Model.CollegeId })">@LangHelpers.Instance["groups"]</a></li>
+    }
+    else
+    {
+        <li><a href="@Url.Action("Details", "Providers")">@LangHelpers.Instance["department_profile"]</a></li>
+        <li><a href="@Url.Action("Groups", "Providers")">@LangHelpers.Instance["groups"]</a></li>
+    }
+
+    <li>Delete JPC</li>
+</ul>
+
+<div class="box2 box2-info">
+
+    <h3>
+        هل أنت متأكد أنك تريد حذف هذا القسم؟
+    </h3>
+    <div>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.NameEnglish)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.NameEnglish)
+            </dd>
+        </dl>
+
+        @using (Html.BeginForm("DeleteJpcConfirmed", "Providers", new { id = Model.Id }, FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color">
+                @Html.HiddenFor(m => m.Id)
+
+                <input type="submit" value="Delete" class="btn btn-danger" />
+            </div>
+        }
+    </div>
+</div>

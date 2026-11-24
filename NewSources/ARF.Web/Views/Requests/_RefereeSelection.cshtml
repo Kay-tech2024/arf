@@ -1,0 +1,630 @@
+﻿@{
+    var isMember = Utils.GetUserRoles().First().ToString().EndsWith("Member");
+}
+
+<table id="gridSelectedReferees" style="width: 100%; display: none;" class="table table-striped table-small-font table-vmiddle table-hover">
+    <thead>
+        <tr>
+            <th scope="col" data-column-id="fullName">
+                @LangHelpers.Instance["name"]
+            </th>
+            <th scope="col" data-column-id="majorName">
+                @LangHelpers.Instance["major_name"]
+            </th>
+
+            @*<th scope="col" data-column-id="collegeName">
+                    @LangHelpers.Instance["college_name"]
+                </th>*@
+
+            @if (!isMember)
+            {
+                <th scope="col" data-column-id="numberOfVotes">
+                    @LangHelpers.Instance["number_of_votes"]
+                </th>
+            }
+
+            <th scope="col" data-column-id="commands" data-formatter="commands" data-sortable="false">@LangHelpers.Instance["actions"]</th>
+        </tr>
+    </thead>
+</table>
+
+<div>
+    <p class="text-right" id="external_refree_add_link">
+        <a data-toggle="modal" data-target="#external_refree_modal" class="btn btn-default">@LangHelpers.Instance["add_external_referee"]</a>
+    </p>
+    <div class="modal fade bs-example-modal-lg" id="external_refree_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">@LangHelpers.Instance["external_referee"]</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="ExternalRefereeId" id="ExternalRefereeId" />
+                    <div class="alert alert-danger" id="error-message-external-refree" style="display:none;"></div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">@LangHelpers.Instance["email"]</label>
+                        <div class="col-md-7">
+                            <input type="email" name="ExternlRefereeEmail" onchange="findReferee(this)" id="ExternlRefereeEmail" class="form-control" />
+                            <input type="hidden" id="referee_user_id" value="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">@LangHelpers.Instance["name"]</label>
+                        <div class="col-md-7">
+                            <input type="text" name="ExternlRefereeName" id="ExternlRefereeName" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">@LangHelpers.Instance["mobile_number"]</label>
+                        <div class="col-md-7">
+                            <input type="number" name="ExternlRefereeMobileNumber" id="ExternlRefereeMobileNumber" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="saveReferee()">@LangHelpers.Instance["save"]</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">@LangHelpers.Instance["close"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<table id="gridReferees" style="width: 100%;" class="table table-striped table-small-font table-vmiddle">
+    <thead>
+        <tr>
+            <th scope="col" data-column-id="updated" data-width="50px" data-visible="false" data-order="desc"></th>
+
+            <th scope="col" data-column-id="fullName">
+                @LangHelpers.Instance["name"]
+            </th>
+            <th scope="col" data-column-id="majorName">
+                @LangHelpers.Instance["major_name"]
+            </th>
+            @*<th scope="col" data-column-id="collegeName">
+                    @LangHelpers.Instance["college_name"]
+                </th>*@
+
+            @if (!isMember)
+            {
+                <th scope="col" data-column-id="numberOfVotes">
+                    @LangHelpers.Instance["number_of_votes"]
+                </th>
+            }
+
+            <th scope="col" data-column-id="commands" data-formatter="commands" data-sortable="false">@LangHelpers.Instance["actions"]</th>
+        </tr>
+    </thead>
+</table>
+
+
+@this.ScriptBlock(
+    @<script type="text/javascript" nonce="@Html.ScriptNonce()">
+        var isMember = @isMember.ToString().ToLower();
+
+        if (typeof (maxReferees) === 'undefined') {
+            maxReferees = 3;
+        }
+
+        if (typeof (selectedReferees) === 'undefined') {
+            selectedReferees = [];
+        }
+
+        if (typeof (window.onRefreeSelectionChanged) === 'undefined') {
+            window.onRefreeSelectionChanged = function () {
+
+            };
+        }
+
+        var onRefreeSelectionChanged = window.onRefreeSelectionChanged;
+
+        $(document).ready(function () {
+            $('#external_refree_modal').on('shown.bs.modal', function (e) {
+                $("#ExternlRefereeEmail").val("");
+                $("#ExternlRefereeName").val("");
+                $("#ExternlRefereeMobileNumber").val("");
+                $("#ExternalRefereeId").val("");
+                $("#ExternlRefereeName").removeAttr("disabled");
+                $("#ExternlRefereeMobileNumber").removeAttr("disabled");
+            });
+        });
+
+        function findReferee(_me) {
+            var _email = $(_me).val();
+            var _url = baseAjaxUrl + "FindRefereeByEmail"
+            $("#ExternlRefereeName").attr("disabled", "disabled");
+            $("#ExternlRefereeMobileNumber").attr("disabled", "disabled");
+            $("#referee_user_id").val("");
+            $.post(_url, { RefereeEmail: _email }, function (_result) {
+                if (_result.status) {
+                    if (_result.data != null) {
+                        var _name = _result.data.firstName + ((_result.data.secondName != undefined && _result.data.secondName != "") ? " " + _result.data.secondName : "") + ((_result.data.thirdName != undefined && _result.data.thirdName != "") ? " " + _result.data.thirdName : "") + ((_result.data.lastName != undefined && _result.data.lastName != "") ? " " + _result.data.lastName : "");
+
+                        $("#ExternlRefereeName").val(_name);
+                        $("#ExternlRefereeMobileNumber").val(_result.data.mobileNumber);
+                        $("#ExternalRefereeId").val(_result.data.id);
+                        if (_result.data.userId != undefined) {
+                            $("#referee_user_id").val(_result.data.userId);
+                        }
+                    }
+                    else
+                    {
+                        $("#ExternlRefereeName").removeAttr("disabled");
+                        $("#ExternlRefereeMobileNumber").removeAttr("disabled");
+
+                        $("#ExternlRefereeName").val("");
+                        $("#ExternlRefereeMobileNumber").val("");
+                    }
+                }
+                else {
+                    $("#ExternlRefereeName").removeAttr("disabled");
+                    $("#ExternlRefereeMobileNumber").removeAttr("disabled");
+                }
+            });
+        }
+
+        function saveReferee() {
+            var _params = {
+                Email: $("#ExternlRefereeEmail").val(),
+                FullName: $("#ExternlRefereeName").val(),
+                MobileNumber: $("#ExternlRefereeMobileNumber").val(),
+            };
+            var ExternalRefereeId = $("#ExternalRefereeId").val();
+
+            $("#error-message-external-refree").hide();
+            $("#error-message-external-refree").html("");
+
+            if (_params.Email != "" && _params.FullName != "") {
+                if (ExternalRefereeId != "") {
+                    addExternalRefereeToSelectedList(ExternalRefereeId, _params.FullName);
+                    $('#external_refree_modal').modal('toggle');
+                }
+                else {
+                    var _url = baseAjaxUrl + "SaveExternalReferee";
+                    $.post(_url, _params, function (_result) {
+                        if (_result.status) {
+                            addExternalRefereeToSelectedList(_result.data, _params.FullName);
+                            $('#external_refree_modal').modal('toggle');
+                            if (selectedReferees.length == maxReferees) {
+                                $('.btn-select-referee').hide();
+                                $("#external_refree_add_link").hide();
+                            }
+                        }
+                        else {
+                            $("#error-message-external-refree").show();
+                            $("#error-message-external-refree").html(_result.message);
+                        }
+                    });
+                }
+            }
+            else {
+                $("#error-message-external-refree").show();
+                $("#error-message-external-refree").html("@LangHelpers.Instance["field_with_star_required"]");
+            }
+        }
+
+        function addExternalRefereeToSelectedList(id, fullname, external) {
+            var index = $('#gridSelectedReferees tbody tr').length;
+            if (index === undefined || index === 'undefined') {
+                index = 0;
+            }
+            var isDuplicate = false;
+            for (var i = 0; i < selectedReferees.length; i++) {
+                if (selectedReferees[i].id == id) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+
+            if (!isDuplicate) {
+                var e2 = addReferee($("#referee_user_id").val() ,id, fullname, "", "", index);
+                var obj = {
+                    id: id,
+                    fullName: fullname,
+                    majorName: "",
+                    numberOfVotes: "",
+                    userId: $("#referee_user_id").val(),
+                    isPrime: index < 2
+                };
+
+                selectedReferees.push(obj);
+                onRefreeSelectionChanged();
+                updateArrows();
+                $('#gridSelectedReferees').show();
+                var la = $('.btn-select-referee');
+                var found = false;
+                for (var i = 0; i < la.length; i++) {
+                    var rowid = $(la[i]).data('id');
+                    if (rowid == id) {
+                        $(la[i]).hide();
+                    }
+                }
+
+            }
+        }
+
+        var selector = $('#gridReferees');
+        var grid = $(selector).bootgrid
+            (
+            {
+                ajax: true,
+                rowCount: 5,
+                    url: function () { return baseAjaxUrl + "ListReferees?FilterUserId="+$("#RequestCreatedBy").val() },
+                ajaxSettings: {
+                    method: "GET",
+                    cache: false
+                },
+                searchSettings: {
+                    delay: 3000
+                },
+                labels: {
+                    all: '@LangHelpers.Instance["all"]',
+                    infos: '@LangHelpers.Instance["from"] {{ctx.start}} @LangHelpers.Instance["to"] {{ctx.end}} (@LangHelpers.Instance["total"] {{ctx.total}})',
+                    loading: '@LangHelpers.Instance["wait"]',
+                    search: '@LangHelpers.Instance["search"]',
+                    noResults: "@LangHelpers.Instance["no_referees"]"
+                },
+                css: {
+                    icon: 'fa icon',
+                    iconColumns: 'fa-view-module',
+                    iconDown: 'fa-sort-alpha-asc',
+                    iconRefresh: 'fa-refresh',
+                    iconUp: 'fa-sort-alpha-desc',
+                    iconSearch: 'fa-search'
+                },
+
+                formatters: {
+                    "commands": function (column, row) {
+                        var selectedRow = null;
+                        var found = false;
+                        for (var j = 0; j < selectedReferees.length; j++) {
+
+                            if (selectedReferees[j].id == row.id) {
+                                found = true;
+                                selectedRow = selectedReferees[j];
+                                break;
+                            }
+                        };
+
+                        for (var j = 0; j < preSelected.length; j++) {
+
+                            if (preSelected[j].id == row.id) {
+                                found = true;
+                                selectedRow = preSelected[j];
+                                break;
+                            }
+                        };
+
+                        var show = selectedReferees.length < maxReferees && !found;
+
+                        if (selectedRow != null)
+                            row.numberOfVotes = selectedRow.numberOfVotes;
+
+                        return '<a style="' + (!show ? 'display: none;' : '') + '" href="#" data-userid="'+row.userId+'" data-id="' + row.id + '" data-full-name="' + row.fullName + '" data-major-name="' + row.majorName + '" data-number-of-votes="' + row.numberOfVotes + '" class="btn btn-icon btn-info btn-select-referee">@LangHelpers.Instance["select_referee"]</a>';
+                    },
+                    "email": function (column, row) {
+                        return '<a href="mailto:' + row.email + '">' + row.email + '</a>';
+                    }
+                }
+            }).on("loaded.rs.jquery.bootgrid", function () {
+
+            });
+
+
+        var updateArrows = function () {
+            $('.btn-move-up').remove();
+            $('.btn-move-down').remove();
+
+            var prev = $('#gridSelectedReferees tbody tr');
+            for (var j = 0; j < prev.length; j++) {
+                var el = $(prev[j]);
+
+                var id = el.attr('data-id');
+                var td = $(el.find('td').last());
+
+
+
+                if(j<2 )
+                {
+                    el.find('.badge').html('@LangHelpers.Instance["prime_referee"]');
+                } else
+                {
+                    el.find('.badge').html('@LangHelpers.Instance["reserve_referee"]');
+                }
+
+                if (el.find('.btn-unselect-referee').length > 0) {
+                    if (j < selectedReferees.length - 1) {
+                        td.append('<a href="#" class="btn btn-icon btn-success btn-move-down" data-id="' + id + '">🠋</a> ');
+                    } else {
+                        td.append('<a href="#" class="btn btn-icon btn-success btn-move-down disabled">🠋</a> ');
+                    }
+
+                    if (j > 0) {
+                        td.append('<a href="#" class="btn btn-icon btn-success btn-move-up" data-id="' + id + '">🠉</a> ');
+                    } else {
+                        td.append('<a href="#" class="btn btn-icon btn-success btn-move-up disabled">🠉</a> ');
+                    }
+                }
+                var e2 = el;
+                $(e2).find('.btn-move-up').click(function (e) {
+                    var id = null;
+                    try {
+                        id = parseInt($(this).data('id'));
+                    } catch (e) {
+                        return false;
+                    }
+
+                    if (!id) return false;
+
+                    var prevId = -1;
+
+                    for (var i = 0; i < selectedReferees.length; i++) {
+                        if (selectedReferees[i].id == id) {
+                            if (i > 0) {
+                                prevId = selectedReferees[i - 1].id;
+                            }
+
+                            break;
+                        }
+                    }
+
+                    if (prevId === -1) return false;
+
+
+                    var newArray = [];
+                    for (var i = 0; i < selectedReferees.length; i++) {
+                        if (selectedReferees[i].id === prevId) {
+                            newArray.push(selectedReferees[i + 1]);
+                            newArray.push(selectedReferees[i]);
+                            i += 1;
+                        } else {
+                            newArray.push(selectedReferees[i]);
+                        }
+                    }
+
+                    selectedReferees = newArray;
+                    $('#gridSelectedReferees tbody').empty();
+
+                    for (var i = 0; i < selectedReferees.length; i++) {
+                        var id = selectedReferees[i].id;
+                        var fullName = selectedReferees[i].fullName;
+                        var majorName = selectedReferees[i].majorName;
+                        var numberOfVotes = selectedReferees[i].numberOfVotes;
+                        var userId = selectedReferees[i].userId;
+                        addReferee(userId, id, fullName, majorName, numberOfVotes, i);
+                    }
+
+                    e.preventDefault();
+
+                    return false;
+
+                });
+
+
+                $(e2).find('.btn-move-down').click(function (e) {
+                    var id = null;
+                    try {
+                        id = parseInt($(this).data('id'));
+                    } catch (e) {
+                        return false;
+                    }
+
+                    if (!id) return false;
+
+                    var nextId = -1;
+
+                    for (var i = 0; i < selectedReferees.length; i++) {
+                        if (selectedReferees[i].id == id) {
+                            if (i < selectedReferees.length - 1) {
+                                nextId = selectedReferees[i + 1].id;
+                            }
+
+                            break;
+                        }
+                    }
+
+                    if (nextId === -1) return false;
+
+
+                    var newArray = [];
+                    for (var i = 0; i < selectedReferees.length; i++) {
+                        if (selectedReferees[i].id == id) {
+                            newArray.push(selectedReferees[i + 1]);
+                            newArray.push(selectedReferees[i]);
+                            i += 1;
+                        } else {
+                            newArray.push(selectedReferees[i]);
+                        }
+                    }
+
+                    selectedReferees = newArray;
+                    $('#gridSelectedReferees tbody').empty();
+
+                    for (var i = 0; i < selectedReferees.length; i++) {
+                        var id = selectedReferees[i].id;
+                        var fullName = selectedReferees[i].fullName;
+                        var majorName = selectedReferees[i].majorName;
+                        var numberOfVotes = selectedReferees[i].numberOfVotes;
+                        var userId = selectedReferees[i].userId;
+                        addReferee(userId, id, fullName, majorName, numberOfVotes, i);
+
+                    }
+
+                    e.preventDefault();
+                    return false;
+
+                });
+
+            }
+
+        };
+
+
+
+        var primes = [];
+
+        var addReferee = function (userId, id, fullName, majorName, numberOfVotes, index, showActionLinks) {
+            if (showActionLinks == undefined || showActionLinks == null) {
+                showActionLinks = true;
+            }
+            if (!id || !fullName || fullName.length === 0) return;
+            var obj = {
+                id: id,
+                fullName: fullName,
+                majorName: majorName,
+                numberOfVotes: numberOfVotes,
+                isPrime: index < 2
+            };
+
+            if (majorName === undefined || majorName === 'undefined'  || majorName === null || !(majorName.length > 0)) {
+                majorName = '';
+            }
+
+            if (numberOfVotes === undefined || numberOfVotes === 'undefined' || numberOfVotes === null) {
+                numberOfVotes = '';
+            }
+            var refereeExtraText = "";
+            if (userId == null || userId == undefined || userId == "undefined" || userId == "") {
+                refereeExtraText = '<span class="badge1 bg-primary">@LangHelpers.Instance["external_referee"]</span>';
+            }
+            var html = '<tr data-index="' + index + '" data-id="' + id + '">';
+            if (maxReferees > 2) {
+                if (obj.isPrime) {
+                    html += '<td>' + fullName + ' <span class="badge bg-info">(@LangHelpers.Instance["prime_referee"])</span> ' + refereeExtraText + '</td>';
+                } else {
+                    html += '<td>' + fullName + ' <span class="badge bg-warning">(@LangHelpers.Instance["reserve_referee"])</span> ' + refereeExtraText +'</td>';
+                }
+            }
+            else {
+                html += '<td>' + fullName + '</td>';
+            }
+
+            html += '<td>' + majorName + '</td>';
+            if (!isMember) {
+                html += '<td>' + numberOfVotes + '</td>';
+            }
+
+            html += '<td>';
+            if (showActionLinks == true) {
+                html += '<a href="#" class="btn btn-icon btn-info btn-unselect-referee">@LangHelpers.Instance["unselect"]</a> ';
+            }
+            html += '</td>';
+            html += '</tr>'
+
+            var e2 = $(html);
+
+            $('#gridSelectedReferees').append(e2)
+
+            $(e2).find('.btn-unselect-referee').data('id', id);
+
+            $(e2).find('.btn-unselect-referee').click(function (e) {
+                id = $(this).data('id');
+                $(e).show();
+
+                var newArray = [];
+                for (var i = 0; i < selectedReferees.length; i++) {
+                    if (selectedReferees[i].id == id) {
+                    } else {
+                        newArray.push(selectedReferees[i]);
+                    }
+                }
+
+                selectedReferees = newArray;
+                onRefreeSelectionChanged();
+
+
+                if (selectedReferees.length < maxReferees) {
+                    var la = $('.btn-select-referee');
+                    for (var i = 0; i < la.length; i++) {
+                        var id = $(la[i]).data('id');
+
+                        var found = false;
+                        for (var j = 0; j < selectedReferees.length; j++) {
+
+                            if (selectedReferees[j].id === id) {
+                                found = true;
+                                break;
+                            }
+                        };
+
+                        if (!found) {
+                            $(la[i]).show();
+                        }
+                    }
+                    $("#external_refree_add_link").show();
+                }
+
+                e2.remove();
+
+                e.preventDefault();
+                return false;
+            });
+
+            if (showActionLinks == true) {
+                updateArrows();
+            }
+
+            return e2;
+        };
+        /*
+        if (selectedReferees.length > 0) {
+            for (var i = 0; i < selectedReferees.length; i++) {
+                var e2 = addReferee(selectedReferees[i].userId, selectedReferees[i].id, selectedReferees[i].fullName, selectedReferees[i].majorName, selectedReferees[i].numberOfVotes, i, false);
+            }
+            $('#gridSelectedReferees').show();
+        }
+        */
+
+        onDomInserted('.btn-select-referee', function (e) {
+
+
+            $(e).click(function () {
+
+                var id = $(e).data('id');
+                var index = $('#gridSelectedReferees tbody tr').length;
+                var fullName = $(e).data('fullName');
+                var majorName = $(e).data('majorName');
+                var numberOfVotes = $(e).data('numberOfVotes');
+                var userId = $(e).data('userid');
+                if (index === undefined || index === 'undefined')
+                    index = 0;
+
+
+                $(e).hide();
+
+                var e2 = addReferee(userId, id, fullName, majorName, numberOfVotes, index);
+
+                var obj = {
+                    id: id,
+                    fullName: fullName,
+                    majorName: majorName,
+                    numberOfVotes: numberOfVotes,
+                    userId: userId,
+                    isPrime: index < 2
+                };
+
+
+                selectedReferees.push(obj);
+                onRefreeSelectionChanged();
+                updateArrows();
+
+                $('#gridSelectedReferees').show();
+                $("#external_refree_add_link").show();
+
+                if (selectedReferees.length === maxReferees) {
+                    $('.btn-select-referee').hide();
+                    $("#external_refree_add_link").hide();
+                }
+
+
+                return false;
+            });
+
+        });
+
+
+
+    </script>
+                                                                                                                )

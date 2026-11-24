@@ -1,0 +1,80 @@
+﻿@model List<SectionsViewModel>
+@{
+    var i = 0;
+    var tablestarted = false;
+    var headingstarted = false;
+    var index = -1;
+    var tableFieldIndex = -1;
+}
+<style>
+    .form-horizontal {
+        max-width: 700px;
+    }
+</style>
+
+<h6><a href="@Utils.GetApplicationUrl()Forms">Back to Forms</a></h6>
+<h3>@ViewBag.FormName</h3>
+
+<div class="container">
+    @foreach (var item in Model)
+    {
+        if (item.FormFields.Count > 0)
+        {
+            <div class="form-horizontal" id="form-section-@i" style="background:rgba(230, 230, 250, 0.45);border-radius:10px; border:#d7d7fa solid 1px; padding:15px;margin-bottom:20px;@(i>0?"display:none":null)">
+                <div class="text-center"><h4>Step @(i + 1)</h4></div>
+                @foreach (var field in item.FormFields)
+                {
+                    @Html.RenderField(field, null, false, ref tablestarted, ref headingstarted, ref index, ref tableFieldIndex)
+                }
+
+                @if (Model.Count > 1)
+                {
+                    <a class="btn btn-success btn-next">Next</a>
+                }
+            </div>
+        }
+        i++;
+    }
+
+</div>
+
+@section scripts{
+
+    <script nonce="@Html.ScriptNonce()">
+
+        var i = 0;
+        var totalsections = $('.form-horizontal').length;
+
+        $(document).on('click', '.btn-next', function () {
+            window.location.href = "#";
+            $('#form-section-' + i).css("display", "none");//.fadeOut(300, "swing");
+            i++;
+            $('#form-section-' + i).fadeIn(300, "swing");
+            if (i > 0) {
+                if (!($('.btn-prev').length > 0)) {
+                    $('.btn-next').before('<a class="btn btn-danger btn-prev">Previous</a>');
+                }
+            }
+            if (i == totalsections - 1) {
+                $('.btn-next').remove();
+            }
+        });
+
+        $(document).on('click', '.btn-prev', function () {
+            window.location.href = "#";
+            $('#form-section-' + i).css("display", "none");//.fadeOut(300, "swing");
+            i--;
+            $('#form-section-' + i).fadeIn(300, "swing");
+            if (i <= totalsections - 1) {
+                if (!($('.btn-next').length > 0)) {
+                    $('.btn-prev').after('<a class="btn btn-success btn-next">Next</a>');
+                }
+            } if (i < 1) {
+                $('.btn-prev').remove();
+            }
+        });
+
+
+    </script>
+
+}

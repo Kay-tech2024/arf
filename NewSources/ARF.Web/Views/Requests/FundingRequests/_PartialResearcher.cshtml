@@ -1,0 +1,365 @@
+﻿@model CommonFundingRequestViewModel
+
+@{
+
+    var index = ViewBag.Index != null && ViewBag.Index > 0 ? (int)ViewBag.Index : 0;
+
+    if (Model.Researchers == null || Model.Researchers.Count == 0)
+    {
+        Model.Researchers = new List<CoresearcherViewModel>
+{
+new CoresearcherViewModel
+{
+
+}
+
+};
+    }
+
+    var id = ViewBag.IsTemplate == true ? "coresearchers{index}" : (index == 0 ? "main_researcher" : "coresearchers" + index);
+}
+
+<div class="panel panel-default" data-index="@(ViewBag.IsTemplate == null? index + "" : "{index}")">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="count">@(ViewBag.IsTemplate == true ? "{order}" : (index + 1) + "")</span>
+            <a data-toggle="collapse" data-parent="#divResearchers" href="#@(id)" class="researcher-name-header">
+                @if (Model.Researchers[index].FullName != null && ViewBag.IsTemplate == null)
+                {
+                    if (Model.Researchers[index].RoleInProject == ResearcherRole.MainResearcher && ViewBag.IsTemplate == null)
+                    {
+                        <span>
+                            <b>@Model.Researchers[index].FullName &nbsp; </b>@LangHelpers.Instance["the_main_researcher"]
+                        </span>
+                    }
+                    else
+                    {
+                        <span>
+                            <b>@Model.Researchers[index].FullName &nbsp; </b>@(LangHelpers.Instance["team_member"])
+                        </span>
+                    }
+                }
+                else if (Model.Researchers[index].RoleInProject == ResearcherRole.MainResearcher && ViewBag.IsTemplate == null)
+                {
+                    <span>
+                        @LangHelpers.Instance["the_main_researcher"]
+                    </span>
+                }
+                else
+                {
+                    <span>
+                        @(LangHelpers.Instance["team_member"])
+                    </span>
+                }
+            </a>
+        </h4>
+        @if (index > 0 || ViewBag.IsTemplate == true)
+        {
+            <a href="#" class="btnRemoveRow btn btn-danger btn-xs cancel">@LangHelpers.Instance["cancel"]</a>
+        }
+    </div>
+    <div id="@(id)" class="panel-collapse collapse @(index == 0 && ViewBag.IsTemplate == null? "in" : "")">
+        <div class="panel-body">
+
+            @if (ViewBag.IsTemplate != true)
+            {
+                <div>
+                    @Html.HiddenFor(m => m.Researchers[index].Id)
+                </div>
+            }
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["quad_name"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.Researchers[index].FullName, new { @class = "form-control researcher-name" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].FullName)
+                </div>
+            </div>
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["national_id"]</label>
+                @*<span id="statusquestion" style="cursor: pointer;" class="popupstat glyphicon glyphicon-question-sign"></span>*@
+
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.Researchers[index].NationalID, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].NationalID)
+                </div>
+            </div>
+            <div id="myPopover" style="display:none" class="list-group">
+                <a href="#" id="stauslistitem" class="list-group-item">@LangHelpers.Instance["SectionTrainingCourses"]</a>
+            </div>
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["nationality"]</label>
+                <div class="col-sm-7">
+                    @Html.DropDownListFor(m => m.Researchers[index].NationalityId, new SelectList(Model.Countries, "Value", "Text", Model.Researchers[index].NationalityId), LangHelpers.Instance["select"], new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].NationalityId)
+                </div>
+            </div>
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["birthdate"]</label>
+                <div class="col-sm-7">
+                    @Html.DatePickerFor(m => m.Researchers[index].Birthdate, ARF.Web.App_Start.Extensions.DateType.Date, new { @class = "form-control allow-edit" })
+
+                    @Html.ValidationMessageFor(m => m.Researchers[index].Birthdate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["residence_country"]</label>
+                <div class="col-sm-7">
+                    @Html.DropDownListFor(m => m.Researchers[index].CountryId, new SelectList(Model.Countries, "Value", "Text", Model.Researchers[index].CountryId), LangHelpers.Instance["select"], new { @class = "form-control ddl-country" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].CountryId)
+                </div>
+            </div>
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["residence_city"]</label>
+                <div class="col-sm-7">
+                    @Html.DropDownListFor(m => m.Researchers[index].CityId, new SelectList(Model.Cities.Where(c => c.CountryId == null || (Model.Researchers[index].CountryId > 0 && c.CountryId == Model.Researchers[index].CountryId)), "Id", "Name", Model.Researchers[index].CityId), LangHelpers.Instance["select"], new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].CityId)
+                </div>
+            </div>
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["addresss"]</label>
+                <div class="col-sm-7">
+                    @Html.TextAreaFor(m => m.Researchers[index].Addresss, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].Addresss)
+                </div>
+            </div>
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["mobile"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.Researchers[index].MobileNumber, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].MobileNumber)
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["email"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.Researchers[index].Email, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].Email)
+                </div>
+            </div>
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["researcher_type"]</label>
+                <div class="col-sm-7">
+                    @if (Model.Researchers[index].RoleInProject == ResearcherRole.MainResearcher && ViewBag.IsTemplate == null)
+                    {
+                        <span class="form-control disabled">@LangHelpers.Instance["the_main_researcher"]</span>
+                        @Html.HiddenFor(m => Model.Researchers[index].RoleInProject)
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(m => m.Researchers[index].RoleInProject, new SelectList(Model.ResearcherRoles, "Value", "Text", Model.Researchers[index].RoleInProject), LangHelpers.Instance["select"], new { @class = "form-control ddl-researcher-type" })
+                        @Html.ValidationMessageFor(m => m.Researchers[index].RoleInProject)
+                    }
+                </div>
+            </div>
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["degree_or_qualification"]</label>
+                <div class="col-sm-7">
+                    @Html.DropDownListFor(m => m.Researchers[index].Qualification, new SelectList(
+                                               Utils.QualificationTypesByResearcherType(Model.Researchers[index].RoleInProject)
+                                               .Select(r => new SelectListItem { Text = LangHelpers.Instance[r.ToString()], Value = r.ToString() }), "Value", "Text", Model.Researchers[index].Qualification), LangHelpers.Instance["select"], new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].Qualification)
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["university_or_workplace"]</label>
+                <div class="col-sm-7">
+                    @Html.DropDownListFor(m => m.Researchers[index].UniversityId, new SelectList(Model.Universities, "Value", "Text", Model.Researchers[index].UniversityId), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown ddl-university" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].UniversityId)
+                </div>
+            </div>
+            <div class="form-group required div-university-other" style="display: @(Model.Researchers[index].UniversityId == null || Model.Researchers[index].UniversityId  > 0? "none" : "block")">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["other"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.Researchers[index].UniversityOther, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].UniversityOther)
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["college"]</label>
+                <div class="col-sm-7">
+                    @Html.DropDownListFor(m => m.Researchers[index].CollegeId, new SelectList(Model.Colleges.Where(c => Model.Researchers[index].UniversityId > 0 && c.ParentId == Model.Researchers[index].UniversityId.Value.ToString()), "Value", "Text", Model.Researchers[index].CollegeId), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown ddl-college" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].CollegeId)
+                </div>
+            </div>
+            <div class="form-group required div-college-other" style="display: @(Model.Researchers[index].CollegeId == null || Model.Researchers[index].CollegeId  > 0? "none" : "block")">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["other"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.Researchers[index].CollegeOther, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].CollegeOther)
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["department"]</label>
+                <div class="col-sm-7">
+                    @Html.DropDownListFor(m => m.Researchers[index].DepartmentID, new SelectList(Model.Departments.Where(c => Model.Researchers[index].CollegeId > 0 && c.ParentId == Model.Researchers[index].CollegeId.Value.ToString()), "Value", "Text", Model.Researchers[index].DepartmentID), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].DepartmentID)
+                </div>
+            </div>
+
+
+            <div class="form-group required div-department-other" style="display: @(Model.Researchers[index].DepartmentID == null || Model.Researchers[index].DepartmentID  > 0? "none" : "block")">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["other"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.Researchers[index].DepartmentOther, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].DepartmentOther)
+                </div>
+            </div>
+
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["researcher_specialization"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.Researchers[index].Specialization, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].Specialization)
+                </div>
+            </div>
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["bank_name"]</label>
+                <div class="col-sm-7">
+                    @Html.DropDownListFor(m => m.Researchers[index].Bank, new SelectList(Model.Banks, "Value", "Text", Model.Researchers[index].Bank), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].Bank)
+                </div>
+            </div>
+            <div class="form-group required div-bank-other" style="display: @(Model.Researchers[index].Bank == null || Model.Researchers[index].Bank  > 0? "none" : "block")">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["other"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.Researchers[index].BankOther, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].BankOther)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["branch_name"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.Researchers[index].BankBranch, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].BankBranch)
+                </div>
+            </div>
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["account_holder_name"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.Researchers[index].BankAccountHolder, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].BankAccountHolder)
+                </div>
+            </div>
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["iban"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.Researchers[index].BankIban, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Researchers[index].BankIban)
+                </div>
+            </div>
+
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["iban_photocopy"]</label>
+                <div class="col-sm-7">
+                    <input type="file" name="Researchers[@(ViewBag.IsTemplate ==true? "{index}" : index + "")].BankIbanPhotocopy" />
+                    @if (ViewBag.IsTemplate != true && Model.Researchers[index].BankIbanPhotocopyReadonly != null)
+                    {
+                        <a class="btn btn-xs btn-success" target="_blank" href="@(Utils.GetApplicationUrl() + "f/" +  Model.Researchers[index].BankIbanPhotocopyReadonly.FileId)">@Model.Researchers[index].BankIbanPhotocopyReadonly.FileName</a>
+                    }
+
+                    @Html.ValidationMessageFor(m => m.Researchers[index].BankIbanPhotocopy)
+                </div>
+            </div>
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["cv"]</label>
+                <div class="col-sm-7">
+                    <table class="table table-striped transition-less">
+                        <tbody>
+                            <tr class="row-section-header required">
+                                <td><a class="field-caption" href="#">@LangHelpers.Instance["SectionCareerHistory"]</a></td>
+                                <td><span class="color-red"></span></td>
+                                <td><a data-toggle="dont-collapse" data-target="#@(ViewBag.IsTemplate == true ? "section{index}_SectionCareerHistory" : "section" + index + "_SectionCareerHistory")" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                            </tr>
+                            <tr class="collapse row-section-details" id="@(ViewBag.IsTemplate == true ? "section{index}_SectionCareerHistory" : "section" + index + "_SectionCareerHistory")">
+                                <td colspan="3">
+                                    @Html.TextAreaFor(m => @m.Researchers[index].SectionCareerHistory, new { rows = 3, @class = "form-control " + (!(ViewBag.IsTemplate == true) && index == 0 ? "" : "rich-text-editor") + " small" })
+                                </td>
+                            </tr>
+                            <tr class="row-section-header required">
+                                <td><a class="field-caption" href="#">@LangHelpers.Instance["SectionAcademicHistory"]</a></td>
+                                <td><span class="color-red"></span></td>
+                                <td><a data-toggle="dont-collapse" data-target="#@(ViewBag.IsTemplate == true ? "section{index}_SectionAcademicHistory" : "section" + index + "_SectionAcademicHistory")" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                            </tr>
+                            <tr class="collapse row-section-details" id="@(ViewBag.IsTemplate == true ? "section{index}_SectionAcademicHistory" : "section" + index + "_SectionAcademicHistory")">
+                                <td colspan="3">
+                                    @Html.TextAreaFor(m => @m.Researchers[index].SectionAcademicHistory, new { rows = 3, @class = "form-control " + (!(ViewBag.IsTemplate == true) && index == 0 ? "" : "rich-text-editor") + " small" })
+                                </td>
+                            </tr>
+                            <tr class="row-section-header required">
+                                <td><a class="field-caption" href="#">@LangHelpers.Instance["SectionPublishedPapers"]</a></td>
+                                <td><span class="color-red"></span></td>
+                                <td><a data-toggle="dont-collapse" data-target="#@(ViewBag.IsTemplate == true ? "section{index}_SectionPublishedPapers" : "section" + index + "_SectionPublishedPapers")" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                            </tr>
+                            <tr class="collapse row-section-details" id="@(ViewBag.IsTemplate == true ? "section{index}_SectionPublishedPapers" : "section" + index + "_SectionPublishedPapers")">
+                                <td colspan="3">
+                                    @Html.TextAreaFor(m => @m.Researchers[index].SectionPublishedPapers, new { rows = 3, @class = "form-control " + (!(ViewBag.IsTemplate == true) && index == 0 ? "" : "rich-text-editor") + " small" })
+                                </td>
+                            </tr>
+                            <tr class="row-section-header required">
+                                <td><a class="field-caption" href="#">@LangHelpers.Instance["SectionInterests"]</a></td>
+                                <td><span class="color-red"></span></td>
+                                <td><a data-toggle="dont-collapse" data-target="#@(ViewBag.IsTemplate == true ? "section{index}_SectionInterests" : "section" + index + "_SectionInterests")" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                            </tr>
+                            <tr class="collapse row-section-details" id="@(ViewBag.IsTemplate == true ? "section{index}_SectionInterests" : "section" + index + "_SectionInterests")">
+                                <td colspan="3">
+                                    @Html.TextAreaFor(m => @m.Researchers[index].SectionInterests, new { rows = 3, @class = "form-control " + (!(ViewBag.IsTemplate == true) && index == 0 ? "" : "rich-text-editor") + " small" })
+                                </td>
+                            </tr>
+                            <tr class="row-section-header required">
+                                <td><a class="field-caption" href="#">@LangHelpers.Instance["SectionMemberships"]</a></td>
+                                <td><span class="color-red"></span></td>
+                                <td><a data-toggle="dont-collapse" data-target="@(ViewBag.IsTemplate == true ? "section{index}_SectionMemberships" : "section" + index + "_SectionMemberships")" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                            </tr>
+                            <tr class="collapse row-section-details" id="@(ViewBag.IsTemplate == true ? "section{index}_SectionMemberships" : "section" + index + "_SectionMemberships")">
+                                <td colspan="3">
+                                    @Html.TextAreaFor(m => @m.Researchers[index].SectionMemberships, new { rows = 3, @class = "form-control " + (!(ViewBag.IsTemplate == true) && index == 0 ? "" : "rich-text-editor") + " small" })
+                                </td>
+                            </tr>
+                            <tr class="row-section-header required">
+                                <td><a class="field-caption" href="#">@LangHelpers.Instance["SectionAwards"]</a></td>
+                                <td><span class="color-red"></span></td>
+                                <td><a data-toggle="dont-collapse" data-target="#@(ViewBag.IsTemplate == true ? "section{index}_SectionAwards" : "section" + index + "_SectionAwards")" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                            </tr>
+                            <tr class="collapse row-section-details" id="@(ViewBag.IsTemplate == true ? "section{index}_SectionAwards" : "section" + index + "_SectionAwards")">
+                                <td colspan="3">
+                                    @Html.TextAreaFor(m => @m.Researchers[index].SectionAwards, new { rows = 3, @class = "form-control " + (!(ViewBag.IsTemplate == true) && index == 0 ? "" : "rich-text-editor") + " small" })
+                                </td>
+                            </tr>
+                            <tr class="row-section-header required">
+                                <td><a class="field-caption" href="#">@LangHelpers.Instance["SectionTrainingCourses"]</a></td>
+                                <td><span class="color-red"></span></td>
+                                <td><a data-toggle="dont-collapse" data-target="#@(ViewBag.IsTemplate == true ? "section{index}_SectionTrainingCourses" : "section" + index + "_SectionTrainingCourses")" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["add"]</a></td>
+                            </tr>
+                            <tr class="collapse row-section-details" id="@(ViewBag.IsTemplate == true ? "section{index}_SectionTrainingCourses" : "section" + index + "_SectionTrainingCourses")">
+                                <td colspan="3">
+                                    @Html.TextAreaFor(m => @m.Researchers[index].SectionTrainingCourses, new { rows = 3, @class = "form-control " + (!(ViewBag.IsTemplate == true) && index == 0 ? "" : "rich-text-editor") + " small" })
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    @Html.ValidationMessageFor(m => m.Researchers[index].CvText)
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+

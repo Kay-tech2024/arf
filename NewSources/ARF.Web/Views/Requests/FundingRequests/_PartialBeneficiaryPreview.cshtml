@@ -1,0 +1,40 @@
+﻿@model RequestSummaryViewModel2
+
+@{
+
+    var index = ViewBag.Index != null && ViewBag.Index > 0 ? (int)ViewBag.Index : 0;
+
+    if (Model.Beneficiaries == null || Model.Beneficiaries.Count == 0)
+    {
+        Model.Beneficiaries = new List<BeneficiaryViewModel>
+{
+new BeneficiaryViewModel
+{
+
+}
+
+};
+    }
+
+    var id = ViewBag.IsTemplate == true ? "Beneficiaries{index}" : "Beneficiaries" + index;
+}
+
+<tr data-index="@(ViewBag.IsTemplate == null? index + "" : "{index}")">
+    <td>@(ViewBag.IsTemplate == null ? (index + 1) + "" : "{order}")</td>
+    <td>
+        @Html.TextBoxFor(m => m.Beneficiaries[index].Name, new { @class = "form-control", placeholder = LangHelpers.Instance["beneficiary"] })
+        @Html.ValidationMessageFor(m => m.Beneficiaries[index].Name)
+    </td>
+    <td>
+        @Html.TextBoxFor(m => m.Beneficiaries[index].Address, new { @class = "form-control", placeholder = LangHelpers.Instance["beneficiary_address"] })
+        @Html.ValidationMessageFor(m => m.Beneficiaries[index].Address)
+    </td>
+    <td>
+        @Html.TextBoxFor(m => m.Beneficiaries[index].Description, new { @class = "form-control", placeholder = LangHelpers.Instance["benefit_description"] })
+        @Html.ValidationMessageFor(m => m.Beneficiaries[index].Description)
+    </td>
+
+    <td>
+        @*<a href="#" class="btnRemoveRow btn btn-danger">@LangHelpers.Instance["remove"]</a>*@
+    </td>
+</tr>

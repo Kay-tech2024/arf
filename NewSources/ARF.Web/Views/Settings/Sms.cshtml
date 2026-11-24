@@ -1,0 +1,100 @@
+﻿@model SmsSettingsViewModel
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<ul class="breadcrumb">
+    <li><a href="@Url.Action("Index", "Home")">@LangHelpers.Instance["home"]</a></li>
+    <li><a href="@Url.Action("Index", "Settings")">@LangHelpers.Instance["settings"]</a></li>
+    <li>@LangHelpers.Instance["sms_settings"]</li>
+</ul>
+<div class="box2 box2-info">
+    @using (Html.BeginForm("Sms", "Settings"))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.PreferredProvider, @LangHelpers.Instance["ReferredProvider"], new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.DropDownListFor(m => m.PreferredProvider, new SelectList(Model.Providers.Select(m2 => m2.Type.ToString()).ToList(), Model.PreferredProvider.ToString()), new { @class = "form-control" })
+                </div>
+            </div>
+
+            @for (var i = 0; i < Model.Providers.Count; i++)
+            {
+                @Html.HiddenFor(m => Model.Providers[i].Type)
+
+                <div class="sms-provider" id="div@(Model.Providers[i].Type.ToString())" @Html.Raw(Model.PreferredProvider == Model.Providers[i].Type ? "" : "style=\"display: none\"")>
+                    <div class="form-group">
+                        @Html.LabelFor(model => Model.Providers[i].SenderName, @LangHelpers.Instance["Sender"], htmlAttributes: new { @class = "control-label col-md-3" })
+                        <div class="col-md-9">
+                            @Html.EditorFor(model => Model.Providers[i].SenderName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => Model.Providers[i].SenderName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => Model.Providers[i].Username, @LangHelpers.Instance["username"], htmlAttributes: new { @class = "control-label col-md-3" })
+                        <div class="col-md-9">
+                            @Html.EditorFor(model => Model.Providers[i].Username, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => Model.Providers[i].Username, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => Model.Providers[i].Password, @LangHelpers.Instance["password"], htmlAttributes: new { @class = "control-label col-md-3" })
+                        <div class="col-md-9">
+                            @Html.PasswordFor(model => Model.Providers[i].Password, new { @class = "form-control", value = "**********" })
+                            @Html.ValidationMessageFor(model => Model.Providers[i].Password, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                    <input type="submit" value="@LangHelpers.Instance["save"]" class="btn btn-primary btn-lg btn-block" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="box box-success">
+    @using (Html.BeginForm("SendTestSmsMessage", "Settings", FormMethod.Post, new { @class = "form-horizontal" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <input id="testProvider" type="hidden" name="provider" value="@Model.PreferredProvider.ToString()" />
+
+        <div class="form-group">
+            @Html.Label("MobileNumber", @LangHelpers.Instance["MobileNo"], htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.TextBox("MobileNumber", "", new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="@LangHelpers.Instance["SendTestMessage"]" class="btn btn-primary btn-lg btn-block" />
+            </div>
+        </div>
+
+    }
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript" nonce="@Html.ScriptNonce()">
+
+        $('select[name=PreferredProvider]').on('change', function () {
+            $('.sms-provider').hide();
+            $('#div' + $(this).val()).show();
+            $('#testProvider').val($(this).val());
+        });
+    </script>
+}

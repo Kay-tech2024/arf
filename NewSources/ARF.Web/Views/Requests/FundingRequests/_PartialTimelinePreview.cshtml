@@ -1,0 +1,60 @@
+﻿@model RequestSummaryViewModel2
+
+@{
+
+    var index = ViewBag.Index != null && ViewBag.Index > 0 ? (int)ViewBag.Index : 0;
+
+    if (Model.Timeline == null || Model.Timeline.Count == 0)
+    {
+        Model.Timeline = new List<TimelineViewModel>
+{
+new TimelineViewModel
+{
+
+}
+
+};
+    }
+
+    var id = ViewBag.IsTemplate == true ? "Timeline{index}" : "Timeline" + index;
+}
+
+<tr data-index="@(ViewBag.IsTemplate == null? index + "" : "{index}")">
+
+    <td>@(ViewBag.IsTemplate == null ? (index + 1) + "" : "{order}")</td>
+    <td>
+        @Html.TextBoxFor(m => m.Timeline[index].TaskName, new { @class = "form-control", placeholder = LangHelpers.Instance["TaskName"] })
+        @Html.ValidationMessageFor(m => m.Timeline[index].TaskName)
+    </td>
+    <td>
+        @Html.DropDownListFor(m => m.Timeline[index].ResponsibleResearcherId, new SelectList(Model.ResearchersLookup, "Value", "Text", Model.Timeline[index].ResponsibleResearcherId), LangHelpers.Instance["select"], new { @class = "form-control ddl-researchers", placeholder = LangHelpers.Instance["ResponsibleResearcher"], @disabled = "disabled" })
+        @Html.ValidationMessageFor(m => m.Timeline[index].ResponsibleResearcherId)
+    </td>
+    <td>
+
+        @Html.DropDownListFor(m => m.Timeline[index].StartingMonth, new SelectList(Model.Months, "Value", "Text", Model.Timeline[index].StartingMonth), LangHelpers.Instance["select"], new { @class = "form-control", placeholder = LangHelpers.Instance["ResponsibleResearcher"], style = "display: " + (ViewBag.IsTemplate == true || !Model.Timeline[index].IsConsultant ? "" : "none"), @disabled = "disabled" })
+        @Html.ValidationMessageFor(m => m.Timeline[index].StartingMonth)
+
+
+    </td>
+    <td>
+        <div class="divVisits" style="display: @(ViewBag.IsTemplate != true && Model.Timeline[index].IsConsultant? "" : "none")">
+            <label>@LangHelpers.Instance["number_of_visits"]</label>
+            @Html.TextBoxFor(m => m.Timeline[index].NumberOfVisits, new { @class = "form-control", placeholder = LangHelpers.Instance["number_of_visits"] })
+            @Html.ValidationMessageFor(m => m.Timeline[index].NumberOfVisits)
+        </div>
+
+        <div class="divMonths" style="display: @(ViewBag.IsTemplate== true || !Model.Timeline[index].IsConsultant? "" : "none")">
+            @Html.DropDownListFor(m => m.Timeline[index].EndingMonth, new SelectList(Model.Months, "Value", "Text", Model.Timeline[index].EndingMonth), LangHelpers.Instance["select"], new { @class = "form-control", placeholder = LangHelpers.Instance["ResponsibleResearcher"], @disabled = "disabled" })
+            @Html.ValidationMessageFor(m => m.Timeline[index].EndingMonth)
+        </div>
+    </td>
+
+
+    <td>
+        @*@if (index > 1 || ViewBag.IsTemplate == true)
+        {
+            <a href="#" class="btnRemoveRow btn btn-danger">@LangHelpers.Instance["remove"]</a>
+        }*@
+    </td>
+</tr>

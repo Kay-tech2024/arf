@@ -1,0 +1,40 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<ul class="breadcrumb">
+    <li>@Html.ActionLink(LangHelpers.Instance["homepage"], "Index", "Home")</li>
+
+    <li>@LangHelpers.Instance["reports"]</li>
+
+</ul>
+
+<h2>@LangHelpers.Instance["reports"]</h2>
+
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-6">
+            <a href="~/Reports/Types" class="btn btn-primary btn-block">@LangHelpers.Instance["report"]</a>
+
+        </div>
+        <div class="col-md-6">
+            <a href="~/Reports/Financial" class="btn btn-primary btn-block">@LangHelpers.Instance["financial_report"]</a>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <a href="~/Reports/FinancialResearchTeam" class="btn btn-primary btn-block">@LangHelpers.Instance["research_team_financial_report"]</a>
+
+        </div>
+        <div class="col-md-6">
+            <a href="~/Reports/Materials" class="btn btn-primary btn-block">@LangHelpers.Instance["materials_and_equipment_report"]</a>
+
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,209 @@
+﻿@{
+    ARF.Data.DbModels.ArfDbEntities db = new ARF.Data.DbModels.ArfDbEntities();
+    var preferences = CommonManager.GetUserPreferences();
+    var isArabic = preferences == null || preferences.Language != LanguagePreference.English;
+}
+@model ARF.Web.Models.TermRequestModel
+
+<h3>تقرير المتابعة لمنتصف المدة للمشروع البحثي</h3>
+
+<div class="col-md-4">
+    <div class="form-horizontal">
+        <div class="form-group text-center">
+            <label class="col-sm-12 text-center">مسلسل المشروع:</label>
+            <div class="col-sm-12">
+                <input type="text" disabled class="form-control text-center" value="@Model.Id">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="form-horizontal">
+        <div class="form-group text-center">
+            <label class="col-sm-12 text-center">كود الوحدة البحثية:</label>
+            <div class="col-sm-12">
+                <input type="text" disabled class="form-control text-center" value="@Model.ResearchUnitCode">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="form-horizontal">
+        <div class="form-group text-center">
+            <label class="col-sm-12 text-center">السنة:</label>
+            <div class="col-sm-12">
+                <input type="text" disabled class="form-control text-center" value="@Model.ResearchYear">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-md-5">
+            عنوان المشروع باللغة العربية:
+        </label>
+        <div class="col-md-7">
+            <input type="text" disabled class="form-control" value="@Model.TitleArabic">
+        </div>
+    </div>
+</div>
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-md-5">
+            عنوان المشروع باللغة الانجليزية:
+        </label>
+        <div class="col-md-7">
+            <input type="text" disabled class="form-control" value="@Model.TitleEnglish">
+        </div>
+    </div>
+</div>
+
+
+<div class="col-md-6">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-5">
+                ميزانية المقترحة:
+            </label>
+            <input disabled type="text" class="control-label col-md-7" value="@Model.FundingAmount ريال">
+        </div>
+    </div>
+</div>
+
+<div class="col-md-6">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-5">
+                المدة المقترحة:
+            </label>
+            <input disabled type="text" class="control-label col-md-7" value="@Model.FundingDurationMonths شهراً ">
+        </div>
+    </div>
+</div>
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-md-5">
+            نوع مشروع البحث:
+        </label>
+        <div>
+            <label class="radio-inline">
+                <input type="radio" name="optradio">منفرد
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="optradio">مشترك
+            </label>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-6">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-5">
+                تاريخ التعقد:
+            </label>
+            <input disabled type="text" class="control-label col-md-7" value="@Model.ContractDate ">
+        </div>
+    </div>
+</div>
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-md-5">
+            كلية  :
+        </label>
+        <div class="col-md-7">
+            <input type="text" disabled class="form-control" value="@Model.ResearchFaculty">
+        </div>
+    </div>
+</div>
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-md-5">
+            الباحث الرئيس  :
+        </label>
+        <div class="col-md-7">
+            <input type="text" disabled class="form-control" value=" @Model.PrimaryResearcherNameArabic">
+        </div>
+    </div>
+</div>
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-md-5">
+            تاريخ التقديم  :
+        </label>
+        <div class="col-md-7">
+            <input type="text" disabled class="form-control" value="@Model.ApplicationDate">
+        </div>
+    </div>
+</div>
+
+<div style="margin-top:60px"></div>
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-md-5 ">نسبة المنجزة من المشروع </label>
+        <div class="col-md-7">
+            <textarea rows="5" class="form-control"></textarea>
+        </div>
+    </div>
+</div>  
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-md-5 ">رأي الفاحص حول ما تم إنجازة </label>
+        <div class="col-md-7">
+            <textarea rows="5" class="form-control"></textarea>
+        </div>
+    </div>
+</div>
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-md-5 ">الملحوظات </label>
+        <div class="col-md-7">
+            <textarea rows="5" class="form-control"></textarea>
+        </div>
+    </div>
+</div>
+
+<div class="form-horizontal">
+    <div class="form-group">
+
+        <label  class="control-label">            الرأي النهائي للفاحص:
+</label>
+        <div>
+            <div class="radio">
+                <label class="control-label"><input type="radio" name="optradio">صالح لاستمرار التمويل بصورة الحالية</label>
+            </div>
+            <div class="radio">
+                <label class="control-label"><input type="radio" name="optradio">صالح لاستمرار للتمويل بعد العمل بالملحوظات الواردة في التقرير</label>
+            </div>
+            <div class="radio">
+                <label class="control-label"><input type="radio" name="optradio">غير صالح لاستمرار التمويل</label>
+            </div>
+            <div class="radio">
+                <label class="control-label"><input type="radio" name="optradio">أخرى:</label>
+                <input type="text" style="padding:5px"/>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="control-label col-md-2">  توقيع رئيس وحدة البحوث:</label>
+    <div class="col-md-4">
+        <input class="form-control" />
+    </div>
+
+</div>
+
+

@@ -1,0 +1,475 @@
+﻿@model RequestSummaryViewModel2
+@{
+
+
+
+                var index = -1;
+
+}
+
+
+<table class="table table-striped transition-less">
+    <tbody>
+        <tr class="row-section-header required">
+            <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_the_abstract_in_arabic">@LangHelpers.Instance["the_abstract_in_arabic"]</a></td>
+            <td><span class="color-red"></span></td>
+            <td><a data-toggle="dont-collapse" data-target="#section_the_abstract_in_arabic" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+        </tr>
+        <tr class="collapse row-section-details" id="section_the_abstract_in_arabic">
+            <td colspan="3">
+                @Html.TextAreaFor(m => m.Abstract, new { rows = 10, @class = "form-control " })
+            </td>
+        </tr>
+        <tr class="row-section-header required">
+            <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_Keywords">@LangHelpers.Instance["Keywords"]</a></td>
+            <td><span class="color-red"></span></td>
+            <td><a data-toggle="dont-collapse" data-target="#section_Keywords" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+        </tr>
+        <tr class="collapse row-section-details" id="section_Keywords">
+            <td colspan="3">
+
+                <div class="panel-group div-repeatable" data-key="Keywords">
+                    <table class="table table-bordered table-striped">
+                        <tbody>
+                            @{
+                                index = -1;
+                            }
+
+                            @foreach (var c in Model.Keywords)
+                            {
+                                index++;
+                                ViewBag.Index = index;
+
+                                if (index == 0)
+                                {
+                                    @Html.Raw("<tr>")
+                                }
+                                else if (index % 6 == 0)
+                                {
+                                    @Html.Raw("</tr><tr>")
+                                }
+
+                            <td>
+                                <input name="Keywords[@index]" type="text" class="form-control" value="@c" />
+                            </td>
+                        }
+
+                            @Html.Raw("<tr>")
+        </tbody>
+    </table>
+
+    <a href="#" data-key="Keywords" class="btnAddRow btn btn-success pull-right">@LangHelpers.Instance["add"]</a>
+    <div class="clearfix"></div>
+
+    </td>
+    </tr>
+    <tr class="row-section-header @(Model.Type == ReqFieldType.AppliedScienceField? "required" : "")">
+        <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_the_abstract_in_english">@LangHelpers.Instance["the_abstract_in_english"]</a></td>
+        <td><span class="color-red"></span></td>
+        <td><a data-toggle="dont-collapse" data-target="#section_the_abstract_in_english" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+    </tr>
+    <tr class="collapse row-section-details" id="section_the_abstract_in_english">
+        <td colspan="3">
+            @Html.TextAreaFor(m => m.AbstractEnglish, new { rows = 10, @class = "form-control " })
+        </td>
+    </tr>
+    <tr class="row-section-header @(Model.Type == ReqFieldType.AppliedScienceField? "required" : "")">
+        <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_keywords_english">@LangHelpers.Instance["keywords_english"]</a></td>
+        <td><span class="color-red"></span></td>
+        <td><a data-toggle="dont-collapse" data-target="#section_keywords_english" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+    </tr>
+    <tr class="collapse row-section-details" id="section_keywords_english">
+        <td colspan="3">
+            <div class="panel-group div-repeatable" data-key="KeywordsEnglish">
+                <table class="table table-bordered table-striped">
+                    <tbody>
+                        @{
+                            index = -1;
+                        }
+
+                        @foreach (var c in Model.KeywordsEnglish)
+                        {
+                            index++;
+                            ViewBag.Index = index;
+
+                            if (index == 0)
+                            {
+                                @Html.Raw("<tr>")
+                            }
+                            else if (index % 6 == 0)
+                            {
+                                @Html.Raw("</tr><tr>")
+                            }
+
+                        <td>
+                            <input name="KeywordsEnglish[@index]" type="text" class="form-control" value="@c" />
+                        </td>
+                    }
+
+                        @Html.Raw("<tr>")
+                        </tbody>
+                    </table>
+
+                    <a href="#" data-key="KeywordsEnglish" class="btnAddRow btn btn-success pull-right">@LangHelpers.Instance["add"]</a>
+                    <div class="clearfix"></div>
+                </div>
+
+            </td>
+        </tr>
+
+        @if (Model.Type == ReqFieldType.AppliedScienceField)
+        {
+            <tr class="row-section-header required">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#applied_section_objectives">@LangHelpers.Instance["applied_section_objectives"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#applied_section_objectives" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="applied_section_objectives">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionObjectives, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header required">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#applied_section_relevance">@LangHelpers.Instance["applied_section_relevance"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#applied_section_relevance" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="applied_section_relevance">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionRelevance, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header required">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#applied_section_background">@LangHelpers.Instance["applied_section_background"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#applied_section_background" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="applied_section_background">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionBackground, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header required">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#applied_section_methodology">@LangHelpers.Instance["applied_section_methodology"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#applied_section_methodology" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="applied_section_methodology">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionMethodology, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header required">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#applied_section_other_funding">@LangHelpers.Instance["applied_section_other_funding"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#applied_section_other_funding" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="applied_section_other_funding">
+                <td colspan="3">
+
+                    <div>
+                        <h4 class="title">@LangHelpers.Instance["applied_section_other_funding"]</h4>
+                    </div>
+
+                    <br />
+
+                    <div class="panel-group div-repeatable" data-key="FundingSources">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>@LangHelpers.Instance["sn"]</th>
+                                    <th>@LangHelpers.Instance["applied_funding_agency"]</th>
+                                    <th>@LangHelpers.Instance["applied_funding_amount"]</th>
+                                    <th>@LangHelpers.Instance["applied_funding_duration"]</th>
+                                    <th>@LangHelpers.Instance["applied_funding_status"]</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            @{
+                                index = -1;
+                            }
+                            <tbody>
+                                @foreach (var c in Model.FundingSources)
+                                {
+                                    index++;
+                                    ViewBag.Index = index;
+
+                                    @Html.Partial("~/Views/Requests/FundingRequests/_PartialFundingSourcePreview.cshtml", Model);
+
+                                }
+                            </tbody>
+                        </table>
+
+                        <a href="#" class="btnAddRow btn btn-success pull-right">@LangHelpers.Instance["add"]</a>
+                        <div class="clearfix"></div>
+                    </div>
+
+                </td>
+            </tr>
+            <tr class="row-section-header required">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#applied_section_appendices">@LangHelpers.Instance["applied_section_appendices"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#applied_section_appendices" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="applied_section_appendices">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionAppendices, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+
+        }
+        else
+        {
+            <tr class="row-section-header required">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_section_project_importance">@LangHelpers.Instance["section_project_importance"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#section_section_project_importance" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="section_section_project_importance">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionImportance, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header required">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_section_problem">@LangHelpers.Instance["section_problem"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#section_section_problem" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="section_section_problem">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionProblem, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header required">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_section_goals">@LangHelpers.Instance["section_goals"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#section_section_goals" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="section_section_goals">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionGoals, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_section_assumptions">@LangHelpers.Instance["section_assumptions"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#section_section_assumptions" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="section_section_assumptions">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionAssumptions, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header required">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_section_terms">@LangHelpers.Instance["section_terms"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#section_section_terms" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="section_section_terms">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionTerms, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_section_objective_limitations">@LangHelpers.Instance["section_objective_limitations"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#section_section_objective_limitations" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="section_section_objective_limitations">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionObjectiveLimitations, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_section_spatial_limitations">@LangHelpers.Instance["section_spatial_limitations"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#section_section_spatial_limitations" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="section_section_spatial_limitations">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionSpatialLimitations, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_section_temporal_limitations">@LangHelpers.Instance["section_temporal_limitations"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#section_section_temporal_limitations" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="section_section_temporal_limitations">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionTemporalLimitations, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_section_theoritical_framework">@LangHelpers.Instance["section_theoritical_framework"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#section_section_theoritical_framework" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="section_section_theoritical_framework">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionTheoriticalFramework, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header required">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_section_previous_studies">@LangHelpers.Instance["section_previous_studies"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#section_section_previous_studies" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="section_section_previous_studies">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionPreviousStudies, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header required">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_section_procedures">@LangHelpers.Instance["section_procedures"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#section_section_procedures" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="section_section_procedures">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionProcedures, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_section_society">@LangHelpers.Instance["section_society"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#section_section_society" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="section_section_society">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionSociety, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_section_tools">@LangHelpers.Instance["section_tools"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#section_section_tools" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="section_section_tools">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionTools, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header required">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_section_chapters">@LangHelpers.Instance["section_chapters"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#section_section_chapters" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="section_section_chapters">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionChapters, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+            <tr class="row-section-header required">
+                <td><a class="field-caption" href="#" data-toggle="dont-collapse" data-target="#section_section_references">@LangHelpers.Instance["section_references"]</a></td>
+                <td><span class="color-red"></span></td>
+                <td><a data-toggle="dont-collapse" data-target="#section_section_references" href="#" class="btn-edit-section btn btn-warning">@LangHelpers.Instance["view"]</a></td>
+            </tr>
+            <tr class="collapse row-section-details" id="section_section_references">
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.SectionReferences, new { rows = 10, @class = "form-control " })
+                </td>
+            </tr>
+        }
+
+        </tbody>
+        </table>
+
+
+
+        @{
+            ViewBag.Index = 0;
+            ViewBag.IsTemplate = true;
+        }
+
+
+        @this.ScriptBlock(
+
+                                                        @<script type="text/javascript" nonce="@Html.ScriptNonce()">
+     var templates = {};
+        templates.FundingSources = '@(Html.Raw(Html.Partial("~/Views/Requests/FundingRequests/_PartialFundingSourcePreview.cshtml", Model).ToHtmlString().Replace("\r\n", " ")))';
+
+         $('.btnAddRow').on('click', function (e) {
+
+             var div = $(this).parent();
+             var key = div.attr('data-key');
+             var elms = div.find('tbody tr');
+
+             var rowHtml = templates[key];
+
+             var index = elms.length;
+
+             var el = $(rowHtml.replaceAll('{index}', index).replaceAll('{order}', index + 1).replaceAll('data-id="0"', 'data-id="' + index + '"').replaceAll('_0__', '_' + index + '__').replaceAll('[0]', '[' + index + ']'));
+             el.find('input,select,textarea').val('');
+             el.find('.field-validation-error').remove();
+
+             div.find('table tbody').append(el);
+             e.preventDefault();
+             return false;
+
+         });
+
+         onDomInserted('.btnRemoveRow', function (el) {
+
+             $(el).on('click', function (e) {
+
+
+                 var elm = $(el).closest('tr');
+                 var index = parseInt(elm.attr('data-index'));
+                 var div = elm.closest('.div-repeatable');
+                 var elms = div.find('tbody tr');
+
+                 for (var i = 0; i < elms.length; i++) {
+
+                     if (index == i) {
+                         elm.remove();
+                     } else if (index < i) {
+                         var els = $(elms[i]).find('input,select,textarea');;
+
+                         for (var j = 0; j < els.length; j++) {
+                             var el2 = $(els[j]);
+                             if (!el2.attr('name')) continue;
+                             var tabs = el2.attr('name').split('.');
+                             var name = tabs[0].split('[')[0];
+                             var x = name + '[' + (i - 1) + '].' + prop;
+
+                             var prop = tabs[1];
+                             el2.attr('id', name + (i - 1) + '_' + prop).attr('name', name + '[' + (i - 1) + '].' + prop);
+                         }
+                         $(elms[i]).attr('data-index', i - 1);
+                     }
+                 }
+                 e.preventDefault();
+                 return false;
+
+             });
+         });
+
+
+                                             onDomInserted('.row-section-header', function (el) {
+                                                 $(el).find('a').on('click', function (e) {
+
+                                                     var xel = $(el).next('.row-section-details');
+                                                     var attr = xel.attr('data-is-visible');
+
+                                                     if (attr === '1') {
+
+                                                         xel.css('display', 'none').attr('data-is-visible', '0');
+                                                     } else {
+                                                         var others = $('.row-section-details');
+                                                         for (var i = 0; i < others.length; i++) {
+                                                             $(others[i]).css('display', 'none').attr('data-is-visible', '0');
+                                                         }
+                                                         xel.css('display', 'table-row').attr('data-is-visible', '1');
+                                                     }
+
+                                                     e.preventDefault();
+                                                     return false;
+
+                                                 });
+                                             });
+
+
+
+                                                        </script>
+                                                        )

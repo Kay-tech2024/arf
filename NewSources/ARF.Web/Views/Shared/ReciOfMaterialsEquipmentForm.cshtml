@@ -1,0 +1,82 @@
+﻿<h4>استلام عهدة المواد والتجهيزات</h4>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group text-right">
+            <label class="control-label col-sm-4"> المشروع المعنون  </label>
+            <div class="col-md-8">
+                <input class="form-control" id="Name" name="Name" type="text" value="" />
+            </div>
+        </div>
+        <br><br>
+        <div>
+            <textarea class="form-control" style="width:100%;height:300px;"></textarea>
+        </div>
+    </div>
+</div>
+
+<br><br>
+<div class="row">
+    <div class="col-md-12">
+
+        <br> <br>
+        <br>
+        <input type="hidden" id="add" name="add" value="1" />
+        <br>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th id="statementcostody">@LangHelpers.Instance["StatementOfCustody"] </th>
+                    <th id="ts"> @LangHelpers.Instance["TechnicalSpecifications"]</th>
+                    <th id="usedamount"> @LangHelpers.Instance["QuantityReceivedNumberOrWeight"] </th>
+                    <th id="status"> @LangHelpers.Instance["StatusValidInvalid"] </th>
+                    <th id="recivedside">@LangHelpers.Instance["ReceivingEnd"]</th>
+                    <th><a href="#" class="btn btn-default" onclick="AddRow()">@LangHelpers.Instance["add"]</a></th>
+                </tr>
+            </thead>
+            <tbody id="tbody1">
+                <tr>
+                    <td><input type="text" id="Title1" name="Title1" class="form-control" /></td>
+                    <td><input type="text" id="Description1" name="Description1" class="form-control" /></td>
+                    <td><input type="text" id="Quantity1" name="Quantity1" class="form-control" /></td>
+                    <td>
+                        <div class="row">
+                            <label class="col-md-6">
+                                <input type="radio" id="Status1" name="Status1" value="1" /> صالحة
+                            </label>
+                            <label class="col-md-6">
+                                <input type="radio" id="Status1" name="Status1" value="2" /> غير صالحة
+                            </label>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="text" id="Distination1" name="Distination1" class="form-control" />
+                        @*<select id="Distination1" name="Distination1" class="form-control">
+                                <option>@LangHelpers.Instance["select"]</option>
+                                <option value="مدير مركز البحوث بكلية">مدير مركز البحوث بكلية</option>
+                            </select>*@
+                    </td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script nonce="@Html.ScriptNonce()">
+                var count = 1;
+                function AddRow() {
+                    $("#add").val(++count);
+                    $("#tbody1").append('<tr><td><input type="text" id="Title' + count + '" name="Title' + count + '" class="form-control" /></td>' +
+                        '<td><input type="text" id="Description' + count + '" name="Description' + count + '" class="form-control" /></td>' +
+                        '<td><input type="text" id="Quantity' + count + '" name="Quantity' + count + '" class="form-control" /></td>' +
+                        '<td><div class="row"><label class="col-md-6"><input type="radio" id="Status1" name="Status' + count + '" value="1" /> صالحة</label><label class="col- md - 6"><input type="radio" id="Status' + count+'" name="Status1" value="2" /> غير صالحة</label></div></td>' +
+                        //'<td><select class="form-control" id="Distination' + count + '" name="Distination' + count + '"><option>@LangHelpers.Instance["select"]</option><option value="1">مدير مركز البحوث بكلية</option></select ></td>' +
+                        '<td><input type="text" id="Distination' + count + '" name="Distination' + count+'" class="form-control" /></td>'+
+                        '<td><a href="#" class="btn btn-danger" onclick="RemoveRow(this)">@LangHelpers.Instance["add"]</a></td></tr>');
+                }
+
+                function RemoveRow(element) {
+                    $("#add").val(--count);
+                    $(element).parent().parent().remove();
+                }
+</script>

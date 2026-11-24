@@ -1,0 +1,632 @@
+﻿@model ARF.Web.Models.RegistrationViewModel
+
+@{
+    ViewBag.Title = @LangHelpers.Instance["register_as_referee"];
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Content/css/bootstrap-datetimepicker@(LangHelpers.Instance["css_suffix"]).css" />
+<link rel="stylesheet" type="text/css" href="~/Content/css/calendar@(LangHelpers.Instance["css_suffix"]).css" />
+
+<h2>@LangHelpers.Instance["register_as_referee"]</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="validation-summary-errors" data-valmsg-summary="true">
+        <ul>
+
+            @foreach (var m in ViewData.ModelState.Keys)
+            {
+                if (ViewData.ModelState[m].Errors.Count == 0)
+                {
+                    continue;
+                }
+
+                if (m.Contains("[") && m.Contains("]"))
+                {
+                    var index1 = m.IndexOf('[');
+                    var index2 = m.IndexOf(']');
+                    var property = m.Substring(0, index1);
+                    var row = int.Parse(m.Substring(index1 + 1, index2 - index1 - 1)) + 1;
+
+                    <li>@(LangHelpers.Instance[property] + " " + LangHelpers.Instance["the_row"] + " " + row + ": " + ViewData.ModelState[m].Errors.First().ErrorMessage)</li>
+                }
+                else
+                {
+                    <li>@ViewData.ModelState[m].Errors.First().ErrorMessage</li>
+                }
+            }
+        </ul>
+
+    </div>
+}
+
+@using (Html.BeginForm("Register", "Account", new { role = (byte)Model.Role }, FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" value="Referee" name="Role" />
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.FullName, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", @placeholder = "الاسم الكامل" })
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.NationalId, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.NationalId, new { @class = "form-control", @placeholder = LangHelpers.Instance["national_id"] })
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.NationalityId, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.DropDownListFor(m => m.NationalityId, (SelectList)ViewBag.Countries, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.BirthDate, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.DatePickerFor(m => m.BirthDate, ARF.Web.App_Start.Extensions.DateType.Date, new { @class = "form-control allow-edit" })
+
+            @Html.ValidationMessageFor(model => model.BirthDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.CountryId, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.DropDownListFor(m => m.CountryId, (SelectList)ViewBag.Countries, new { @class = "form-control ddl-country" })
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.CityId, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.DropDownListFor(m => m.CityId, new SelectList(Model.Cities.Where(c => c.CountryId == null || (Model.CountryId > 0 && c.CountryId == Model.CountryId)), "Id", "Name", Model.CityId), LangHelpers.Instance["select"], new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.CityId)
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Address, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.Address, new { @class = "form-control", @placeholder = "العنوان" })
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @*@Html.LabelFor(m => m.MobileNumber, new { @class = "control-label col-md-4" })*@
+        <label class="control-label col-md-4">@LangHelpers.Instance["MobileNumber"]</label>
+
+
+        <div class="col-md-8">
+            <div class="input-group">
+                @Html.TextBoxFor(m => m.MobileNumber, new { @class = "form-control", @placeholder = LangHelpers.Instance["mobile"] })
+                <span class="input-group-btn">
+                    <a id="btnSendVerifyMobile" href="#" class="btn btn-danger">@LangHelpers.Instance["send_verification_code"]</a>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div id="divPhoneVerification" class="form-group required" style="display: none;">
+        @Html.HiddenFor(m => m.SmsKey)
+        @*@Html.LabelFor(m => m.SmsCode, new { @class = "control-label col-md-4" })*@
+        <label class="control-label col-md-4">@LangHelpers.Instance["SmsCode"]</label>
+
+        <div class="col-md-8">
+            <div class="input-group">
+                @Html.TextBoxFor(m => m.SmsCode, new { @class = "form-control", @placeholder = LangHelpers.Instance["sms_code"] })
+                <span class="input-group-btn">
+                    <a id="btnVerifyMobile" href="javascript:;" class="btn btn-default">@LangHelpers.Instance["verify"]</a>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div id="divPhoneVerificationInfo" class="alert alert-info text-center" style="display: none;"></div>
+    <input id="hdnIsMobileVerified" name="hdnIsMobileVerified" value="@(Model.hdnIsMobileVerified == "1" ? "1":"0")" type="hidden" />
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.Email, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = LangHelpers.Instance["email"] })
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.EmailConfirmation, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.EmailConfirmation, new { @class = "form-control", @placeholder = LangHelpers.Instance["email_confirmation"] })
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.Password, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = LangHelpers.Instance["password"] })
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", @placeholder = LangHelpers.Instance["password_confirmation"] })
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.Qualification, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.DropDownListFor(m => m.Qualification, new SelectList(Utils.QualificationTypesByResearcherType(role: ArfUserRole.Referee)
+                                                                                         .Select(r => new SelectListItem { Text = LangHelpers.Instance[r.ToString()], Value = r.ToString() }), "Value", "Text", Model.Qualification), LangHelpers.Instance["select"], new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Qualification)
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.UniversityId, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.DropDownListFor(m => m.UniversityId, new SelectList(Model.Universities, "Value", "Text", Model.UniversityId), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown ddl-university" })
+            @Html.ValidationMessageFor(m => m.UniversityId)
+        </div>
+    </div>
+
+    <div class="form-group required div-university-other" style="display: @(Model.UniversityId == null || Model.UniversityId  > 0? "none" : "block")">
+        @Html.LabelFor(m => m.UniversityOther, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.UniversityOther, new { @class = "form-control", @placeholder = "جامعة التخرج" })
+            @Html.ValidationMessageFor(m => m.UniversityOther)
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.CollegeId, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.DropDownListFor(m => m.CollegeId, new SelectList(Model.Colleges, "Value", "Text", Model.CollegeId), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown ddl-college" })
+            @Html.ValidationMessageFor(m => m.CollegeId)
+        </div>
+    </div>
+
+    <div class="form-group required" style="display: @(Model.CollegeId == null || Model.CollegeId  > 0? "none" : "block")">
+        @Html.LabelFor(m => m.CollegeOther, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.CollegeOther, new { @class = "form-control", @placeholder = "الكلية" })
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.DepartmentID, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.DropDownListFor(m => m.DepartmentID, new SelectList(Model.Departments, "Value", "Text", Model.DepartmentID), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown" })
+            @Html.ValidationMessageFor(m => m.DepartmentID)
+        </div>
+    </div>
+
+    <div class="form-group required div-department-other" style="display: @(Model.DepartmentID == null || Model.DepartmentID  > 0? "none" : "block")">
+        @Html.LabelFor(m => m.DepartmentOther, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.DepartmentOther, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.DepartmentOther)
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.Specialization, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.Specialization, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Specialization)
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.Bank, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.DropDownListFor(m => m.Bank, new SelectList(Model.Banks, "Value", "Text", Model.Bank), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown" })
+            @Html.ValidationMessageFor(m => m.Bank)
+        </div>
+    </div>
+
+    <div class="form-group required div-bank-other" style="display: @(Model.Bank == null || Model.Bank  > 0? "none" : "block")">
+        @Html.LabelFor(m => m.BankOther, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.BankOther, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.BankOther)
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.BankBranch, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.BankBranch, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.BankBranch)
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.BankAccountHolderName, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.BankAccountHolderName, new { @class = "form-control", @placeholder = LangHelpers.Instance["account_holder_name"] })
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.BankAccountIBAN, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.BankAccountIBAN, new { @class = "form-control", @placeholder = LangHelpers.Instance["iban"] })
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.BankIbanPhotocopy, new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            <input type="file" name="BankIbanPhotocopy" />
+            @if (ViewBag.IsTemplate != true && Model.BankIbanPhotocopyReadonly != null)
+            {
+                <a class="btn btn-xs btn-success" target="_blank" href="@(Utils.GetApplicationUrl() + "f/" + Model.BankIbanPhotocopyReadonly.FileId)">    @ArfStrings.download</a>
+            }
+            @Html.ValidationMessageFor(m => m.BankIbanPhotocopy)
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <div class="col-md-12">
+            <button type="submit" id="btnSubmit" class="btn btn-info btn-block disabled">@LangHelpers.Instance["register"]</button>
+        </div>
+    </div>
+}
+
+<div class="row text-center">
+    <small class="link"><a href="~/Account/login" class="btn btn-warning">@LangHelpers.Instance["login"]</a></small>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript" src="~/Content/js/moment-with-locales.min.js" nonce="@Html.ScriptNonce()"></script>
+    <script type="text/javascript" src="~/Content/js/bootstrap-datetimepicker.js" nonce="@Html.ScriptNonce()"></script>
+    <script type="text/javascript" src="~/Content/js/calendar.js" nonce="@Html.ScriptNonce()"></script>
+    <script type="text/javascript" src="~/Content/js/site.js" nonce="@Html.ScriptNonce()"></script>
+
+    <script type="text/javascript" nonce="@Html.ScriptNonce()">
+        if ($("#Email").val() != "") {
+            $("#EmailConfirmation").val($("#Email").val());
+            $("#Email").attr("readonly", "readonly");
+            $("#EmailConfirmation").attr("readonly", "readonly");
+        }
+        var cities = @Html.Raw(Utils.SerializeObject(Model.Cities.Select(r => new { Id = r.Id, Name = r.Name })));
+
+        var switchOther = function ($el) {
+            var $otherEl = $el.closest('.form-group').next();
+            var selected = $el.val();
+            var selectedVal = null;
+            try {
+                selectedVal = parseInt(selected);
+            } catch (e) {
+                return;
+            }
+
+            if (selectedVal == NaN) return;
+
+            if (selectedVal === 0) {
+                $otherEl.slideDown();
+            } else {
+                $otherEl.find('input').val('');
+                $otherEl.slideUp();
+            }
+        };
+        $(document).ready(function () {
+            if ($("#SmsCode").val() != "") {
+                $("#btnVerifyMobile").trigger("click");
+                $("#divPhoneVerification").show();
+            }
+
+        });
+        onDomInserted('.other-dropdown', function (el) {
+
+            $(el).on('change', function (e) {
+                switchOther($(el));
+                return false;
+            });
+        });
+
+        onDomInserted('.ddl-country', function (el) {
+
+            $(el).change(function () {
+
+                var $el = $(el);
+                var selected = $el.val();
+
+                var otherEl = $(el).closest('.form-group').next().find('select');
+
+                console.log(otherEl[0]);
+                otherEl.empty();
+
+                var selectedVal = null;
+                try {
+                    selectedVal = parseInt(selected);
+                } catch (e) {
+
+                }
+
+                if (selectedVal === 0) {
+                } else {
+
+                    $.getJSON(baseAjaxUrl + 'GetCities?countryId=' + selected + "&others=False", function (cats) {
+                        var secCateSelect = otherEl;
+                        secCateSelect.empty();
+                          secCateSelect.empty();
+                         secCateSelect.append($('<option />', {
+                        value: '', text: '@LangHelpers.Instance["select"]'
+                        }));
+
+                        $.each(cats, function (index, cat) {
+
+                            secCateSelect.append($('<option />', {
+                                value: cat.value,
+                                text: cat.text
+                            }));
+                        });
+
+                        secCateSelect.append($('<option />', {
+                            value: '0',
+                            text: '@ArfStrings.other'
+                        }));
+                    });
+                }
+            });
+        });
+
+          onDomInserted('.ddl-university', function (el) {
+
+            $(el).change(function () {
+
+                var $el = $(el);
+                var selected = $el.val();
+
+                var uniEl = $el;
+                var otherEl = $(el).closest('.form-group').next().find('select');
+                var depEl = otherEl.closest('.form-group').next().find('select');
+
+                if (otherEl == null || otherEl.length === 0 || !otherEl.attr('name').endsWith('CollegeID')) {
+                    otherEl = $(el).closest('.form-group').next().next().find('select');
+                    depEl = otherEl.closest('.form-group').next().next().find('select');
+                }
+
+                var hasSelectPicker = false &&  isFunction(otherEl.selectpicker) && otherEl.hasClass('selectpicker');
+
+                otherEl.empty();
+                depEl.empty();
+
+                if (uniEl.val() != 1) {
+                    depEl.append($('<option />', {
+                        value: '0',
+                        text: '@ArfStrings.other'
+                    }));
+                }
+
+
+
+
+                switchOther(otherEl);
+                switchOther(depEl);
+
+
+                if (hasSelectPicker) {
+                    otherEl.selectpicker('refresh');
+                    depEl.selectpicker('refresh');
+
+
+                }
+
+                var selectedVal = null;
+                try {
+                    selectedVal = parseInt(selected);
+                } catch (e) {
+
+                }
+
+                if (selectedVal === 0) {
+                } else {
+
+                    $.getJSON(baseAjaxUrl + 'GetColleges?dontFilter=1&universityId=' + selected + "&others=False", function (cats) {
+                        var secCateSelect = otherEl;
+                        secCateSelect.empty();
+                         secCateSelect.empty();
+                         secCateSelect.append($('<option />', {
+                        value: '', text: '@LangHelpers.Instance["select"]'
+                        }));
+
+
+                        $.each(cats, function (index, cat) {
+
+                            secCateSelect.append($('<option />', {
+                                value: cat.value,
+                                text: cat.text
+                            }));
+                        });
+
+                        if (uniEl.val() != 1) {
+                            secCateSelect.append($('<option />', {
+                                value: '0',
+                                text: '@ArfStrings.other'
+                            }));
+                        }
+
+
+                        if (cats.length === 0) {
+                            secCateSelect.val('0');
+                            switchOther(secCateSelect);
+                        }
+
+                        if (hasSelectPicker) {
+                            secCateSelect.selectpicker('refresh');
+                            otherEl.selectpicker('refresh');
+                        }
+
+                    });
+                }
+            });
+        });
+
+         onDomInserted('.ddl-college', function (el) {
+
+            $(el).change(function () {
+
+                var $el = $(el);
+                var selected = $el.val();
+
+                var uniEl = $(el).closest('.form-group').prev().find('select');
+                var otherEl = $(el).closest('.form-group').next().find('select');
+
+                if (otherEl == null || otherEl.length === 0 || !otherEl.attr('name').endsWith('DepartmentId')) {
+                    otherEl = $(el).closest('.form-group').next().next().find('select');
+
+                    uniEl = $(el).closest('.form-group').prev().prev().find('select');
+                }
+
+                var hasSelectPicker = false &&  isFunction(otherEl.selectpicker) && otherEl.hasClass('selectpicker');
+
+                otherEl.empty();
+
+                switchOther(otherEl);
+
+                if (hasSelectPicker) {
+                    otherEl.selectpicker('refresh');
+
+                }
+
+                var selectedVal = null;
+                try {
+                    selectedVal = parseInt(selected);
+                } catch (e) {
+
+                }
+
+                if (selectedVal === 0) {
+                } else {
+
+                    $.getJSON(baseAjaxUrl + 'GetDepartments?dontFilter=1&&collegeId=' + selected + "&others=False", function (cats) {
+                        var secCateSelect = otherEl;
+                        secCateSelect.empty();
+                           secCateSelect.empty();
+                         secCateSelect.append($('<option />', {
+                        value: '', text: '@LangHelpers.Instance["select"]'
+                        }));
+
+
+                        $.each(cats, function (index, cat) {
+
+                            secCateSelect.append($('<option />', {
+                                value: cat.value,
+                                text: cat.text
+                            }));
+                        });
+
+                        if (uniEl.val() != 1) {
+                            secCateSelect.append($('<option />', {
+                                value: '0',
+                                text: '@ArfStrings.other'
+                            }));
+                        }
+
+
+                        if (cats.length === 0) {
+                            secCateSelect.val('0');
+                            switchOther(secCateSelect);
+                        }
+
+                        if (hasSelectPicker) {
+                            secCateSelect.selectpicker('refresh');
+                            otherEl.selectpicker('refresh');
+                        }
+
+                    });
+                }
+            });
+        });
+
+        var sendSmsCode = function () {
+            var mobile = $('#MobileNumber').val();
+            if (!mobile) return;
+            $('#divPhoneVerificationInfo').slideUp();
+            $.getJSON(baseAjaxUrl + 'SendVerificationCode?type=SMS&to=' + mobile, function (res) {
+                if (!res) return;
+                if (res.success == true) {
+                    $('#SmsKey').val(res.key);
+                    $('#divPhoneVerification').slideDown();
+                    $('#divPhoneVerificationInfo').slideUp();
+                    $('#SmsCode').val('');
+                } else {
+                    if (res.isVerified === true) {
+                        $('#hdnIsMobileVerified').val('1');
+                        validateVerification();
+                    }
+                    $('#divPhoneVerification').slideUp();
+                    $('#divPhoneVerificationInfo').html(res.msg).slideDown();
+                }
+            });
+        };
+
+        $('#btnSendVerifyMobile').click(function (ev) {
+
+            sendSmsCode();
+
+            ev.preventDefault();
+            return false;
+        });
+
+
+        $('#btnVerifyMobile').click(function (ev) {
+            var mobile = $('#MobileNumber').val();
+            var key = $('#SmsKey').val();
+            var code = $('#SmsCode').val();
+            if (!mobile) return;
+            $('#divPhoneVerificationInfo').slideUp();
+
+            $.getJSON(baseAjaxUrl + 'VerifyCode?type=SMS&to=' + mobile + '&key=' + key + '&code=' + code, function (res) {
+                if (!res) return;
+                if (res.success == true) {
+                    $('#divPhoneVerificationInfo').html('<span class="glyphicon glyphicon-ok" style="display: inline;"></span>').slideDown();
+                    $('#hdnIsMobileVerified').val('1');
+                    validateVerification();
+                } else {
+                    if (res.isVerified === true) {
+                        $('#hdnIsMobileVerified').val('1');
+                        validateVerification();
+                    }
+
+                    $('#divPhoneVerificationInfo').html(res.msg).slideDown();
+                }
+            });
+
+            ev.preventDefault();
+            return false;
+        });
+
+        var validateVerification = function () {
+
+            var mobileVerified = $('#hdnIsMobileVerified').val() === '1';
+
+            if (!mobileVerified) {
+                $('#btnSubmit').addClass('disabled');
+                return false;
+            }
+
+            $('#btnSubmit').removeClass('disabled');
+            return true;
+        };
+
+        $('#btnSubmit').on("click", function (e) {
+            if (!validateVerification()) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+    </script>
+}

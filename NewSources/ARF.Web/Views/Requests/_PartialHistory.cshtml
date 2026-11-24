@@ -1,0 +1,57 @@
+﻿@model FundingRequestViewModel
+@{
+
+    var colspan = 4;
+    if (Utils.HasRolesAny(ArfUserRole.PrincipalResearcher))
+    {
+        colspan = 3;
+    }
+}
+<div class="box2 box2-info">
+    <h4 class="text-center">@LangHelpers.Instance["request_history"]</h4>
+    @if (Model.CommentThread != null && Model.CommentThread.Count(m => m.Hide == false) > 0)
+    {
+        <table class="table table-responsive" style="margin: 0 auto; table-layout: fixed;">
+            <thead>
+                <tr>
+
+                    <th>@LangHelpers.Instance["date"]</th>
+                    @if (!Utils.HasRolesAny(ArfUserRole.PrincipalResearcher))
+                    {
+                        <th>@LangHelpers.Instance["username"]</th>
+                    }
+                    <th>@LangHelpers.Instance["role"]</th>
+                    <th>@LangHelpers.Instance["action"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var i = 0;
+                }
+
+                @foreach (var c in Model.CommentThread.Where(m => m.Hide == false))
+                {
+
+                    <tr class="@(++i % 2 == 0 ? " alt-row" : "" )" @Html.Raw(c.Comment != null ? "style=\" border-bottom: 0;\"" : "")>
+                        <td style="max-width: 100px; font-size: 12px;">@c.DateStr</td>
+                        @if (!Utils.HasRolesAny(ArfUserRole.PrincipalResearcher))
+                        {
+                            <td>@c.Username</td>
+                        }
+                        <td>@c.Role</td>
+                        <td>@c.Action</td>
+
+                    </tr>
+                    if (c.Comment != null)
+                    {
+                        <tr class="@(i % 2 == 0 ? " alt-row" : "" )">
+                            <td colspan="@colspan" style="border-top: 0; word-wrap: break-word;">@LangHelpers.Instance["comments"]: <b>@c.Comment</b></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <br />
+
+    }
+</div>

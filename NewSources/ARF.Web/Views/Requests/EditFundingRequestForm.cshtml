@@ -1,0 +1,157 @@
+﻿@model CommonFundingRequestViewModel
+@{
+    Model.Step = 0;
+}
+<div>
+    <div class="box2 box2-info padding">
+        <div class="form-group">
+            <label class="control-label col-md-3">@LangHelpers.Instance["withdrawal_from_the_project"]</label>
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.WithdrawalFromProject, new SelectList(Model.OptionSelection, "Value", "Text"), LangHelpers.Instance["select"], new { @class = "form-control edit-form-option" })
+            </div>
+        </div>
+
+        <div class="form-group otherFields" style="display: none;">
+            <label class="control-label col-md-3">@LangHelpers.Instance["update_duration"]</label>
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.UpdateDuration, new SelectList(Model.OptionSelection, "Value", "Text"), LangHelpers.Instance["select"], new { @class = "form-control edit-form-option", childRowId = "#UpdateDurationRow" })
+            </div>
+        </div>
+        <div class="form-group" id="UpdateDurationRow" style="display: none;">
+            <label class="control-label col-md-3">@LangHelpers.Instance["duration_in_months"]</label>
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.Duration, new SelectList(Model.Durations, "Value", "Text"), LangHelpers.Instance["select"], new { @class = "form-control field-required" })
+                <span class="help-block">@Html.ValidationMessageFor(m => m.Duration)</span>
+            </div>
+        </div>
+
+        <div class="form-group otherFields" style="display: none;">
+            <label class="control-label col-md-3">@LangHelpers.Instance["update_researcher_team"]</label>
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.UpdateResearchersTeam, new SelectList(Model.OptionSelection, "Value", "Text"), LangHelpers.Instance["select"], new { @class = "form-control edit-form-option", childRowId = "#UpdateResearchersTeamRow" })
+            </div>
+        </div>
+        <div class="form-group" id="UpdateResearchersTeamRow" style="display: none; padding:50px;">
+            @Html.Partial("~/Views/Requests/FundingRequests/Arabic/Step2.cshtml", Model)
+        </div>
+
+        @if (Model.Type == ReqFieldType.AppliedScienceField && ViewBag.ShowMaterialEditForm == true)
+        {
+            <div class="form-group otherFields" style="display: none;">
+                <label class="control-label col-md-3">@LangHelpers.Instance["update_materials"]</label>
+                <div class="col-md-6">
+                    @Html.DropDownListFor(m => m.UpdateMaterials, new SelectList(Model.OptionSelection, "Value", "Text"), LangHelpers.Instance["select"], new { @class = "form-control edit-form-option", childRowId = "#UpdateMaterialsRow" })
+                </div>
+            </div>
+            <div class="form-group" id="UpdateMaterialsRow" style="display: none;">
+                <div class="panel-group div-repeatable">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>@LangHelpers.Instance["material_name"]</th>
+                                <th>@LangHelpers.Instance["amount_in_grams"]</th>
+                                <th>@LangHelpers.Instance["material_type"]</th>
+                                <th>@LangHelpers.Instance["material_usage"]</th>
+                                <th>@LangHelpers.Instance["material_cost"]</th>
+                            </tr>
+                        </thead>
+                        @{
+                            var index = -1;
+                        }
+                        <tbody>
+                            @foreach (var c in Model.Materials)
+                            {
+                                index++;
+
+                                <tr data-index="@index">
+                                    <td>
+                                        <div>
+                                            @Html.HiddenFor(m => m.Materials[index].Id)
+                                        </div>
+                                        <div class="">
+                                            @Html.TextBoxFor(m => m.Materials[index].Name, new { @class = "form-control", placeholder = LangHelpers.Instance["material_name"] })
+                                        </div>
+
+                                    </td>
+                                    <td>
+                                        <div class="form-control disabled">@c.Amount</div>
+                                        @Html.HiddenFor(m => m.Materials[index].Amount)
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                            @Html.DropDownListFor(m => m.Materials[index].Type, new SelectList(Model.MaterialTypes, "Value", "Text", Model.Materials[index].Type > 0 ? Model.Materials[index].Type.ToString() : Model.Materials[index].Type == 0 ? ((byte)Model.Materials[index].Type).ToString() : ""), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown-edit", placeholder = LangHelpers.Instance["material_type"] })
+
+                                            <div class="other-div" style="display: @(Model.Materials[index].Type == null || Model.Materials[index].Type  > 0? "none" : "block")">
+                                                @Html.TextBoxFor(m => m.Materials[index].OtherType, new { @class = "form-control", placeholder = LangHelpers.Instance["other_type"] })
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                            @Html.TextBoxFor(m => m.Materials[index].Usage, new { @class = "form-control", placeholder = LangHelpers.Instance["material_usage"] })
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-control disabled">@c.Cost</div>
+                                        @Html.HiddenFor(m => m.Materials[index].Cost)
+                                    </td>
+
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
+
+
+<script nonce="@Html.ScriptNonce()">
+    $(document).ready(function () {
+        $(".edit-form-option").on("change", function () {
+            hideShowDataRow(this);
+        });
+
+        hideShowDataRow("#UpdateDuration");
+        hideShowDataRow("#UpdateResearchersTeam");
+        if ($("#UpdateMaterials").length > 0) {
+            hideShowDataRow("#UpdateMaterials");
+        }
+        hideShowDataRow("#WithdrawalFromProject");
+    });
+
+    function hideShowDataRow(_me) {
+        var childRowId = $(_me).attr("childrowid");
+        if (childRowId != undefined && childRowId != null && childRowId != "") {
+            if ($(_me).val() == "1") {
+                $(childRowId).show();
+            }
+            else {
+                $(childRowId).hide();
+            }
+        }
+        else {
+            if ($(_me).val() == "1" || $(_me).val() == "") {
+                $(".otherFields").hide();
+                $("#UpdateDuration").val("0");
+                $("#UpdateResearchersTeam").val("0");
+                if ($("#UpdateMaterials").length > 0) {
+                    $("#UpdateMaterials").val("0");
+                }
+
+                hideShowDataRow("#UpdateDuration");
+                hideShowDataRow("#UpdateResearchersTeam");
+                if ($("#UpdateMaterials").length > 0) {
+                    hideShowDataRow("#UpdateMaterials");
+                }
+            }
+            else {
+                $(".otherFields").show();
+            }
+        }
+    }
+
+</script>

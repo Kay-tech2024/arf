@@ -1,0 +1,480 @@
+﻿@model FundingRequestViewModel
+
+@{
+    ViewBag.Title = LangHelpers.Instance["new_request"];
+
+    var reqType = RequestType.Unspecificed;
+    var type = Request["type"];
+
+    if (!string.IsNullOrWhiteSpace(type))
+    {
+        Enum.TryParse<RequestType>(type, out reqType);
+    }
+}
+
+<script src="~/Content/js/moment-with-locales.js" nonce="@Html.ScriptNonce()"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.3.3/d3.min.js" nonce="@Html.ScriptNonce()"></script>
+<script type="text/javascript" src="~/Content/js/site.js" nonce="@Html.ScriptNonce()"></script>
+
+<ul class="breadcrumb">
+    <li>@Html.ActionLink(LangHelpers.Instance["home"], "Index", "Home")</li>
+    <li>@Html.ActionLink(LangHelpers.Instance["requests"], "Index", "Requests")</li>
+    <li>@LangHelpers.Instance["edit_request"]</li>
+</ul>
+
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger alert-validation">
+        <h5>@LangHelpers.Instance["ValidationSummary"]</h5>
+        <div class="text-left">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        </div>
+    </div>
+}
+
+<div class="box2 box2-info padding form-horizontal">
+
+    <div class="form-group disabled">
+        <label class="control-label col-md-3">@LangHelpers.Instance["request_number"]</label>
+        <div class="col-md-6">
+            <span class="form-control disabled">@Model.UniqueId</span>
+        </div>
+    </div>
+
+    <div class="form-group disabled">
+        <label class="control-label col-md-3">@LangHelpers.Instance["request_type"]</label>
+        <div class="col-md-6">
+            <span class="form-control disabled">@LangHelpers.Instance[reqType.ToString()]</span>
+        </div>
+    </div>
+
+    <div class="form-group disabled">
+        <label class="control-label col-md-3">@LangHelpers.Instance["title"]</label>
+        <div class="col-md-6">
+            <span class="form-control disabled">@Model.Title</span>
+        </div>
+    </div>
+
+
+    <div class="form-group disabled">
+        <label class="control-label col-md-3">@LangHelpers.Instance["AnnouncementStartDate"]</label>
+        <div class="col-md-6">
+            <span class="form-control disabled">@Model.AnnouncementStartDate</span>
+        </div>
+    </div>
+
+
+    <div class="form-group disabled">
+        <label class="control-label col-md-3">@LangHelpers.Instance["AnnouncementEndDate"]</label>
+        <div class="col-md-6">
+            <span class="form-control disabled">@Model.AnnouncementEndDate</span>
+        </div>
+    </div>
+
+    @if (reqType == RequestType.MaterialRequest)
+    {
+        <div class="form-group disabled">
+            <label class="control-label col-md-3">@LangHelpers.Instance["MaterialsTotalCost"]</label>
+            <div class="col-md-6">
+                <span class="form-control disabled">@Model.MaterialsTotalCost</span>
+            </div>
+        </div>
+    }
+
+    <p class="text-center">
+        <a data-toggle="modal" data-target="#publicationDetails" class="btn btn-default">@LangHelpers.Instance["publication_details"]</a>
+    </p>
+    <div class="modal fade bs-example-modal-lg" id="publicationDetails" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">@LangHelpers.Instance["publication_details"]</h4>
+                </div>
+                <div class="modal-body">
+                    @Html.Partial("~/Views/Requests/_RequestSummaryPartial.cshtml", WebUtils.GetRequestSummary((long)Model.PublicationRequestId))
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">@LangHelpers.Instance["close"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@using (Html.BeginForm("Create", "Requests", new { PublicationRequestId = Model.PublicationRequestId, type = reqType.ToString() }, FormMethod.Post, new { id = "frmCreateRequest", enctype = "multipart/form-data", @class = "form-horizontal maximum-width " }))
+{
+    @Html.AntiForgeryToken()
+    <div class="box2 box2-info padding">
+        @if (reqType == RequestType.EditFundingRequest)
+        {
+            <div>
+                <h4 class="title">@LangHelpers.Instance["edit_form_details"]</h4>
+            </div>
+            <div>
+                @Html.Partial("~/Views/Requests/EditFundingRequestForm.cshtml", WebUtils.GetEditRequestForm((long)Model.PublicationRequestId))
+            </div>
+        }
+
+        @if (reqType == RequestType.MaterialRequest)
+        {
+            <div>
+                <h4 class="title">@LangHelpers.Instance["requested_materials"]</h4>
+            </div>
+            <div class="panel-group div-repeatable" data-key="Materials" id="MaterialsTable">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>@LangHelpers.Instance["sn"]</th>
+                            <th>@LangHelpers.Instance["material_name"]</th>
+                            <th>@LangHelpers.Instance["amount_in_grams"]</th>
+                            <th>@LangHelpers.Instance["material_type"]</th>
+                            <th>@LangHelpers.Instance["material_usage"]</th>
+                            <th>@LangHelpers.Instance["material_cost"]</th>
+                        </tr>
+                    </thead>
+                    @{
+                        var index = 0;
+                    }
+                    <tbody>
+                        @foreach (var c in Model.RequestMaterial)
+                        {
+                            index++;
+                            <tr data-index="@index">
+                                <td>@index</td>
+                                <td>
+                                    <div class="form-control disabled">@c.Name</div>
+                                </td>
+                                <td>
+                                    <div class="form-control disabled">@c.Amount</div>
+                                </td>
+                                <td>
+                                    <div class="form-control disabled">@(Enum.Parse(typeof(MaterialType), c.Type.ToString()))</div>
+                                </td>
+                                <td>
+                                    <div class="form-control disabled">@c.Usage</div>
+                                </td>
+                                <td>
+                                    <div class="form-control disabled">@c.Cost</div>
+                                </td>
+
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+    </div>
+
+
+    if (reqType == RequestType.MidTermProgressReport)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">Form 4</div>
+            <div class="panel-body">
+                <div>
+                    <h4 class="title">@LangHelpers.Instance["budget_summary"]</h4>
+                </div>
+                <br />
+                <table id="budgetSummary" class="table table-striped table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th>@ArfStrings.name</th>
+                            <th>@ArfStrings.researcher_role</th>
+                            <th>@ArfStrings.first_period_active_months</th>
+                            <th>@ArfStrings.first_period_cost</th>
+                            @*<th>@ArfStrings.second_period_active_months</th>
+                                <th>@ArfStrings.second_period_cost</th>*@
+                            @*<th>@ArfStrings.total_active_months</th>*@
+                            @*<th>@ArfStrings.total_cost</th>*@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var m in Model.BudgetSummaryPerPerson)
+                        {
+                            <tr>
+                                <td>@m.Name</td>
+                                <td>@m.ResearcherRole</td>
+                                <td>@(m.IsConsultant ? LangHelpers.Instance.GetLangValueByString("number_of_visits", false, Model.FieldType == ReqFieldType.AppliedScienceField ? "en" : null) + ": " + m.FirstPeriodActiveMonths : m.FirstPeriodActiveMonths)</td>
+                                <td>@m.FirstPeriodCost</td>
+                                @*<td>@(m.IsConsultant ? LangHelpers.Instance.GetLangValueByString("number_of_visits", false, Model.FieldType == ReqFieldType.AppliedScienceField ? "en" : null) + ": " + m.SecondPeriodActiveMonths : m.SecondPeriodActiveMonths)</td>*@
+                                @*<td>@m.SecondPeriodCost</td>*@
+                                @*<td>@m.TotalActiveMonths</td>*@
+                                @*<td>@m.TotalCost</td>*@
+                            </tr>
+                        }
+                        @if (Model.FieldType == ReqFieldType.AppliedScienceField)
+                        {
+                            <tr>
+                                <td>@ArfStrings.materials_total_cost</td>
+                                <td></td>
+                                <td></td>
+                                @*<td></td>*@
+                                @*<td></td>
+                                    <td></td>
+                                    <td></td>*@
+                                <td>@Model.MaterialsTotalCost</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td>@ArfStrings.first_period_total_cost</td>
+                            <td></td>
+                            <td></td>
+                            @*<td></td>*@
+                            @*<td></td>
+                                <td></td>
+                                <td></td>*@
+                            <td>@Model.FirstPeriodTotalCost</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <hr />
+                <table id="midTermReport" class="table table-striped table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th>@ArfStrings.s_no</th>
+                            <th>@ArfStrings.task</th>
+                            <th>@ArfStrings.completion_rate</th>
+                            <th>@ArfStrings.reasons_for_delay</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Forms.Count(); i++)
+                        {
+                            @Html.HiddenFor(m => m.Forms[i].Id)
+                            <tr>
+                                <td>@(1 + i)</td>
+                                <td>@Html.DisplayFor(m => m.Forms[i].TaskName)</td>
+                                <td>
+                                    @Html.DropDownListFor(m => m.Forms[i].CompletionRate, new SelectList(ViewBag.dropdownlist, "Value", "Text", Model.Forms[i].CompletionRate), LangHelpers.Instance["select"], new { @class = "form-control" })
+                                </td>
+                                <td>
+                                    @Html.TextAreaFor(m => m.Forms[i].Reasons, htmlAttributes: new { @class = "form-control", rows = 5, cols = 5, placeholder = @LangHelpers.Instance["reasons_for_delay"] })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <h4 class="col-md-offset-3 col-md-6 text-center">@LangHelpers.Instance["attachments"]</h4>
+        </div>
+
+        <div class="form-group required">
+            <label class="control-label col-md-3">نموذج 4</label>
+            <div class="col-md-6">
+                <input type="file" name="file1" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group required">
+            <label class="control-label col-md-3">نموذج 4</label>
+            <div class="col-md-6">
+                <input type="file" name="file2" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group required">
+            <label class="control-label col-md-3">نموذج 4</label>
+            <div class="col-md-6">
+                <input type="file" name="file3" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group required">
+            <label class="control-label col-md-3">نموذج 5</label>
+            <div class="col-md-6">
+                <input type="file" name="file4" class="form-control" />
+            </div>
+        </div>
+    }
+    else if (reqType == RequestType.FulltermProgressReport)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">Form 7</div>
+            <div class="panel-body">
+                <div>
+                    <h4 class="title">@LangHelpers.Instance["budget_summary"]</h4>
+                </div>
+                <br />
+                <table id="budgetSummary" class="table table-striped table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th>@ArfStrings.name</th>
+                            <th>@ArfStrings.researcher_role</th>
+                            <th>@ArfStrings.first_period_active_months</th>
+                            <th>@ArfStrings.first_period_cost</th>
+                            <th>@ArfStrings.second_period_active_months</th>
+                            <th>@ArfStrings.second_period_cost</th>
+                            <th>@ArfStrings.total_active_months</th>
+                            <th>@ArfStrings.total_cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var m in Model.BudgetSummaryPerPerson)
+                        {
+                            <tr>
+                                <td>@m.Name</td>
+                                <td>@m.ResearcherRole</td>
+                                <td>@(m.IsConsultant ? LangHelpers.Instance.GetLangValueByString("number_of_visits", false, Model.FieldType == ReqFieldType.AppliedScienceField ? "en" : null) + ": " + m.FirstPeriodActiveMonths : m.FirstPeriodActiveMonths)</td>
+                                <td>@m.FirstPeriodCost</td>
+                                <td>@(m.IsConsultant ? LangHelpers.Instance.GetLangValueByString("number_of_visits", false, Model.FieldType == ReqFieldType.AppliedScienceField ? "en" : null) + ": " + m.SecondPeriodActiveMonths : m.SecondPeriodActiveMonths)</td>
+                                <td>@m.SecondPeriodCost</td>
+                                <td>@m.TotalActiveMonths</td>
+                                <td>@m.TotalCost</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td>@ArfStrings.first_period_total_cost</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>@Model.FirstPeriodTotalCost</td>
+                        </tr>
+                        <tr>
+                            <td>@ArfStrings.second_period_total_cost</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>@Model.SecondPeriodTotalCost</td>
+                        </tr>
+                        @if (Model.FieldType == ReqFieldType.AppliedScienceField)
+                        {
+                            <tr>
+                                <td>@ArfStrings.materials_total_cost</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>@Model.MaterialsTotalCost</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td>@ArfStrings.total_cost_for_project</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>@Model.TotalCostForProject</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <hr />
+                <table id="fullTermReport" class="table table-striped table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th>@ArfStrings.s_no</th>
+                            <th>@ArfStrings.task</th>
+                            <th>@ArfStrings.completion_rate</th>
+                            <th>@ArfStrings.reasons_for_delay</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ var i = 1;}
+                        @foreach (var f in Model.Forms)
+                        {
+                            <tr>
+                                <td>@(i++)</td>
+                                <td>@f.TaskName</td>
+                                <td>
+                                    @Html.DropDownList("Dropdown", new SelectList(ViewBag.dropdownlist, "Value", "Text", f.CompletionRate.ToString()), htmlAttributes: new { @class = "form-control" })
+                                </td>
+                                <td>
+                                    @Html.TextArea("Reasons", f.Reasons, htmlAttributes: new { @class = "form-control", rows = 5, cols = 5, placeholder = @LangHelpers.Instance["reasons_for_delay"] })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else if (reqType == RequestType.MaterialRequest)
+    {
+        <div class="row">
+            <h4 class="col-md-offset-3 col-md-6 text-center">@LangHelpers.Instance["attachments"]</h4>
+        </div>
+
+        foreach (var item in Model.Files)
+        {
+            <div class="form-group">
+                <div class="col-md-3"></div>
+                <div class="col-md-6">
+                    @Html.ActionLink((item.Type != FileType.Unspecified ? LangHelpers.Instance[item.Type.ToString()] + ": " : "") + item.FileName, "Index", "GetFile", new { id = item.FileId }, new { @class = "btn btn-success", target = "_blank" })
+
+                </div>
+            </div>
+            <hr style="border: 1px dashed #ddd;" />
+        }
+    }
+
+    <div class="box2 box2-info">
+        <div class="row">
+            <div class="form-group">
+                <label class="control-label col-md-3">@LangHelpers.Instance["comments"]</label>
+                <div class="col-md-6">
+                    @Html.TextAreaFor(model => model.Comments, htmlAttributes: new { @class = "form-control", rows = 5, cols = 5, placeholder = @LangHelpers.Instance["comments"] })
+                    @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="box box2-info" style="max-width: 300px; display: block; margin: 0 auto;">
+        <div class="form-group">
+            <button type="submit" class="btn btn-success btn-block">إرسال</button>
+        </div>
+    </div>
+}
+
+<div class="row text-center">
+    <a class="btn btn-default" href="~/Home/Return">العودة</a>
+    <br />
+</div>
+
+@section scripts{
+    <script type="text/javascript" src="~/Content/js/hijri-date.js" nonce="@Html.ScriptNonce()"></script>
+    <script type="text/javascript" src="~/Content/js/calendar.js" nonce="@Html.ScriptNonce()"></script>
+
+    <script nonce="@Html.ScriptNonce()">
+        $('#MaterialsTable').find('input[type=text],input[type=number],input[type=radio],input[type=checkbox],textarea,select').each(function () {
+            elToReadOnly(this);
+        });
+
+        function makeSummaryFormReadonly() {
+            $('#publicationDetails').find('input[type=text],input[type=number],input[type=radio],input[type=checkbox],textarea,select').each(function () {
+                elToReadOnly(this);
+            });
+
+            $('#divRefereeSelection').hide();
+            $('#divSelectedReferees').hide();
+            $("#external_refree_add_link").hide();
+
+            $('#publicationDetails').find('.required').removeClass('required');
+            $('#publicationDetails').find('#btnAddRow').remove();
+            $('#publicationDetails').find('.btnAddRow').remove();
+            $('#publicationDetails').find('.btnRemoveRow').remove();
+        }
+
+        makeSummaryFormReadonly();
+        $(document).ready(function () {
+            for (var i = 0; i <= 100; i++) {
+                $("#completionrate").append($("<option/>").val(i).text(i));
+            }
+        });
+    </script>
+
+
+}

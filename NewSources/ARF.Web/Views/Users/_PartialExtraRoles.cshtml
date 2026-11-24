@@ -1,0 +1,61 @@
+﻿@model EditUserViewModel
+
+@{
+
+    var index = ViewBag.Index != null && ViewBag.Index > 0 ? (int)ViewBag.Index : 0;
+
+    if (Model.ExtraRoles == null || Model.ExtraRoles.Count == 0)
+    {
+        Model.ExtraRoles = new List<ExtraRoleViewModel>
+{
+new ExtraRoleViewModel
+{
+
+}
+
+};
+    }
+
+    var id = ViewBag.IsTemplate == true ? "ExtraRoles{index}" : "ExtraRoles" + index;
+}
+
+<tr data-index="@(ViewBag.IsTemplate == null? index + "" : "{index}")">
+    <td>@(ViewBag.IsTemplate == null ? (index + 1) + "" : "{order}")</td>
+    <td>
+        @if (ViewBag.IsTemplate == null)
+        {
+            <div>
+                @Html.HiddenFor(m => m.ExtraRoles[index].Id)
+            </div>
+        }
+        @Html.DropDownListFor(m => m.ExtraRoles[index].RoleId, new SelectList(Model.Roles, "RoleId", "RoleName", Model.ExtraRoles[index].RoleId), LangHelpers.Instance["select"], new { @class = "form-control role-dropdown", placeholder = LangHelpers.Instance["role_name"] })
+
+        @Html.ValidationMessageFor(m => m.ExtraRoles[index].RoleId)
+    </td>
+    <td>
+        <div style="display: @(ViewBag.IsTemplate != true && Utils.IsCollegeRole( Model.ExtraRoles[index].Role)? "block" : "none")">
+            @Html.DropDownListFor(m => m.ExtraRoles[index].CollegeId, new SelectList(Model.Colleges, "Id", "Name", Model.ExtraRoles[index].CollegeId), LangHelpers.Instance["select"], new { @class = "form-control", placeholder = LangHelpers.Instance["college_name"] })
+            @Html.ValidationMessageFor(m => m.ExtraRoles[index].CollegeId)
+        </div>
+    </td>
+    @*<td>
+            @Html.DatePickerFor(m => m.ExtraRoles[index].EffectiveFrom, ARF.Web.App_Start.Extensions.DateType.Date, new { @class = "form-control", placeholder = LangHelpers.Instance["effective_from"] })
+            @Html.ValidationMessageFor(m => m.ExtraRoles[index].EffectiveFrom)
+        </td>
+        <td>
+            @Html.DatePickerFor(m => m.ExtraRoles[index].EffectiveTo, ARF.Web.App_Start.Extensions.DateType.Date, new { @class = "form-control", placeholder = LangHelpers.Instance["effective_until"] })
+            @Html.ValidationMessageFor(m => m.ExtraRoles[index].EffectiveTo)
+        </td>*@
+    <td>
+        @Html.DropDownListFor(m => m.ExtraRoles[index].IsActive, new SelectList(new SelectListItem[]
+                           {
+    new SelectListItem{Text = LangHelpers.Instance["enabled"], Value= "True"},
+    new SelectListItem{Text = LangHelpers.Instance["disabled"], Value= "False"},
+                           }, "Value", "Text", Model.ExtraRoles[index].IsActive.ToString()), new { @class = "form-control", placeholder = LangHelpers.Instance["college_name"] })
+    </td>
+    <td>
+
+        <a href="#" class="btnRemoveRow btn btn-danger">@LangHelpers.Instance["remove"]</a>
+
+    </td>
+</tr>

@@ -1,0 +1,96 @@
+﻿@model ContactUsViewModel
+@{
+    ViewBag.Title = ArfStrings.contactus;
+    string CurrentName = Utils.GetUserId();
+    string cLayout = "";
+    if (string.IsNullOrWhiteSpace(CurrentName))
+    {
+        cLayout = "~/Views/Shared/_LayoutLogin.cshtml";
+    }
+    else
+    {
+        cLayout = "~/Views/Shared/_Layout.cshtml";
+        <ul class="breadcrumb">
+            <li>@Html.ActionLink(ArfStrings.homepage, "Index", "Home")</li>
+            <li>@ArfStrings.contactus</li>
+        </ul>
+        <h2 class="page-header">@ArfStrings.contactus</h2>
+    }
+    Layout = cLayout;
+}
+<link rel="stylesheet" type="text/css" href="~/Content/css/bootstrap-datetimepicker@(ArfStrings.css_suffix).css" />
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="validation-summary-errors" data-valmsg-summary="true">
+        <ul>
+
+            @foreach (var m in ViewData.ModelState.Keys)
+            {
+                if (ViewData.ModelState[m].Errors.Count == 0)
+                {
+                    continue;
+                }
+
+                if (m.Contains("[") && m.Contains("]"))
+                {
+                    var index1 = m.IndexOf('[');
+                    var index2 = m.IndexOf(']');
+                    var property = m.Substring(0, index1);
+                    var row = int.Parse(m.Substring(index1 + 1, index2 - index1 - 1)) + 1;
+
+                    <li>@(LangHelpers.Instance[property] + " " + LangHelpers.Instance["the_row"] + " " + row + ": " + ViewData.ModelState[m].Errors.First().ErrorMessage)</li>
+                }
+                else
+                {
+                    <li>@ViewData.ModelState[m].Errors.First().ErrorMessage</li>
+                }
+            }
+        </ul>
+
+    </div>
+
+
+}
+
+
+
+@using (Html.BeginForm("ContactUs", "About", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-group required">
+        @Html.LabelFor(m => m.FullName, new { @class = "control-label col-sm-3" })
+        <div class="col-sm-9">
+            @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", @placeholder = ArfStrings.fullname })
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.EmailAddress, new { @class = "control-label col-sm-3" })
+        <div class="col-sm-9">
+            @Html.TextBoxFor(m => m.EmailAddress, new { @class = "form-control", @placeholder = ArfStrings.email })
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.LabelFor(m => m.Subject, new { @class = "control-label col-sm-3" })
+        <div class="col-sm-9">
+            @Html.TextBoxFor(m => m.Subject, new { @class = "form-control", @placeholder = ArfStrings.subject })
+        </div>
+    </div>
+
+    <div class="form-group required">
+        @Html.Label(ArfStrings.contactusmessage, new { @class = "control-label col-sm-3" })
+        <div class="col-sm-9">
+            @Html.TextAreaFor(m => m.Message, new { @class = "form-control", @placeholder = ArfStrings.contactusmessage, rows = 5 })
+        </div>
+    </div>
+
+    <div>
+        @Html.Recaptcha(useSsl: SslBehavior.AlwaysUseSsl, language: LangHelpers.Instance["lang_code"], theme: RecaptchaTheme.Clean)
+    </div>
+
+    <div class="row">
+        <button type="submit" class="text-center btn btn-block btn-info">@ArfStrings.submit</button>
+    </div>
+}

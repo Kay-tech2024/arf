@@ -1,0 +1,143 @@
+﻿@model RequestSummaryViewModel2
+
+@{
+
+    var index = ViewBag.Index != null && ViewBag.Index > 0 ? (int)ViewBag.Index : 0;
+
+    if (Model.SuggestedReferees == null || Model.SuggestedReferees.Count == 0)
+    {
+        Model.SuggestedReferees = new List<SuggestedRefereeViewModel>
+{
+new SuggestedRefereeViewModel
+{
+
+}
+
+};
+    }
+
+    var id = ViewBag.IsTemplate == true ? "SuggestedReferees{index}" : "SuggestedReferees" + index;
+}
+
+<div class="panel panel-default" data-index="@(ViewBag.IsTemplate == null? index + "" : "{index}")">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="count">@(ViewBag.IsTemplate == true ? "{order}" : (index + 1) + "")</span>
+            <a data-toggle="collapse" data-parent="#divSuggestedReferees" href="#@(id)" class="researcher-name-header">
+                @if (Model.SuggestedReferees[index].Name != null && ViewBag.IsTemplate == null)
+                {
+
+                    <span>
+                        <b>@Model.SuggestedReferees[index].Name &nbsp; </b>@(LangHelpers.Instance["suggested_referee"])
+                    </span>
+
+                }
+                else
+                {
+                    <span>
+                        @(LangHelpers.Instance["suggested_referee"])
+                    </span>
+                }
+            </a>
+        </h4>
+        @if (index > 5 || ViewBag.IsTemplate == true)
+        {
+            <a href="#" class="btnRemoveRow btn btn-danger btn-xs cancel">@LangHelpers.Instance["cancel"]</a>
+        }
+    </div>
+    <div id="@(id)" class="panel-collapse collapse @(index == 0 && ViewBag.IsTemplate == null? "in" : "")">
+        <div class="panel-body">
+
+            @Html.HiddenFor(m => m.SuggestedReferees[index].Id)
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["name"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.SuggestedReferees[index].Name, new { @class = "form-control researcher-name" })
+                    @Html.ValidationMessageFor(m => m.SuggestedReferees[index].Name)
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["Degree"]</label>
+                <div class="col-sm-7">
+                    @Html.DropDownListFor(m => m.SuggestedReferees[index].Degree, new SelectList(Model.QualificationTypes, "Value", "Text", Model.SuggestedReferees[index].Degree), LangHelpers.Instance["select"], new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.SuggestedReferees[index].Degree)
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["university"]</label>
+                <div class="col-sm-7">
+                    @Html.DropDownListFor(m => m.SuggestedReferees[index].UniversityId, new SelectList(Model.Universities, "Value", "Text", Model.SuggestedReferees[index].UniversityId), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown" })
+                    @Html.ValidationMessageFor(m => m.SuggestedReferees[index].UniversityId)
+                </div>
+            </div>
+            <div class="form-group required div-university-other" style="display: @(Model.SuggestedReferees[index].UniversityId == null || Model.SuggestedReferees[index].UniversityId  > 0? "none" : "block")">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["other"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.SuggestedReferees[index].UniversityOther, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.SuggestedReferees[index].UniversityOther)
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["college"]</label>
+                <div class="col-sm-7">
+                    @Html.DropDownListFor(m => m.SuggestedReferees[index].CollegeId, new SelectList(Model.Colleges, "Value", "Text", Model.SuggestedReferees[index].CollegeId), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown" })
+                    @Html.ValidationMessageFor(m => m.SuggestedReferees[index].CollegeId)
+                </div>
+            </div>
+            <div class="form-group required div-college-other" style="display: @(Model.SuggestedReferees[index].CollegeId == null || Model.SuggestedReferees[index].CollegeId  > 0? "none" : "block")">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["other"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.SuggestedReferees[index].CollegeOther, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.SuggestedReferees[index].CollegeOther)
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["department"]</label>
+                <div class="col-sm-7">
+                    @Html.DropDownListFor(m => m.SuggestedReferees[index].DepartmentID, new SelectList(Model.Departments, "Value", "Text", Model.SuggestedReferees[index].DepartmentID), LangHelpers.Instance["select"], new { @class = "form-control other-dropdown" })
+                    @Html.ValidationMessageFor(m => m.SuggestedReferees[index].DepartmentID)
+                </div>
+            </div>
+
+            <div class="form-group required div-department-other" style="display: @(Model.SuggestedReferees[index].DepartmentID == null || Model.SuggestedReferees[index].DepartmentID  > 0? "none" : "block")">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["other"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.SuggestedReferees[index].DepartmentOther, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.SuggestedReferees[index].DepartmentOther)
+                </div>
+            </div>
+
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["specialization"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.SuggestedReferees[index].Specialization, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.SuggestedReferees[index].Specialization)
+                </div>
+            </div>
+
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["mobile"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.SuggestedReferees[index].MobileNumber, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.SuggestedReferees[index].MobileNumber)
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["email"]</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.SuggestedReferees[index].Email, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.SuggestedReferees[index].Email)
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-3"> @LangHelpers.Instance["address"]</label>
+                <div class="col-sm-7">
+                    @Html.TextAreaFor(m => m.SuggestedReferees[index].Addresss, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.SuggestedReferees[index].Addresss)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

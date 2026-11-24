@@ -1,0 +1,140 @@
+﻿@model FundingRequestViewModel
+
+@{
+    //Model.FieldType == ReqFieldType.AppliedScienceField
+
+    var reqType = RequestType.Unspecificed;
+    var type = Request["type"];
+
+    if (!string.IsNullOrWhiteSpace(type))
+    {
+        Enum.TryParse<RequestType>(type, out reqType);
+    }
+
+    var fieldType = FieldType.Unspecified;
+    var field = Request["field"];
+
+    if (!string.IsNullOrWhiteSpace(field))
+    {
+        Enum.TryParse<FieldType>(field, out fieldType);
+    }
+
+    ViewBag.Title = LangHelpers.Instance["new_publish"];
+
+    var RequestId = ViewBag.RequestId;
+
+}
+
+<ul class="breadcrumb">
+    <li>@Html.ActionLink(LangHelpers.Instance["home"], "Index", "Home")</li>
+    <li>@Html.ActionLink(LangHelpers.Instance["requests"], "Index", "Requests")</li>
+    <li>@Html.ActionLink(LangHelpers.Instance["new_request"], "Create", "Requests")</li>
+    <li>@LangHelpers.Instance["new_publish"]</li>
+</ul>
+
+@{
+    ResearcherViewModel[] researchers = { new ResearcherViewModel() {
+FirstName = "firstname",
+LastName = "lastname"
+}, new ResearcherViewModel() {
+FirstName = "firstname1",
+LastName = "lastname1"
+}, new ResearcherViewModel() {
+FirstName = "firstname2",
+LastName = "lastname2"
+}, new ResearcherViewModel() {
+FirstName = "firstname3",
+LastName = "lastname3"
+}, new ResearcherViewModel() {
+FirstName = "firstname4",
+LastName = "lastname4"
+} };
+    Task[] tasks = { new Task() { CompletionPercent = "25", DelayReason = "some reason", TaskName = "Task 1" } };
+}
+
+
+
+@using (Html.BeginForm("Create", "Requests", new { type = reqType.ToString() }, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal maximum-width" }))
+
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("FieldType", fieldType.ToString())
+
+    if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger alert-validation">
+            <h5>@LangHelpers.Instance["ValidationSummary"]</h5>
+            <div class="text-left">
+                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    }
+
+    <input type="hidden" name="ReqId" value="@RequestId" />
+
+    if (Utils.HasRolesAny(ArfUserRole.PrincipalResearcher))
+    {
+        <div style="padding-left:15px;padding-right:15px;">
+            @{
+                if (reqType == RequestType.FundingRequest)
+                {
+                    @Html.Partial("PrincipleResearcherForm")
+                }
+                else
+                {
+                    @Html.Partial("GenericForm");
+                }
+            }
+
+        </div>
+
+    }
+    else if (Utils.HasRolesAny(ArfUserRole.VicePresidentForHigherStudiesAndScientificResearch))
+    {
+        @Html.Partial("VicePresidentForHigherStudiesForm")
+    }
+    else if (Utils.HasRolesAny(ArfUserRole.ViceDeanshipofResearchcCentersAndDatabases))
+    {
+        @Html.Partial("DeanshipofResearchCenterForm")
+    }
+    else if (Utils.HasRolesAny(ArfUserRole.MembersOfTheStandingCommitteeForFinancingResearchProjects))
+    {
+        @Html.Partial("MemberOfStandingCommitteeForm")
+    }
+    else if (Utils.HasRolesAny(ArfUserRole.Referee))
+    {
+        @Html.Partial("ArbitratorForm")
+    }
+    else if (Utils.HasRolesAny(ArfUserRole.Accountant))
+    {
+        @Html.Partial("AccountantForm")
+    }
+
+    <button type="submit" class="btn btn-primary start">
+        <i class="glyphicon glyphicon-upload"></i>
+        <span>Submit</span>
+    </button>
+
+}
+
+@section scripts{
+
+    <script nonce="@Html.ScriptNonce()">
+        var index = 1;
+        $('#add-row').click(function () {
+            var html = $('table tbody tr').first().html();
+            //html = html + '<td><a class="btn btn-xs btn-danger remove-row">حذف</a></td>';
+            html = html.replaceAll("value=", "");
+            html = html.replaceAll("Tasks_0", "Tasks_" + index);
+            html = html.replaceAll("Tasks[0]", "Tasks[" + index + "]");
+            index++;
+            $('table.maham').find('tbody').append('<tr>' + html + '</tr>');
+        });
+
+        $(document).on('click', '.remove-row', function () {
+            $(this).parents('tr').remove();
+        });
+
+    </script>
+
+}

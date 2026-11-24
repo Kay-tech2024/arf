@@ -1,0 +1,131 @@
+﻿<h2> بيان المستحقات المالية</h2>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group text-right">
+            <label class="control-label col-sm-4"> عنوان المشروع البحثي </label>
+            <div class="col-md-8">
+                <input class="form-control" id="Name" name="Name" type="text" value="" />
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="control-label col-sm-4 "> رقم  المشروع</label>
+            <div class="col-md-8">
+                <input class="form-control" id="Name" name="Name" type="text" value="" />
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="control-label col-sm-4"> الأشهر  الستة </label>
+            <div class="col-md-8">
+                <input class="form-control" id="Name" name="Name" type="text" value="" />
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="control-label col-sm-4 "> من </label>
+            <div class="col-md-8">
+                <input class="form-control" id="Name" name="Name" type="date" value="" />
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+
+            <label class="control-label col-sm-4"> الى </label>
+            <div class="col-md-8">
+                <input class="form-control" id="Name" name="Name" type="date" value="" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<br><br>
+<div>
+    <br>
+    <input type="hidden" id="add" name="add" value="1" />
+    <br>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th id="fullname">الاسم الثلاثي </th>
+                <th id="relation"> الصفة </th>
+                <th id="qualification">المؤهل </th>
+                <th id="depatmentname"> جهة العمل</th>
+                <th id="mw"> عدد أشهر العمل</th>
+                <th id="deservedpayment"> المبلغ المستحق شهريا مضروبا في عدد الاشهر </th>
+                <th id="bank"> البنك/الفرع</th>
+                <th id="accountno"> رقم الحساب</th>
+                <th id=" phoneno"> الجوال</th>
+                <th><a href="#tbody1" class="btn btn-default" onclick="AddRow()" class="form-group">إضافة</a></th>
+            </tr>
+        </thead>
+        <tbody id="tbody1">
+            <tr>
+                <td>
+                    <input type="text" id="Fullname1" name="Fullname1" class="form-control" />
+                </td>
+                <td>
+                    <input type="text" id="relation1" name="relation1" class="form-control" />
+                </td>
+                <td>
+                    <input type="text" id="qualification1" name="qualification1" class="form-control" />
+                </td>
+                <td>
+                    <input type="text" id="depatmentname1" name="depatmentname" class="form-control" />
+                </td>
+                <td>
+                    <input type="text" id="mw1" name="mw1" class="form-control" />
+                </td>
+                <td>
+                    <input type="text" id="deservedpayment1" name="deservedpayment1" class="form-control" />
+                </td>
+                <td>
+                    <input type="text" id="bank1" name="bank1" class="form-control" />
+                </td>
+                <td>
+                    <input type="text" id="accountno1" name="accountno1" class="form-control" />
+                </td>
+                <td>
+                    <input type="text" id=" phoneno1" name=" phoneno1" class="form-control" />
+                </td>
+                <td></td>
+            </tr>
+
+
+        </tbody>
+    </table>
+</div>
+
+<script nonce="@Html.ScriptNonce()">
+    var count = 1;
+
+    function AddRow() {
+        $("#add").val(++count);
+        $("#tbody1").append('<tr><td><input type="text" id="Fullname' + count + '" name="Fullname' + count + '" class="form-control" /></td>' +
+            '<td><input type="text" id="relation' + count + '" name="relation' + count + '" class="form-control" /></td>' +
+            '<td><input type="text" id="qualification' + count + '" name="qualification' + count + '" class="form-control" /></td>' +
+            '<td><input type="text" id="depatmentname' + count + '" name="depatmentname' + count + '" class="form-control" /></td>' +
+            '<td><input type="text" id="mw' + count + '" name="mw' + count + '" class="form-control" /></td>' +
+            '<td><input type="text" id="deservedpayment' + count + '" name="deservedpayment' + count + '" class="form-control" /></td>' +
+            '<td><input type="text" id="bank' + count + '" name="bank' + count + '" class="form-control" /></td>' +
+            '<td><input type="text" id="accountno' + count + '" name="accountno' + count + '" class="form-control" /></td>' +
+            '<td><input type="text" id="phoneno' + count + '" name="phoneno' + count + '" class="form-control" /></td>' +
+            '<td><a href="#tbody1" class="btn btn-danger" onclick="RemoveRow(this)">حذف</a></td></tr>');
+    }
+
+    function RemoveRow(element) {
+        $("#add").val(--count);
+        $(element).parent().parent().remove();
+    }
+</script>
+

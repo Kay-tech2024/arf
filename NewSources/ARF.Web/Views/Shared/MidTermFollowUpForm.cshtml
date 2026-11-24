@@ -1,0 +1,98 @@
+﻿@model FundingRequestViewModel
+@{
+    if (Model.timeTable == null)
+    {
+        Model.timeTable = new List<TimeTableViewModel>();
+    }
+
+}
+<h3>@LangHelpers.Instance["Tasks"]</h3>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+
+                    <th>
+                        @LangHelpers.Instance["TasksBySchedule"]
+                    </th>
+                    <th>@LangHelpers.Instance["CompletionRate"] </th>
+                    <th> @LangHelpers.Instance["ReasonsForDelay"]</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @{
+                    var i = 0;
+                    foreach (var item in Model.timeTable)
+                    {
+                        i++;
+                        <tr>
+                            <td>@item.Task <input type="hidden" name="ttId@(i)" value="@item.Id" /></td>
+                            <td><input type="number" id="Percentage@(i)" name="Percentage@(i)" class="form-control" /></td>
+                            <td><input type="text" id="DelayReasons@(i)" name="DelayReasons@(i)" class="form-control" /></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-4 ">@LangHelpers.Instance["CanThisResearchProjectLeadToAScientificPatent"] </label>
+        <div class="radio-inline col-md-8">
+            <label class="col-md-2">
+                @Html.RadioButtonFor(m => m.requestMidTermReport.CanBeInventionRecord, true) @LangHelpers.Instance["yes"]
+            </label>
+            <label class="col-md-2">
+                @Html.RadioButtonFor(m => m.requestMidTermReport.CanBeInventionRecord, false) @LangHelpers.Instance["No"]
+            </label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-4">
+            @LangHelpers.Instance["ObstaclesToTheProjectIfAnyAndOpinionOfMainResearcherOnHowToOvercomeTheseObstacles"]
+        </label>
+        <div class="col-md-8">
+            @Html.TextAreaFor(m => m.requestMidTermReport.Obisticales, new { @class = "form-control", rows = 5 })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-4"> @LangHelpers.Instance["AttachmentsAndEvidenceOfProgressInTheProject"]  </label>
+        <div class="col-md-8">
+            <div class="col-md-2 custom-file-upload">
+                <a href="#Filebody" class="btn btn-default" onclick="AddAttachment();">@LangHelpers.Instance["add"]</a>
+            </div>
+            <div id="Filebody" class="col-md-9">
+                <div class="custom-file-upload">
+                    <input class="form-control" id="MidtermAtt1" name="MidtermAtt1" type="file" />
+                </div>
+            </div>
+        </div>
+        <script nonce="@Html.ScriptNonce()">
+            var fcount = 1;
+
+            function AddAttachment() {
+                fcount++;
+
+                var fcontent = "";
+
+                fcontent = fcontent + '<div class="custom-file-upload">' +
+                    '<input class="form-control" id= "MidtermAtt' + fcount + '" name= "MidtermAtt' + fcount + '" type= "file" />' +
+                    '<a href="#Filebody" class="btn btn-danger" onclick="RemoveFileUpload(this);">@LangHelpers.Instance["delete"]</a></div>';
+
+                $("#Filebody").append(fcontent);
+            }
+
+            function RemoveFileUpload(element) {
+                $(element).parent().remove();
+            }
+        </script>
+    </div>
+    <h4 class="title">@LangHelpers.Instance["researcher"]</h4>
+    <div class="form-group">
+        <label class="control-label col-sm-4"> @LangHelpers.Instance["NumberOfMonthsOfWork"]  </label>
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.ResearchersReward.MonthsOfWork)
+        </div>
+    </div>
+</div>

@@ -1,0 +1,212 @@
+﻿@model  List<ARF.Data.DbModels.ViewRequestsByTypeReport>
+@{
+    ViewBag.Title = "Types";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var totalapproved = 0;
+    var totalsubmitted = 0;
+    var totalrejected = 0;
+    var totalapprovedmid = 0;
+    var totalpaidmid = 0;
+    var totalapprovedfull = 0;
+    var totalpaidfull = 0;
+    var totalvicedean = 0;
+}
+
+<style>
+
+    @@media print {
+        a[href]:after {
+            content: none !important;
+        }
+        #burger {
+            display: none !important;
+        }
+        #menuToggleLang {
+            display: none !important;
+        }
+        #content {
+            left: 0px;
+        }
+        .container{
+            width: 100%;
+        }
+        .alert-info {
+            display: none !important;
+        }
+
+        .printhide
+        {
+            display: none !important;
+        }
+        
+        .breadcrumb
+        {
+            display: none !important;
+        }
+        
+        .printbtn {
+            display: none !important;
+        }
+    }
+</style>
+
+<ul class="breadcrumb printbtn">
+    <li>@Html.ActionLink(LangHelpers.Instance["homepage"], "Index", "Home")</li>
+
+    <li>@Html.ActionLink(LangHelpers.Instance["reports"], "Index", "Reports")</li>
+
+    <li>@LangHelpers.Instance["requests_report"]</li>
+</ul>
+
+
+<div class="logo printhide" style="background:grey">
+    <img src="/Content/aps/imgs/logo-1.png" class="img-responsive center-block" style="width:200px !important">
+</div>
+
+<h3>@LangHelpers.Instance["requests_report"]</h3>
+<br />
+<div class="container">
+    <table class="table table-responsive table-striped table-hover">
+
+        <thead>
+            <tr>
+                <th>
+                    المسار
+                </th>
+                <th>
+                    @*عدد الطلبات المقدمة*@
+                    عدد الطلبات المقدمة من الباحثين
+                </th>
+                <th>
+                    @*وكيل الكلية للدراسات العليا*@
+                    عدد الطلبات المرسلة لوكيل الكلية
+
+                </th>
+
+                <th>
+                    عدد الطلبات المقبولة
+                </th>
+                <th>
+                    عدد الطلبات المقبولة في انتظار صرف نصف المدة
+                </th>
+                <th>
+                    عدد الطلبات المقبولة في انتظار صرف نهاية المدة
+                </th>
+                <th>
+                    عدد الطلبات المرفوضة
+                </th>
+                <th>
+                    عدد الطلبات التي تم صرف مستحقات نصف المدة لها
+                </th>
+                <th>
+                    عدد الطلبات التي تم صرف مستحقات نهاية المدة لها
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                if (item.ApprovedRequests != null)
+                {
+                    totalapproved += (int)item.ApprovedRequests;
+                }
+                else
+                {
+                    totalapproved += 0;
+                }
+
+                if (item.ReceivedByViceDean != null)
+                {
+                    totalvicedean += (int)item.ReceivedByViceDean;
+                }
+
+                if (item.SubmittedRequests != null)
+                {
+                    totalsubmitted += (int)item.SubmittedRequests;
+                }
+                else
+                {
+                    totalsubmitted += 0;
+                }
+
+
+                if (item.RejectedRequests != null)
+                {
+                    totalrejected += (int)item.RejectedRequests;
+                }
+                else
+                {
+                    totalrejected += 0;
+                }
+
+                if (item.ApprovedFullTermRequests != null)
+                {
+                    totalapprovedfull += (int)item.ApprovedFullTermRequests;
+                }
+                else
+                {
+                    totalapprovedfull += 0;
+                }
+
+                if (item.PaidFullTermRequests != null)
+                {
+                    totalpaidfull += (int)item.PaidFullTermRequests;
+                }
+                else
+                {
+                    totalpaidfull += 0;
+                }
+
+                if (item.ApprovedMidTermRequests != null)
+                {
+                    totalapprovedmid += (int)item.ApprovedMidTermRequests;
+                }
+                else
+                {
+                    totalapprovedmid += 0;
+                }
+
+                if (item.PaidMidTermRequests != null)
+                {
+                    totalpaidmid += (int)item.PaidMidTermRequests;
+                }
+                else
+                {
+                    totalpaidmid += 0;
+                }
+
+                <tr>
+                    <td>@LangHelpers.Instance[item.FieldType]</td>
+                    <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=1&RequestStatus=1&FieldType=@item.FieldTypeId">@item.SubmittedRequests</a></td>
+                    <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=1&RequestStatus=8&FieldType=@item.FieldTypeId">@item.ReceivedByViceDean</a></td>
+                    <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=1&RequestStatus=2&FieldType=@item.FieldTypeId">@item.ApprovedRequests</a></td>
+                    <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=1&RequestStatus=3&FieldType=@item.FieldTypeId">@item.ApprovedMidTermRequests</a></td>
+                    <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=1&RequestStatus=4&FieldType=@item.FieldTypeId">@item.ApprovedFullTermRequests</a></td>
+                    <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=1&RequestStatus=5&FieldType=@item.FieldTypeId">@item.RejectedRequests</a></td>
+                    <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=1&RequestStatus=6&FieldType=@item.FieldTypeId">@item.PaidMidTermRequests</a></td>
+                    <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=1&RequestStatus=7&FieldType=@item.FieldTypeId">@item.PaidFullTermRequests</a></td>
+                </tr>
+            }
+
+
+            <tr class="success">
+                <td>@LangHelpers.Instance["totalA"]</td>
+                <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=1&RequestStatus=1&FieldType=0">@totalsubmitted </a></td>
+                <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=1&RequestStatus=8&FieldType=0">@totalvicedean</a></td>
+                <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=1&RequestStatus=2&FieldType=0">@totalapproved</a></td>
+                <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=1&RequestStatus=3&FieldType=0">@totalapprovedmid </a></td>
+                <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=1&RequestStatus=4&FieldType=0">@totalapprovedfull </a></td>
+                <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=1&RequestStatus=5&FieldType=0">@totalrejected </a></td>
+                <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=1&RequestStatus=6&FieldType=0">@totalpaidmid</a> </td>
+                <td><a href="@Utils.GetApplicationUrl()Reports/List?ReportNo=1&RequestStatus=7&FieldType=0">@totalpaidfull</a> </td>
+            </tr>
+
+        </tbody>
+
+    </table>
+
+
+    <button class="btn btn-primary printbtn" onclick="window.print();">@LangHelpers.Instance["print"]&nbsp;&nbsp;<i class="fa fa-print"></i></button>
+</div>

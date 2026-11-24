@@ -1,0 +1,95 @@
+﻿@model UsersInfoViewModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="fluid-container">
+    <div>
+
+        <h2>Index</h2>
+        <div class="col col-sm-12">
+            <table id="example" class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            <label>@LangHelpers.Instance["email"]</label>
+                        </th>
+
+                        <th>
+                            <label>@LangHelpers.Instance["username"]</label>
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Users)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.User.Email)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.User.UserName)
+                            </td>
+                            <td>
+                                <a id="@item.User.UserId" href="#" class="btn btn-info"
+                                   data-modal="">@LangHelpers.Instance["role"]</a>
+
+                                @Html.ActionLink(@LangHelpers.Instance["edit"], "Edit", new { id = item.User.UserId }, new { @class = "btn btn-info" })
+                                @Html.ActionLink(@LangHelpers.Instance["details"], "Details", new { id = item.User.UserId }, new { @class = "btn btn-info" })
+                                @Html.ActionLink(@LangHelpers.Instance["delete"], "Delete", new { id = item.User.UserId }, new { @class = "btn btn-info" })
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="modal fade modal-lg" id="myModal" tabindex="-1" role="dialog"
+                 aria-labelledby="myModalLabel" aria-hidden="true">
+                <div id='myModalContent' style="min-height:100%;background:#FFFFFF;color:#000000;" class="modal-body"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script nonce="@Html.ScriptNonce()">
+        $(function () {
+            $.ajaxSetup({ cache: false });
+            $("a[data-modal]").on("click", function (e) {
+                var id = $(this).attr('id');
+                var url1 = '@Url.Content("~/Admin/Users/UserRoles")';
+                url1 = url1 + "?userid=" + id;
+                $('#myModalContent').load(url1, function () {
+                    $('#myModal').modal({
+                        keyboard: true
+                    }, 'show');
+                    bindForm(this);
+                });
+                return false;
+            });
+        });
+
+        function bindForm(dialog) {
+
+            $('form', dialog).submit(function () {
+                $.ajax({
+                    url: this.action,
+                    type: this.method,
+                    data: $(this).serialize(),
+                    success: function (result) {
+                        if (result.success) {
+                            $('#myModal').modal('hide');
+                            window.location = '@Url.Action("Index","Users")';
+                        } else {
+                            $('#myModalContent').html(result);
+                            bindForm(dialog);
+                        }
+                    }
+                });
+                return false;
+            });
+        }
+    </script>
+
+}

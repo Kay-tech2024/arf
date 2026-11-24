@@ -1,0 +1,87 @@
+﻿@model IEnumerable<MajorViewModel>
+
+@{
+    ViewBag.Title = LangHelpers.Instance["majors"];
+}
+
+<ul class="breadcrumb">
+    <li><a href="@Url.Action("Index", "Home")">@LangHelpers.Instance["homepage"]</a></li>
+    <li>@LangHelpers.Instance["majors"]</li>
+</ul>
+
+@if (Utils.HasPrivilagesAny(Privilages.majors_view_list))
+{
+    <a class="btn btn-icon btn-success btn-add btn-lg" href="~/Majors/Create"><i class="fa fa-plus-circle"></i>@LangHelpers.Instance["create"]</a>
+}
+
+<div class="box2 box2-info">
+    @if (Model == null || Model.Count() == 0)
+    {
+        <p class="text-center">
+            <em>@LangHelpers.Instance["no_majors"]</em>
+        </p>
+    }
+    else
+    {
+        <table class="table">
+            <tr>
+                <th>@LangHelpers.Instance["major_name"]</th>
+
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+
+                    <td>
+                        @if (Utils.HasPrivilagesAny(Privilages.majors_view_list))
+                        {
+                            <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-xs btn-warning" title="@LangHelpers.Instance["edit"]"><i class="fa fa-pencil"></i></a>
+                            <a href="@Url.Action("Delete", new {id = item.Id })" class="btn-delete btn btn-xs btn-danger" data-id="@item.Id" title="@LangHelpers.Instance["delete"]"><i class="fa fa-times"></i></a>
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+
+
+@section scripts
+{
+    <script type="text/javascript" nonce="@Html.ScriptNonce()">
+
+        $('.btn-delete').click(function (e) {
+            var id = $(this).data("id");
+
+            swal({
+                title: "@LangHelpers.Instance["are_you_sure"]",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "@LangHelpers.Instance["yes"]",
+        closeOnConfirm: false,
+        cancelButtonText: '@LangHelpers.Instance["cancel"]'
+
+    }, function () {
+        $.ajax({
+            url: "@Url.Action("AjaxDeleteMajor", "Majors")/" + id,
+        context: document.body
+    }).done(function () {
+        swal.close();
+        window.location.reload();
+    });
+
+});
+
+e.preventDefault();
+return false;
+});
+
+
+    </script>
+}

@@ -1,0 +1,251 @@
+﻿@model CommonFundingRequestViewModel
+@{
+    ViewBag.Title = LangHelpers.Instance["new_funding_request"];
+    var viewName = (string)null;
+
+    switch (Model.Type)
+    {
+        case ReqFieldType.ArabicLanguageField:
+        case ReqFieldType.IslamicField:
+        case ReqFieldType.SocialField:
+            viewName = "~/Views/Requests/FundingRequests/Arabic/Step" + Model.Step + ".cshtml";
+            break;
+        case ReqFieldType.AppliedScienceField:
+            ViewBag.DisplayFieldsInEnglish = true;
+            Utils.SwitchCulture("EN");
+            viewName = "~/Views/Requests/FundingRequests/Arabic/Step" + Model.Step + ".cshtml";
+            break;
+
+    }
+
+    var isSelectedLangArabic = Utils.IsUserLanguageArabic;
+    if (Model.Type == ReqFieldType.AppliedScienceField)
+    {
+        var c = (System.Globalization.CultureInfo)Utils.GetDictVal("OldCulture");
+        if (c != null)
+        {
+            isSelectedLangArabic = c.Name.StartsWith("ar");
+        }
+    }
+}
+
+<ul class="breadcrumb">
+    <li>@Html.ActionLink(LangHelpers.Instance["home"], "Index", "Home")</li>
+    <li>@Html.ActionLink(LangHelpers.Instance["requests"], "Index", "Requests")</li>
+    <li>@Html.ActionLink(LangHelpers.Instance["new_funding_request"], "Create", "Requests")</li>
+    <li>@LangHelpers.Instance[Model.Type.ToString()]</li>
+</ul>
+
+<div class="@(isSelectedLangArabic && Model.Type == ReqFieldType.AppliedScienceField ? "ltr" : "")">
+
+    <div class="step-wizard-container2 step@(Model.StepCount)">
+
+        <div class="step-wizard">
+            <div class="progress2">
+                <div class="progressbar2 empty"></div>
+                <div id="prog" class="progressbar2"></div>
+            </div>
+            <ul>
+                @for (var i = 0; i < Model.StepCount; i++)
+                {
+                    <li class="@(i+1 == Model.Step? "active": "")">
+                        <a href="@Utils.GetFundingRequestLink(Model.Type, i+1, Model.Id)">
+                            <span class="step2">@(i + 1)</span>
+                            @if ((i + 1) == 1)
+                            {
+                                <span class="title2">@ArfStrings.step1</span>
+                            }
+                            @if ((i + 1) == 2)
+                            {
+                                <span class="title2">@ArfStrings.step2</span>
+                            }
+                            @if ((i + 1) == 3)
+                            {
+                                <span class="title2">@ArfStrings.step3</span>
+                            }
+                            @if ((i + 1) == 4)
+                            {
+                                <span class="title2">@ArfStrings.step4</span>
+                            }
+                            @if ((i + 1) == 5)
+                            {
+                                <span class="title2">@ArfStrings.step5</span>
+                            }
+                            @if ((i + 1) == 6)
+                            {
+                                <span class="title2">@ArfStrings.step6</span>
+                            }
+                        </a>
+                        <br />
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="validation-summary-errors" data-valmsg-summary="true">
+            <ul>
+
+                @foreach (var m in ViewData.ModelState.Keys)
+                {
+                    if (ViewData.ModelState[m].Errors.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    if (m.Contains("[") && m.Contains("]"))
+                    {
+                        var index1 = m.IndexOf('[');
+                        var index2 = m.IndexOf(']');
+                        var property = m.Substring(0, index1);
+                        var row = int.Parse(m.Substring(index1 + 1, index2 - index1 - 1)) + 1;
+
+                        <li>@(LangHelpers.Instance[property] + " " + LangHelpers.Instance["the_row"] + " " + row + ": " + ViewData.ModelState[m].Errors.First().ErrorMessage)</li>
+                    }
+                    else
+                    {
+                        <li>@ViewData.ModelState[m].Errors.First().ErrorMessage</li>
+                    }
+                }
+            </ul>
+        </div>
+
+    }
+
+    @using (Html.BeginForm("New", "Funding", Request.QueryString["preview"] == "1" ? (object)new { Id = Model.Id, Type = Model.Type.ToString(), Step = Model.Step, preview = "1" } : new { Id = Model.Id, Type = Model.Type.ToString(), Step = Model.Step }, FormMethod.Post, new { @class = "form-horizontal application-form " + (ViewBag.WidthMaximized == true ? "maximum-width" : (ViewBag.LargerWidth == true ? "larger-width" : "")), enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Partial(viewName, Model)
+
+        if (Model.Step > 1)
+        {
+            <div class="pull-left wizard-nav">
+                <a href="@Utils.GetFundingRequestLink(Model.Type, Request.QueryString["preview"] == "1"? Model.Step : (Model.Step - 1), Model.Id)" class="icon-button prev @(Model.Type == ReqFieldType.AppliedScienceField || !Utils.IsUserLanguageArabic ? "en" : "")"><i class="glyphicon glyphicon-arrow-@(LangHelpers.Instance.GetLangValueByString("css_left", false, Model.Type == ReqFieldType.AppliedScienceField? "en" : null))"></i><span>@(LangHelpers.Instance["prev_btn"])</span></a>
+            </div>
+        }
+
+        <div class="pull-right wizard-nav">
+            <a id="btnSubmit" href="#" class="icon-button @(!Utils.IsUserLanguageArabic ? "en" : "")">
+                <i class="glyphicon glyphicon-arrow-@(LangHelpers.Instance.GetLangValueByString("css_right", false, Model.Type == ReqFieldType.AppliedScienceField? "en" : null))"></i>
+                <span>
+                    @(Model.Step == Model.StepCount ? LangHelpers.Instance.GetLangValueByString(Model.HasCoresearchers ? "submit_to_coresearchers" : "submit", false, Model.Type == ReqFieldType.AppliedScienceField ? "en" : null) : LangHelpers.Instance.GetLangValueByString("next_btn", false, Model.Type == ReqFieldType.AppliedScienceField ? "en" : null))
+                </span>
+            </a>
+        </div>
+
+        <div class="clearfix"></div>
+    }
+</div>
+@{
+    Utils.SwitchCulture(null);
+}
+
+@section scripts
+    {
+
+    <script type="text/javascript" nonce="@Html.ScriptNonce()">
+        $(document).on('click', '.popupstat', null, function (e) {
+                $(this).popover({ title: "<code>@LangHelpers.Instance["the_row"]</code>", content: $('#myPopover').html(), html: true, placement: "left" });
+                $(this).popover('show');
+                $('.popover').addClass('pp');
+
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            });
+
+            $(document).on('click', 'body', null, function (e) {
+                $('.popupstat').popover('hide');
+            });
+
+
+
+           var isAccepted = @((Model.Step < 6).ToString().ToLower());
+         $('#btnSubmit').click(function (e) {
+
+             if (isAccepted) {
+                 $('form').submit();
+                 e.preventDefault();
+                 return false;
+             }
+                swal({
+                    title: "@ViewBag.agreement",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "@LangHelpers.Instance["yes"]",
+                    closeOnConfirm: false,
+                    cancelButtonText: '@LangHelpers.Instance["no"]'
+
+                }, function () {
+
+                    isAccepted = true;
+                    $('#btnSubmit').click();
+
+                 });
+
+                e.preventDefault();
+                return false;
+    });
+
+        $(document).ready(function () {
+            var typereq = $('#RequestType').val();
+
+            if (typereq == "PublishRequest") {
+                $('#type').hide();
+            }
+            function setClasses(index, steps) {
+                if (index < 0 || index > steps) return;
+                if (index == 0) {
+                    $(".step-wizard-container2 #prev").prop('disabled', true);
+                } else {
+                    $(".step-wizard-container2 #prev").prop('disabled', false);
+                }
+                if (index == steps) {
+                    $(".step-wizard-container2 #next").text('done');
+                } else {
+                    $(".step-wizard-container2 #next").text('next');
+                }
+                $(".step-wizard-container2 ul li").each(function () {
+                    $(this).removeClass();
+                });
+                $(".step-wizard-container2 ul li:lt(" + index + ")").each(function () {
+                    $(this).addClass("done");
+                });
+                $(".step-wizard-container2 ul li:eq(" + index + ")").addClass("active")
+                var p = index * (100 / steps);
+                $(".step-wizard-container2 #prog").width(p + '%');
+            }
+
+            // initial state setup
+            setClasses(@(Model.Step - 1), $(".step-wizard-container2 .step-wizard ul li").length - 1);
+        });
+
+        onDomInserted('.field-type-datetime', function (e) {
+            $(function () {
+                if (isFunction($(e).datetimepicker)) {
+                    $(e).datetimepicker({
+                        format: 'YYYY-MM-DD hh:mm A'
+                    });
+                }
+            });
+        });
+
+        onDomInserted('.field-type-date', function (e) {
+            $(function () {
+                if (isFunction($(e).datetimepicker)) {
+                    $(e).datetimepicker({
+                        format: 'YYYY-MM-DD'
+                    });
+                } else if (isFunction($(e).datepicker)) {
+                    $(e).datepicker({
+                        format: 'yyyy-mm-dd'
+                    });
+                }
+            });
+        });
+    </script>
+
+}

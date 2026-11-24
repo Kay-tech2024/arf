@@ -1,0 +1,604 @@
+﻿@{
+    ARF.Data.DbModels.ArfDbEntities db = new ARF.Data.DbModels.ArfDbEntities();
+    var preferences = CommonManager.GetUserPreferences();
+    var isArabic = preferences == null || preferences.Language != LanguagePreference.English;
+    Layout = null;
+}
+
+@model ARF.Web.Models.FundingRequestViewModel
+
+<style>
+    .form-control-view {
+        border none;
+    }
+
+    .btn-default {
+        border none;
+    }
+
+    .bs-caret {
+        display none;
+    }
+</style>
+
+<div class="text-center" style=" padding10px;">
+    @foreach (var req in Model.RequestList)
+    {
+        if (req.Serial != null)
+        {
+            <div class="col-md-4">
+                <div class="form-horizontal">
+                    <div class="form-group text-center">
+                        <label class="col-sm-12 text-center">@LangHelpers.Instance["ProjectSeries"]</label>
+                        <div class="col-sm-12">
+                            <input type="text" disabled class="form-control text-center" value="@req.Serial">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        if (req.Code != null)
+        {
+            <div class="col-md-4">
+                <div class="form-horizontal">
+                    <div class="form-group text-center">
+                        <label class="col-sm-12 text-center">@LangHelpers.Instance["ResearchUnitCode"]</label>
+                        <div class="col-sm-12">
+                            <input type="text" disabled class="form-control text-center" value="@req.Code">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        if (req.StartDate != null)
+        {
+            <div class="col-md-4">
+                <div class="form-horizontal">
+                    <div class="form-group text-center">
+                        <label class="col-sm-12 text-center">@LangHelpers.Instance["Year"]</label>
+                        <div class="col-sm-12">
+                            <input type="text" disabled class="form-control text-center" value="@req.StartDate">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+@foreach (var req in Model.RequestList)
+{
+    if (req.Title != null)
+    {
+        <div class="form-horizontal maximum-width">
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["ArabicTitleOfProposedProject"]
+                </label>
+                <div class="col-md-6">
+                    <input type="text" disabled class="form-control" value="@req.Title">
+                </div>
+            </div>
+        </div>
+
+    }
+
+    if (req.AmountSar != null)
+    {
+        <div class="col-md-4">
+            <div class="form-horizontal">
+                <div class="form-group text-center">
+                    <label class="col-sm-12 text-center">@LangHelpers.Instance["ProposedBudget"]</label>
+                    <div class="col-sm-12">
+                        <input type="text" disabled class="form-control text-center" value="@(req.AmountSar + LangHelpers.Instance["SR"] )">
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    if (req.Duration != null)
+    {
+        <div class="col-md-4">
+            <div class="form-horizontal">
+                <div class="form-group text-center">
+                    <label class="col-sm-12 text-center">@LangHelpers.Instance["ProposedDuration"]</label>
+                    <div class="col-sm-12">
+                        <input type="text" disabled class="form-control text-center" value="@req.Duration">
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    var type = "";
+    if (req.PublicationType == 1)
+    {
+        Html.Raw(LangHelpers.Instance["Single"]);
+        type = LangHelpers.Instance["Single"];
+    }
+    else
+    {
+        Html.Raw(LangHelpers.Instance["Joint"]);
+        type = LangHelpers.Instance["Joint"];
+    }
+
+    <div class="col-md-4">
+        <div class="form-horizontal">
+            <div class="form-group text-center">
+                <label class="col-sm-12 text-center">@LangHelpers.Instance["SearchProjectType"]</label>
+                <div class="col-sm-12">
+                    <input type="text" disabled class="form-control text-center" value="@type" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    if (req.RequestCoresearchers.Count > 0)
+    {
+        <h4 class="title">@LangHelpers.Instance["co_researcher"]</h4>
+
+        var rindex = 0;
+        foreach (var res in req.RequestCoresearchers)
+        {
+            <div class="form-horizontal maximum-width">
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        @(rindex + 1) &nbsp;
+                        @LangHelpers.Instance["name"]
+                    </label>
+                    <div class="col-md-6">
+                        <input type="text" disabled class="form-control" value="@(db.Researchers.Where(e => e.Id == res.ResearcherId).Select(e => new { Name = e.FirstName + " " + e.SecondName + " " + e.ThirdName + " " + e.LastName }).FirstOrDefault().Name)" />
+                    </div>
+                </div>
+            </div>
+            rindex++;
+        }
+        <hr />
+    }
+}
+
+@foreach (var req in Model.RequestList)
+{
+    if (req.ResearchFieldGeneral != null || req.ResearchFieldSpecific != null)
+    {
+        <h4 class="title">@LangHelpers.Instance["ProjectField"]</h4>
+
+        <div class="col-md-12">
+            @if (req.ResearchFieldGeneral != null)
+            {
+                <div class="col-md-4">
+                    <div class="form-horizontal">
+                        <div class="form-group text-center">
+                            <label class="col-sm-12 text-center">@LangHelpers.Instance["GeneralSpeciality"]</label>
+                            <div class="col-sm-12">
+                                <input type="text" disabled class="form-control text-center" value="@req.ResearchFieldGeneral">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (req.ResearchFieldSpecific != null)
+            {
+                <div class="col-md-4">
+                    <div class="form-horizontal">
+                        <div class="form-group text-center">
+                            <label class="col-sm-12 text-center">@LangHelpers.Instance["CarefulSpecialization"]</label>
+                            <div class="col-sm-12">
+                                <input type="text" disabled class="form-control text-center" value="@req.ResearchFieldGeneral">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <hr />
+    }
+    <div class="form-horizontal maximum-width">
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                @LangHelpers.Instance["HasTheProposalBeenSubmittedToTheUnitResearchCentreAtPreviousSessions"]
+            </label>
+            <div class="col-md-3">
+                @if (req.HasBeenPresentedBefore == true)
+                {
+                    <input type="text" disabled class="form-control text-center" value="@LangHelpers.Instance["yes"] &nbsp;-&nbsp; @req.ResearcherPresentaionNumber">
+                }
+                else
+                {
+                    <input type="text" disabled class="form-control text-center" value="@LangHelpers.Instance["No"]">
+
+                }
+            </div>
+        </div>
+    </div>
+
+    if (req.NumberOfPerviousFundedResearchs != null)
+    {
+        <div class="form-horizontal maximum-width">
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["NumberOfResearchesPreviouslyFundedByThePrincipalResearcherFromTheDeanshipOfScientificResearch"]
+                </label>
+                <div class="col-md-3">
+                    <input type="text" disabled class="form-control text-center" value="@req.NumberOfPerviousFundedResearchs">
+                </div>
+            </div>
+        </div>
+    }
+    if (req.NumberOfResearchCommingPapers != null)
+    {
+        <div class="form-horizontal maximum-width">
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["NumberOfResearchPapersToBePublishedFromTheProject"]
+                </label>
+                <div class="col-md-3">
+                    <input type="text" disabled class="form-control text-center" value="@req.NumberOfResearchCommingPapers">
+                </div>
+            </div>
+        </div>
+    }
+    if (req.KeyWords != null)
+    {
+
+        <div class="form-horizontal maximum-width">
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    @LangHelpers.Instance["KeywordsToSearch6To10Words"]
+                </label>
+                <div class="col-md-6">
+                    <input type="text" disabled class="form-control text-center" value="@req.KeyWords">
+                </div>
+            </div>
+        </div>
+    }
+
+    if (req.PriorityNumber != null || req.PriortyDescription != null)
+    {
+        <hr />
+    }
+
+    <div class="form-horizontal maximum-width">
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                @LangHelpers.Instance["DoesTheResearchProjectForFinanceFallWithinThePrioritiesOfScientificResearchForTheScientificSectionYouWorkWith"]
+            </label>
+            <div class="col-md-3">
+                @if (req.HasPriority == true)
+                {
+                    <input type="text" disabled class="form-control text-center" value="@req.KeyWords">
+                }
+                else
+                {
+                    <input type="text" disabled class="form-control text-center" value="@LangHelpers.Instance["No"]">
+                }
+            </div>
+        </div>
+    </div>
+    if (req.PriorityNumber != null || req.PriortyDescription != null)
+    {
+        <div class="col-md-12">
+
+            @if (req.PriorityNumber != null)
+            {
+                <div class="col-md-4">
+                    <div class="form-horizontal">
+                        <div class="form-group text-center">
+                            <label class="col-sm-12 text-center">@LangHelpers.Instance["PriorityNumber"]</label>
+                            <div class="col-sm-12">
+                                <input type="text" disabled class="form-control text-center" value="@req.PriorityNumber">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (req.PriortyDescription != null)
+            {
+                <div class="col-md-8">
+                    <div class="form-horizontal maximum-width">
+                        <div class="form-group text-center">
+                            <label class="col-sm-12 text-center">@LangHelpers.Instance["ProvidesFor"]</label>
+                            <div class="col-sm-12">
+                                <input type="text" disabled class="form-control text-center" value="@req.PriortyDescription">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <hr />
+    }
+}
+@foreach (var reqData in Model.RequestDataList)
+{
+    if (reqData.ProjectImportant != null || reqData.Problem != null || reqData.StatementOfObjectives != null || reqData.Assuptions != null || reqData.TermAndConcepts != null || reqData.ScopeofSubject != null || reqData.ThiorticalFramework != null || reqData.PreviousStudy != null || reqData.Chapters != null || reqData.Refrences != null)
+    {
+        <hr />
+
+        <h4 class="title">@LangHelpers.Instance["ProjectMethodologicalPlan"]</h4>
+
+        if (reqData.ProjectImportant != null)
+        {
+            <div class="form-horizontal maximum-width">
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        @LangHelpers.Instance["ImportanceOfTheProject"]
+                    </label>
+                    <div class="col-md-3">
+                        <input type="text" disabled class="form-control text-center" value="@reqData.ProjectImportant">
+                    </div>
+                </div>
+            </div>
+        }
+        if (reqData.Problem != null)
+        {
+            <div class="form-horizontal maximum-width">
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        @LangHelpers.Instance["Problem"]
+                    </label>
+                    <div class="col-md-3">
+                        <input type="text" disabled class="form-control text-center" value="@reqData.Problem">
+                    </div>
+                </div>
+            </div>
+        }
+
+        if (reqData.StatementOfObjectives != null)
+        {
+            <div class="form-horizontal maximum-width">
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        @LangHelpers.Instance["Goals"]
+                    </label>
+                    <div class="col-md-3">
+                        <input type="text" disabled class="form-control text-center" value="@reqData.StatementOfObjectives">
+                    </div>
+                </div>
+            </div>
+        }
+
+        if (reqData.Assuptions != null)
+        {
+            <div class="form-horizontal maximum-width">
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        @LangHelpers.Instance["QueriesAndHypotheses"]
+                    </label>
+                    <div class="col-md-3">
+                        <input type="text" disabled class="form-control text-center" value="@reqData.Assuptions">
+                    </div>
+                </div>
+            </div>
+        }
+
+        if (reqData.TermAndConcepts != null)
+        {
+            <div class="form-horizontal maximum-width">
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        @LangHelpers.Instance["TerminologyAndConcepts"]
+                    </label>
+                    <div class="col-md-3">
+                        <input type="text" disabled class="form-control text-center" value="@reqData.TermAndConcepts">
+                    </div>
+                </div>
+            </div>
+        }
+
+        if (reqData.ScopeofSubject != null)
+        {
+            <div class="form-horizontal maximum-width">
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        @LangHelpers.Instance["ObjectiveSpatialAndTemporalBoundaries"]
+                    </label>
+                    <div class="col-md-3">
+                        <input type="text" disabled class="form-control text-center" value="@reqData.ScopeofSubject">
+                    </div>
+                </div>
+            </div>
+        }
+
+        if (reqData.ThiorticalFramework != null)
+        {
+            <div class="form-horizontal maximum-width">
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        @LangHelpers.Instance["ProjectReferenceTheoreticalFrameIfAny"]
+                    </label>
+                    <div class="col-md-3">
+                        <input type="text" disabled class="form-control text-center" value="@reqData.ThiorticalFramework">
+                    </div>
+                </div>
+            </div>
+        }
+
+        if (reqData.PreviousStudy != null)
+        {
+            <div class="form-horizontal maximum-width">
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        @LangHelpers.Instance["PreviousStudies"]
+                    </label>
+                    <div class="col-md-3">
+                        <input type="text" disabled class="form-control text-center" value="@reqData.PreviousStudy">
+                    </div>
+                </div>
+            </div>
+        }
+        if (reqData.Chapters != null)
+        {
+            <div class="form-horizontal maximum-width">
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        @LangHelpers.Instance["SearchDivisionsSectionsAndChapter"]
+                    </label>
+                    <div class="col-md-3">
+                        <input type="text" disabled class="form-control text-center" value="@reqData.Chapters">
+                    </div>
+                </div>
+            </div>
+        }
+        if (reqData.Refrences != null)
+        {
+            <div class="form-horizontal maximum-width">
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        @LangHelpers.Instance["ReferencesAndProposedSources"]
+                    </label>
+                    <div class="col-md-3">
+                        <input type="text" disabled class="form-control text-center" value="@reqData.Refrences">
+                    </div>
+                </div>
+            </div>
+        }
+        <hr />
+    }
+}
+<hr />
+
+<h4 class="title">@LangHelpers.Instance["ProjectImplementationTimeline"]</h4>
+
+<div class="form-horizontal maximum-width">
+    <div class="form-group">
+        <label class="control-label col-md-3">
+            @LangHelpers.Instance["StartDate"]
+        </label>
+        <div class="col-md-3">
+            @*<input type="text" disabled class="form-control text-center" value="@reqData.Refrences">*@
+            @Html.TextBoxFor(m => m.RequestTT.Year, new { @class = "form-control form-control-view", @type = "date", @disabled = "disabled" })
+        </div>
+    </div>
+</div>
+<hr />
+
+<div class="form-group">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col" rowspan="2" style="color:#1a5b92">@LangHelpers.Instance["Item"]</th>
+                <th scope="col" rowspan="2" style="color:#1a5b92">@LangHelpers.Instance["MissionAndCharged"] @LangHelpers.Instance["PlannedSequenceOfMajorTasks"]</th>
+                <th colspan="12" scope="colgroup" style="color:#1a5b92">@LangHelpers.Instance["FirstYear12Months"]</th>
+            </tr>
+            <tr>
+                <th scope="col" style="color:#1a5b92">1</th>
+                <th scope="col" style="color:#1a5b92">2</th>
+                <th scope="col" style="color:#1a5b92">3</th>
+                <th scope="col" style="color:#1a5b92">4</th>
+                <th scope="col" style="color:#1a5b92">5</th>
+                <th scope="col" style="color:#1a5b92">6</th>
+                <th scope="col" style="color:#1a5b92">7</th>
+                <th scope="col" style="color:#1a5b92">8</th>
+                <th scope="col" style="color:#1a5b92">9</th>
+                <th scope="col" style="color:#1a5b92">10</th>
+                <th scope="col" style="color:#1a5b92">11</th>
+                <th scope="col" style="color:#1a5b92">12</th>
+                @*<th><a href="#taskstbodya" id="taskstbodya" class="btn btn-default" style="color#1a5b92" onclick="AddTaskTR(this);">إضافة بند</a></th>*@
+            </tr>
+        </thead>
+
+        <tbody id="taskstbody">
+            <tr>
+                @foreach (var item in Model.RequestTTList)
+                {
+                    <td>@item.Item</td>
+                    <td>@item.Task</td>
+                    <td>@item.January</td>
+                    <td>@item.Feb</td>
+                    <td>@item.March</td>
+                    <td>@item.April</td>
+                    <td>@item.May</td>
+                    <td>@item.June</td>
+                    <td>@item.July</td>
+                    <td>@item.Auguest</td>
+                    <td>@item.September</td>
+                    <td>@item.October</td>
+                    <td>@item.Novermber</td>
+                    <td>@item.December</td>
+                }
+            </tr>
+        </tbody>
+    </table>
+
+    <input type="hidden" id="ttcount" name="ttcount" value="1" />
+</div>
+
+@*@foreach (var reqActt in Model.RequestActivityList)
+    {<hr />
+        <h4 class="title">@LangHelpers.Instance["ProposedActivities"]</h4>
+        <div class="form-group">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th style="color:#1a5b92">م</th>
+                        <th style="color:#1a5b92">@LangHelpers.Instance["EventName"]</th>
+                        <th style="color:#1a5b92"> @LangHelpers.Instance["Itstype"]</th>
+                        <th style="color:#1a5b92">@LangHelpers.Instance["Itsplace"]</th>
+                        <th style="color:#1a5b92">@LangHelpers.Instance["Itshistory"]</th>
+                        <th style="color:#1a5b92">@LangHelpers.Instance["ItsDescribe"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            @reqActt.Title
+                        </td>
+                        <td>
+                            @reqActt.Type
+                        </td>
+                        <td>
+                            @reqActt.Place
+                        </td>
+                        <td>
+                            @reqActt.ActivityDate
+                        </td>
+                        <td>
+                            @reqActt.Description
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <hr />
+    }*@
+
+@foreach (var reqBeni in Model.RequestBenificialList)
+{<hr />
+    <h4 class="title">@LangHelpers.Instance["BeneficiariesOfTheResearchOutputs"]</h4>
+    <div class="form-group">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th style="color:#1a5b92">م</th>
+                    <th style="color:#1a5b92">@LangHelpers.Instance["Organization"]</th>
+                    <th style="color:#1a5b92">@LangHelpers.Instance["ItsAddress"]</th>
+                    <th style="color:#1a5b92">@LangHelpers.Instance["DescribeTheirUtilization"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>
+                        @reqBeni.Title
+                    </td>
+                    <td>
+                        @reqBeni.Address
+                    </td>
+                    <td>
+                        @reqBeni.Description
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <hr />
+}
+<script nonce="@Html.ScriptNonce()">
+    $(".form-control-view").attr("disabled", "disabled");
+</script>

@@ -1,0 +1,51 @@
+﻿@model IEnumerable<AnnouncementViewModel>
+@{
+    ViewBag.Title = LangHelpers.Instance["AnnouncementsOfFundingCycles"];
+}
+
+<h2>@LangHelpers.Instance["AnnouncementsOfFundingCycles"]</h2>
+
+<p>
+    @Html.ActionLink("جديد", "Create", "Announcements", null, new { @class = "btn btn-success" })
+</p>
+
+<br /><br />
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th><span>الرقم المرجعي</span></th>
+            <th><span>العنوان</span></th>
+            <th><span>تاريخ البداية</span></th>
+            <th><span>تاريخ النهاية</span></th>
+
+            <th>
+
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Title</td>
+                <td>@item.StartDate</td>
+                <td>@item.EndDate</td>
+
+                <td>
+                    @if (Utils.HasRolesAny(ArfUserRole.DeanofDeanshipofScientificResearch))
+                    {
+                        <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-xs btn-primary" title="@LangHelpers.Instance["edit"]"> @LangHelpers.Instance["edit"]</a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("View", new { id = item.Id })" class="btn btn-xs btn-info" title="@LangHelpers.Instance["details"]"> @LangHelpers.Instance["details"]</a>
+                    }
+                </td>
+            </tr>
+        }
+
+    </tbody>
+
+</table>
